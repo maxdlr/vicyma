@@ -47,7 +47,7 @@ class Lodging
     private ?bool $gate = null;
 
     #[ORM\Column]
-    private ?bool $isAnimalAllowed = null;
+    private ?bool $animalAllowed = null;
 
     #[ORM\Column]
     private ?bool $terrace = null;
@@ -57,6 +57,12 @@ class Lodging
 
     #[ORM\Column]
     private ?int $floor = null;
+
+    #[ORM\Column(length: 1000)]
+    private ?string $description = null;
+
+    #[ORM\Column]
+    private ?float $priceByNight = null;
 
     public function getId(): ?int
     {
@@ -197,12 +203,12 @@ class Lodging
 
     public function isAllowAnimals(): ?bool
     {
-        return $this->isAnimalAllowed;
+        return $this->animalAllowed;
     }
 
-    public function setAllowAnimals(bool $isAnimalAllowed): static
+    public function setAllowAnimals(bool $animalAllowed): static
     {
-        $this->isAnimalAllowed = $isAnimalAllowed;
+        $this->animalAllowed = $animalAllowed;
 
         return $this;
     }
@@ -239,6 +245,30 @@ class Lodging
     public function setFloor(int $floor): static
     {
         $this->floor = $floor;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getPriceByNight(): ?float
+    {
+        return $this->priceByNight;
+    }
+
+    public function setPriceByNight(float $priceByNight): static
+    {
+        $this->priceByNight = $priceByNight;
 
         return $this;
     }
