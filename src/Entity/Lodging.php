@@ -50,10 +50,10 @@ class Lodging
     private ?bool $isAnimalAllowed = null;
 
     #[ORM\Column]
-    private ?bool $terrasse = null;
+    private ?bool $terrace = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $terrasseSurface = null;
+    private ?float $terraceSurface = null;
 
     #[ORM\Column]
     private ?int $floor = null;
@@ -135,7 +135,7 @@ class Lodging
         return $this;
     }
 
-    public function isTvService(): ?bool
+    public function hasTvService(): ?bool
     {
         return $this->tvService;
     }
@@ -147,7 +147,7 @@ class Lodging
         return $this;
     }
 
-    public function isWasher(): ?bool
+    public function hasWasher(): ?bool
     {
         return $this->washer;
     }
@@ -159,7 +159,7 @@ class Lodging
         return $this;
     }
 
-    public function isWaterHeater(): ?bool
+    public function hasWaterHeater(): ?bool
     {
         return $this->waterHeater;
     }
@@ -171,7 +171,7 @@ class Lodging
         return $this;
     }
 
-    public function isParking(): ?bool
+    public function hasParking(): ?bool
     {
         return $this->parking;
     }
@@ -183,7 +183,7 @@ class Lodging
         return $this;
     }
 
-    public function isGate(): ?bool
+    public function hasGate(): ?bool
     {
         return $this->gate;
     }
@@ -197,7 +197,7 @@ class Lodging
 
     public function isAllowAnimals(): ?bool
     {
-        return $this->allowAnimals;
+        return $this->isAnimalAllowed;
     }
 
     public function setAllowAnimals(bool $isAnimalAllowed): static
@@ -207,26 +207,26 @@ class Lodging
         return $this;
     }
 
-    public function isTerrasse(): ?bool
+    public function hasTerrace(): ?bool
     {
-        return $this->terrasse;
+        return $this->terrace;
     }
 
-    public function setTerrasse(bool $terrasse): static
+    public function setTerrace(bool $terrace): static
     {
-        $this->terrasse = $terrasse;
+        $this->terrace = $terrace;
 
         return $this;
     }
 
-    public function getTerrasseSurface(): ?float
+    public function getTerraceSurface(): ?float
     {
-        return $this->terrasseSurface;
+        return $this->terraceSurface;
     }
 
-    public function setTerrasseSurface(?float $terrasseSurface): static
+    public function setTerraceSurface(?float $terraceSurface): static
     {
-        $this->terrasseSurface = $terrasseSurface;
+        $this->terraceSurface = $terraceSurface;
 
         return $this;
     }
