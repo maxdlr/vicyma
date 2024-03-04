@@ -10,36 +10,56 @@ class ClassBrowser
 {
     /**
      * @throws ReflectionException
+     * @throws Exception
+     */
+    static public function findAllProperties(string $classFQCN): array
+    {
+        $reflection = new ReflectionClass($classFQCN);
+        $properties = [];
+
+        try {
+            foreach ($reflection->getProperties() as $property) {
+                $properties[] = $property->name;
+            }
+            return $properties;
+        } catch (Exception) {
+            throw new Exception('Cannot find ' . $needle . ' in ' . $classFQCN . '.');
+        }
+    }
+
+    /**
+     * @throws ReflectionException
      */
     static public function findSetter(
-        string $className,
+        string $classFQCN,
         string $needle
     ): string
     {
-        return self::methodBrowser($className, $needle, 'set');
+        return self::methodBrowser($classFQCN, $needle, 'set');
     }
 
     /**
      * @throws ReflectionException
      */
     static public function findGetter(
-        string $className,
+        string $classFQCN,
         string $needle
     ): string
     {
-        return self::methodBrowser($className, $needle, 'get');
+        return self::methodBrowser($classFQCN, $needle, 'get');
     }
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     static private function methodBrowser(
-        string $className,
+        string $classFQCN,
         string $needle,
         string $methodPrefix,
     ): ?string
     {
-        $reflection = new ReflectionClass($className);
+        $reflection = new ReflectionClass($classFQCN);
 
         try {
             foreach ($reflection->getMethods() as $method) {
@@ -47,8 +67,8 @@ class ClassBrowser
                     return $method->name;
                 }
             }
-        } catch (Exception $exception) {
-            dd($exception);
+        } catch (Exception) {
+            throw new Exception('Cannot find ' . $needle . ' in ' . $classFQCN . '.');
         }
         return null;
     }

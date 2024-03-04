@@ -3,68 +3,45 @@
 namespace App\DataFixtures\Factory;
 
 use App\Entity\Lodging;
-use App\Service\ClassBrowser;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ObjectManager;
 use Exception;
-use Faker\Factory;
+use Faker\Factory as Faker;
 
-class LodgingFactory
+class LodgingFactory extends Factory
 {
-    static private ArrayCollection|Lodging $lodging;
-
-    static public function generate(): Lodging|ArrayCollection
+    public function __construct()
     {
-        return self::$lodging;
+        $this->item = new Lodging();
     }
 
-    static public function persist(ObjectManager $manager): void
-    {
-        if (self::$lodging instanceof Lodging) {
-            $manager->persist(self::$lodging);
-        } else {
-            foreach (self::$lodging as $lodging) {
-                $manager->persist($lodging);
-            }
-        }
-    }
-
-    static public function make(int $number = 1): static
+    public function make(int $number = 1): self
     {
         if ($number === 1) {
-            self::$lodging = self::buildLodging();
+            $this->item = self::build();
         } else {
             $tempCollection = new ArrayCollection();
             for ($i = 0; $i < $number; $i++) {
-                $tempCollection->add(self::buildLodging());
+                $tempCollection->add(self::build());
             }
-            self::$lodging = $tempCollection;
+            $this->item = $tempCollection;
         }
-        return new static;
+        return $this;
     }
 
-    /**
-     * @throws Exception
-     */
-    static public function withNull(string $fieldName = null): static
+    public function withCriteria(array $criteria): self
     {
-        $choices = implode(', ', self::getFields());
+        $this->distribute(/**
+         * @throws Exception
+         */ fn(Lodging $lodging) => $this->applyCriteria($criteria));
 
-        if ($fieldName === null) {
-            throw new Exception(
-                'Choose a field to make null.' . $choices
-            );
-        }
-
-        $setter = ClassBrowser::findSetter(Lodging::class, $fieldName);
-        self::$lodging->$setter(null);
-        return new static;
+        return $this;
     }
 
-    static public function buildLodging(): Lodging
+    private function build(): Lodging
     {
-        $faker = Factory::create();
+        $faker = Faker::create();
         $lodging = new Lodging();
+
 
         $lodging
             ->setName($faker->word())
@@ -83,31 +60,9 @@ class LodgingFactory
             ->setTerrace($faker->boolean(80))
             ->setTerraceSurface($faker->randomFloat(2, 10, 20))
             ->setFloor($faker->numberBetween(0, 3))
-            ->setPriceByNight($faker->randomFloat(2, 130, 150));
+            ->setPriceByNight($faker->randomFloat(2, 130, 150))
+        ;
 
         return $lodging;
-    }
-
-    static private function getFields(): array
-    {
-        return [
-            "Name",
-            "Description",
-            "Capacity",
-            "RoomCount",
-            "Surface",
-            "BathroomCount",
-            "ToiletCount",
-            "TvService",
-            "Washer",
-            "WaterHeater",
-            "Parking",
-            "Gate",
-            "AllowAnimals",
-            "Terrace",
-            "TerraceSurface",
-            "Floor",
-            "PriceByNight"
-        ];
     }
 }

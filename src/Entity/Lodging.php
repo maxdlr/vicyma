@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\LodgingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LodgingRepository::class)]
@@ -63,6 +65,14 @@ class Lodging
 
     #[ORM\Column]
     private ?float $priceByNight = null;
+
+    #[ORM\ManyToMany(targetEntity: Bed::class, inversedBy: 'lodgings')]
+    private Collection $beds;
+
+    public function __construct()
+    {
+        $this->beds = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -269,6 +279,30 @@ class Lodging
     public function setPriceByNight(float $priceByNight): static
     {
         $this->priceByNight = $priceByNight;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Bed>
+     */
+    public function getBeds(): Collection
+    {
+        return $this->beds;
+    }
+
+    public function addBed(Bed $bed): static
+    {
+        if (!$this->beds->contains($bed)) {
+            $this->beds->add($bed);
+        }
+
+        return $this;
+    }
+
+    public function removeBed(Bed $bed): static
+    {
+        $this->beds->removeElement($bed);
 
         return $this;
     }
