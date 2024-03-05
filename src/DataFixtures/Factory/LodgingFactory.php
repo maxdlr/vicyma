@@ -4,6 +4,7 @@ namespace App\DataFixtures\Factory;
 
 use App\Entity\Lodging;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Faker\Factory as Faker;
 
@@ -12,6 +13,11 @@ class LodgingFactory extends Factory
     public function __construct()
     {
         $this->item = new Lodging();
+    }
+
+    public function persist(ObjectManager $manager): void
+    {
+        $this->distribute(fn(Lodging $lodging) => $manager->persist($lodging));
     }
 
     public function make(int $number = 1): self

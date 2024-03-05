@@ -69,9 +69,21 @@ class Lodging
     #[ORM\ManyToMany(targetEntity: Bed::class, inversedBy: 'lodgings')]
     private Collection $beds;
 
+    #[ORM\ManyToMany(targetEntity: File::class, mappedBy: 'lodgings')]
+    private Collection $files;
+
+    #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'lodgings')]
+    private Collection $reservations;
+
+    #[ORM\ManyToOne(inversedBy: 'lodgings')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ReservationStatus $reservationStatus = null;
+
     public function __construct()
     {
         $this->beds = new ArrayCollection();
+        $this->files = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -303,6 +315,72 @@ class Lodging
     public function removeBed(Bed $bed): static
     {
         $this->beds->removeElement($bed);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(File $file): static
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+            $file->addLodging($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(File $file): static
+    {
+        if ($this->files->removeElement($file)) {
+            $file->removeLodging($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->addLodging($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            $reservation->removeLodging($this);
+        }
+
+        return $this;
+    }
+
+    public function getReservationStatus(): ?ReservationStatus
+    {
+        return $this->reservationStatus;
+    }
+
+    public function setReservationStatus(?ReservationStatus $reservationStatus): static
+    {
+        $this->reservationStatus = $reservationStatus;
 
         return $this;
     }

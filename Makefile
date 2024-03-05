@@ -1,92 +1,107 @@
 # Variables
+# Basic Symfony/Webapp Makefile by Maxdlr
 default: help
+
+APP = VICYMA
+
 SYMFONY = symfony console
-APP = vicyma
 MYSQL_USERNAME = root
 MYSQL_PASSWORD = root
+BLUE_COLOR=\033[0;36m
+YELLOW_COLOR=\033[0;33m
+SUCCESS_COLOR=\033[0;32m
+END_COLOR=\033[0m
 
 run: ## Start project
-	$(info [VICYMA] -- [ ------------- Starting project... ------------- ])
+	@make recipe-intro-msg msg="Starting project"
 
 	@make composer-install && \
 	clear && \
-	make createlocalenv && \
-	make filllocalenv && \
+	make create-local-env && \
+	make fill-local-env && \
 	clear && \
 	make db && \
-	make cacheclear && \
+	make cache-clear && \
 	clear && \
-	make yarnbuild && \
-	make serverstart && \
+	make yarn-build && \
+	make server-start && \
 	clear && \
-	make openbrowser && \
-	@echo [VICYMA] -- [OK]
+	make open-browser && \
+	make success-msg
+
+command-intro-msg:
+	@echo "[$(BLUE_COLOR)$(APP)$(END_COLOR)] -------------$(SUCCESS_COLOR)|=>$(END_COLOR) $(YELLOW_COLOR)$(msg)... $(END_COLOR)"
+recipe-intro-msg:
+	@echo "[$(BLUE_COLOR)$(APP)$(END_COLOR)] -- $(YELLOW_COLOR)[ ------------- $(msg)... ------------- ]$(END_COLOR)"
+success-msg:
+	@echo "[$(BLUE_COLOR)$(APP)$(END_COLOR)] -- $(SUCCESS_COLOR)[OK]$(END_COLOR)"
 
 db: ## Create or Reload Database
-	$(info [VICYMA] -- [ ------------- Dropping, creating, migrating and loading fixtures... ------------- ])
-	@make dbdrop && \
-	make dbcreate && \
-	make dbmigrate && \
-	make dbmigration && \
-	make dbmigrate && \
-	make dbfixtures
+	@make recipe-intro-msg msg="Reloading database"
+	@make db-drop && \
+	make db-create && \
+	make db-migrate && \
+	make db-migration && \
+	make db-migrate && \
+	make db-fixtures && \
+	make success-msg
 
-yarnbuild: ## Building public assets
-	$(info [VICYMA] ------------- || Building public assets... )
-	yarn build
+yarn-build: ## Building public assets
+	@make command-intro-msg msg="Building public assets"
+	@yarn build
 
-openbrowser: ## Open project in $BROWSER
-	$(info [VICYMA] ------------- || Opening project in your browser... )
+open-browser: ## Open project in $BROWSER
+	@make command-intro-msg msg="Opening project in your browser"
 	@symfony open:local
 
-serverstart: ## Start server
-	$(info [VICYMA] ------------- || Starting server... )
-	symfony server:start -d
+server-start: ## Start server
+	@make command-intro-msg msg="Starting server"
+	@symfony server:start -d
 
-serverstop: ## Stop server
-	$(info [VICYMA] ------------- || Stopping server... )
+server-stop: ## Stop server
+	@make command-intro-msg msg="Stopping server"
 	@symfony server:stop
 
-createlocalenv: ## Create .env.local file
-	$(info [VICYMA] ------------- || Creating env file... )
+create-local-env: ## Create .env.local file
+	@make command-intro-msg msg="Creating env file"
 	@if [ ! -f '.env.local' ]; then \
 		touch .env.local; \
 	fi
 
-filllocalenv: ## Create .env.local file
-	$(info [VICYMA] ------------- || Filling env , using 'root:root'... )
+fill-local-env: ## Fill .env.local file with 'root/root'
+	@make command-intro-msg msg="Filling env , using 'root:root'"
 	echo "DATABASE_URL='mysql://$(MYSQL_USERNAME):$(MYSQL_PASSWORD)@127.0.0.1:8889/$(APP)'" | tee .env.local; \
 
-cacheclear: ## Clear symfony cache
-	$(info [VICYMA] ------------- || Clearing cache... )
+cache-clear: ## Clear symfony cache
+	@make command-intro-msg msg="Clearing cache"
 	@$(SYMFONY) cache:clear \
 
-dbdrop: ## Drop database
-	$(info [VICYMA] ------------- || Dropping database... )
-	$(SYMFONY) d:d:d -f --if-exists
+db-drop: ## Drop database
+	@make command-intro-msg msg="Dropping database"
+	@$(SYMFONY) d:d:d -f --if-exists
 
-dbcreate: ## Create database
-	$(info [VICYMA] ------------- || Creating database... )
-	$(SYMFONY) d:d:c --if-not-exists
+db-create: ## Create database
+	@make command-intro-msg msg="Creating database"
+	@$(SYMFONY) d:d:c --if-not-exists
 
-dbmigrate: ## Migrating databse schema
-	$(info [VICYMA] ------------- || Migrating database... )
-	$(SYMFONY) d:m:m --no-interaction
+db-migrate: ## Migrating databse schema
+	@make command-intro-msg msg="Migrating database"
+	@$(SYMFONY) d:m:m --no-interaction
 
-dbmigration: ## Create database migration
-	$(info [VICYMA] ------------- || Creating database migration... )
-	$(SYMFONY) make:migration
+db-migration: ## Create database migration
+	@make command-intro-msg msg="Creating database migration"
+	@$(SYMFONY) make:migration
 
-dbfixtures: ## Load fixtures
-	$(info [VICYMA] ------------- || Loading fixtures... )
-	$(SYMFONY) d:f:l --no-interaction
+db-fixtures: ## Load fixtures
+	@make command-intro-msg msg="Loading fixtures"
+	@$(SYMFONY) d:f:l --no-interaction
 
 composer-install: ## Install dependencies
-	$(info [VICYMA] ------------- || Installing composer dependencies... )
+	@make command-intro-msg msg="Installing composer dependencies"
 	@composer install --no-interaction
 
 runtests: ## Run Tests / testName=TESTNAME to only run TESTNAME
-	$(info [VICYMA] ------------- || Running tests... )
+	@make command-intro-msg msg="Running tests"
 	@if [ -z $(testName) ]; then \
 		php bin/phpunit --colors=always; \
     else \

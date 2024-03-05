@@ -2,22 +2,22 @@
 
 namespace App\DataFixtures\Factory;
 
-use App\Entity\Bed;
+use App\Entity\ReservationStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Faker\Factory as Faker;
 
-class BedFactory extends Factory
+class ReservationStatusFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new Bed();
+        $this->item = new ReservationStatus();
     }
 
     public function persist(ObjectManager $manager): void
     {
-        $this->distribute(fn(Bed $bed) => $manager->persist($bed));
+        $this->distribute(fn(ReservationStatus $reservationStatus) => $manager->persist($reservationStatus));
     }
 
     public function make(int $number = 1): self
@@ -38,21 +38,19 @@ class BedFactory extends Factory
     {
         $this->distribute(/**
          * @throws Exception
-         */ fn(Bed $bed) => $this->applyCriteria($criteria));
+         */ fn(ReservationStatus $reservationStatus) => $this->applyCriteria($criteria));
 
         return $this;
     }
 
-    private function build(): Bed
+    private function build(): ReservationStatus
     {
         $faker = Faker::create();
-        $bed = new Bed();
+        $reservationStatus = new ReservationStatus();
 
-        $bed
-            ->setHeight($faker->randomElement([190, 180, 200]))
-            ->setWidth($faker->randomElement([140, 90, 180, 200]))
-            ->setIsExtra($faker->boolean());
+        $reservationStatus
+            ->setName($faker->randomElement(['PENDING', 'CONFIRMED', 'ARCHIVED', 'DELETED']));
 
-        return $bed;
+        return $reservationStatus;
     }
 }

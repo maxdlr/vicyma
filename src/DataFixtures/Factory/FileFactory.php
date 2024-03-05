@@ -2,22 +2,22 @@
 
 namespace App\DataFixtures\Factory;
 
-use App\Entity\Bed;
+use App\Entity\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Faker\Factory as Faker;
 
-class BedFactory extends Factory
+class FileFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new Bed();
+        $this->item = new File();
     }
 
     public function persist(ObjectManager $manager): void
     {
-        $this->distribute(fn(Bed $bed) => $manager->persist($bed));
+        $this->distribute(fn(File $file) => $manager->persist($file));
     }
 
     public function make(int $number = 1): self
@@ -38,21 +38,21 @@ class BedFactory extends Factory
     {
         $this->distribute(/**
          * @throws Exception
-         */ fn(Bed $bed) => $this->applyCriteria($criteria));
+         */ fn(File $file) => $this->applyCriteria($criteria));
 
         return $this;
     }
 
-    private function build(): Bed
+    private function build(): File
     {
         $faker = Faker::create();
-        $bed = new Bed();
+        $file = new File();
 
-        $bed
-            ->setHeight($faker->randomElement([190, 180, 200]))
-            ->setWidth($faker->randomElement([140, 90, 180, 200]))
-            ->setIsExtra($faker->boolean());
+        $file
+            ->setFileName($faker->word())
+            ->setFileSize($faker->randomFloat(2, 2, 30))
+            ->setCreatedOn($faker->dateTimeBetween('- 5 days'));
 
-        return $bed;
+        return $file;
     }
 }

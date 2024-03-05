@@ -2,22 +2,22 @@
 
 namespace App\DataFixtures\Factory;
 
-use App\Entity\Bed;
+use App\Entity\Reservation;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Faker\Factory as Faker;
 
-class BedFactory extends Factory
+class ReservationFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new Bed();
+        $this->item = new Reservation();
     }
 
     public function persist(ObjectManager $manager): void
     {
-        $this->distribute(fn(Bed $bed) => $manager->persist($bed));
+        $this->distribute(fn(Reservation $reservation) => $manager->persist($reservation));
     }
 
     public function make(int $number = 1): self
@@ -38,21 +38,23 @@ class BedFactory extends Factory
     {
         $this->distribute(/**
          * @throws Exception
-         */ fn(Bed $bed) => $this->applyCriteria($criteria));
+         */ fn(Reservation $reservation) => $this->applyCriteria($criteria));
 
         return $this;
     }
 
-    private function build(): Bed
+    private function build(): Reservation
     {
         $faker = Faker::create();
-        $bed = new Bed();
+        $reservation = new Reservation();
 
-        $bed
-            ->setHeight($faker->randomElement([190, 180, 200]))
-            ->setWidth($faker->randomElement([140, 90, 180, 200]))
-            ->setIsExtra($faker->boolean());
+        $reservation
+            ->setAdultCount($faker->numberBetween(1, 6))
+            ->setChildCount($faker->numberBetween(0, 4))
+            ->setPrice($faker->randomElement([null, $faker->randomFloat(2, 200, 10000)]))
+            ->setArrivalDate($faker->dateTimeBetween('+ 1 day', '+ 8 days'))
+            ->setDepartureDate($faker->dateTimeBetween('+ 9 days', '+ 20 days'));
 
-        return $bed;
+        return $reservation;
     }
 }
