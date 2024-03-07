@@ -44,10 +44,14 @@ class Reservation
     #[ORM\JoinColumn(nullable: true)]
     private ?ReservationStatus $reservationStatus = null;
 
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation')]
+    private Collection $messages;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
         $this->reservationNumber = Uuid::v4();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -152,6 +156,36 @@ class Reservation
     public function setReservationStatus(?ReservationStatus $reservationStatus): static
     {
         $this->reservationStatus = $reservationStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setReservation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getReservation() === $this) {
+                $message->setReservation(null);
+            }
+        }
 
         return $this;
     }

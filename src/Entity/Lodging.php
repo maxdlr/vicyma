@@ -75,11 +75,19 @@ class Lodging
     #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'lodgings')]
     private Collection $reservations;
 
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'lodging')]
+    private Collection $messages;
+
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'lodging')]
+    private Collection $reviews;
+
     public function __construct()
     {
         $this->beds = new ArrayCollection();
         $this->files = new ArrayCollection();
         $this->reservations = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -364,6 +372,66 @@ class Lodging
     {
         if ($this->reservations->removeElement($reservation)) {
             $reservation->removeLodging($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setLodging($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getLodging() === $this) {
+                $message->setLodging(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setLodging($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getLodging() === $this) {
+                $review->setLodging(null);
+            }
         }
 
         return $this;
