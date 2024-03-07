@@ -2,10 +2,8 @@
 
 namespace App\DataFixtures\Factory;
 
+use App\DataFixtures\Factory\Config\Factory;
 use App\Entity\Reservation;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ObjectManager;
-use Exception;
 use Faker\Factory as Faker;
 
 class ReservationFactory extends Factory
@@ -15,35 +13,7 @@ class ReservationFactory extends Factory
         $this->item = new Reservation();
     }
 
-    public function persist(ObjectManager $manager): void
-    {
-        $this->distribute(fn(Reservation $reservation) => $manager->persist($reservation));
-    }
-
-    public function make(int $number = 1): self
-    {
-        if ($number === 1) {
-            $this->item = self::build();
-        } else {
-            $tempCollection = new ArrayCollection();
-            for ($i = 0; $i < $number; $i++) {
-                $tempCollection->add(self::build());
-            }
-            $this->item = $tempCollection;
-        }
-        return $this;
-    }
-
-    public function withCriteria(array $criteria): self
-    {
-        $this->distribute(/**
-         * @throws Exception
-         */ fn(Reservation $reservation) => $this->applyCriteria($criteria));
-
-        return $this;
-    }
-
-    private function build(): Reservation
+    public function build(): Reservation
     {
         $faker = Faker::create();
         $reservation = new Reservation();

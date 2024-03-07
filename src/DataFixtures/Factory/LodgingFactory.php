@@ -2,10 +2,8 @@
 
 namespace App\DataFixtures\Factory;
 
+use App\DataFixtures\Factory\Config\Factory;
 use App\Entity\Lodging;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ObjectManager;
-use Exception;
 use Faker\Factory as Faker;
 
 class LodgingFactory extends Factory
@@ -15,35 +13,7 @@ class LodgingFactory extends Factory
         $this->item = new Lodging();
     }
 
-    public function persist(ObjectManager $manager): void
-    {
-        $this->distribute(fn(Lodging $lodging) => $manager->persist($lodging));
-    }
-
-    public function make(int $number = 1): self
-    {
-        if ($number === 1) {
-            $this->item = self::build();
-        } else {
-            $tempCollection = new ArrayCollection();
-            for ($i = 0; $i < $number; $i++) {
-                $tempCollection->add(self::build());
-            }
-            $this->item = $tempCollection;
-        }
-        return $this;
-    }
-
-    public function withCriteria(array $criteria): self
-    {
-        $this->distribute(/**
-         * @throws Exception
-         */ fn(Lodging $lodging) => $this->applyCriteria($criteria));
-
-        return $this;
-    }
-
-    private function build(): Lodging
+    public function build(): Lodging
     {
         $faker = Faker::create();
         $lodging = new Lodging();
@@ -66,8 +36,7 @@ class LodgingFactory extends Factory
             ->setTerrace($faker->boolean(80))
             ->setTerraceSurface($faker->randomFloat(2, 10, 20))
             ->setFloor($faker->numberBetween(0, 3))
-            ->setPriceByNight($faker->randomFloat(2, 130, 150))
-        ;
+            ->setPriceByNight($faker->randomFloat(2, 130, 150));
 
         return $lodging;
     }

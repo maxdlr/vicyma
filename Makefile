@@ -7,6 +7,8 @@ APP = VICYMA
 SYMFONY = symfony console
 MYSQL_USERNAME = root
 MYSQL_PASSWORD = root
+MYSQL_HOST = 127.0.0.1
+MYSQL_PORT = 3306
 BLUE_COLOR=\033[0;36m
 YELLOW_COLOR=\033[0;33m
 SUCCESS_COLOR=\033[0;32m
@@ -23,6 +25,7 @@ run: ## Start project
 	make db && \
 	make cache-clear && \
 	clear && \
+	make yarn-install && \
 	make yarn-build && \
 	make server-start && \
 	clear && \
@@ -70,7 +73,7 @@ create-local-env: ## Create .env.local file
 
 fill-local-env: ## Fill .env.local file with 'root/root'
 	@make command-intro-msg msg="Filling env , using 'root:root'"
-	echo "DATABASE_URL='mysql://$(MYSQL_USERNAME):$(MYSQL_PASSWORD)@127.0.0.1:8889/$(APP)'" | tee .env.local; \
+	echo "DATABASE_URL='mysql://$(MYSQL_USERNAME):$(MYSQL_PASSWORD)@$(MYSQL_HOST):$(MYSQL_PORT)/$(APP)'" | tee .env.local; \
 
 cache-clear: ## Clear symfony cache
 	@make command-intro-msg msg="Clearing cache"
@@ -107,6 +110,10 @@ runtests: ## Run Tests / testName=TESTNAME to only run TESTNAME
     else \
 		php bin/phpunit --colors=always --filter=$(testName); \
 	fi
+
+yarn-install: ## Install node packages
+	@make command-intro-msg msg="Installing Yarn packages"
+	@yarn install
 
 help: ## Show this help menu
 	@awk -F ':|##' '/^[^\t].+?:.*?##/ {printf "\033[36m%-30s\033[0m %s\n", $$1, $$NF}' $(MAKEFILE_LIST)

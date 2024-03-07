@@ -18,12 +18,12 @@ class ReservationStatus
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(targetEntity: Lodging::class, mappedBy: 'reservationStatus')]
-    private Collection $lodgings;
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservationStatus')]
+    private Collection $reservations;
 
     public function __construct()
     {
-        $this->lodgings = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -44,29 +44,29 @@ class ReservationStatus
     }
 
     /**
-     * @return Collection<int, Lodging>
+     * @return Collection<int, Reservation>
      */
-    public function getLodgings(): Collection
+    public function getReservations(): Collection
     {
-        return $this->lodgings;
+        return $this->reservations;
     }
 
-    public function addLodging(Lodging $lodging): static
+    public function addReservation(Reservation $reservation): static
     {
-        if (!$this->lodgings->contains($lodging)) {
-            $this->lodgings->add($lodging);
-            $lodging->setReservationStatus($this);
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setReservationStatus($this);
         }
 
         return $this;
     }
 
-    public function removeLodging(Lodging $lodging): static
+    public function removeReservation(Reservation $reservation): static
     {
-        if ($this->lodgings->removeElement($lodging)) {
+        if ($this->reservations->removeElement($reservation)) {
             // set the owning side to null (unless already changed)
-            if ($lodging->getReservationStatus() === $this) {
-                $lodging->setReservationStatus(null);
+            if ($reservation->getReservationStatus() === $this) {
+                $reservation->setReservationStatus(null);
             }
         }
 

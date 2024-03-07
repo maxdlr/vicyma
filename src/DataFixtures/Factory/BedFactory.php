@@ -2,10 +2,8 @@
 
 namespace App\DataFixtures\Factory;
 
+use App\DataFixtures\Factory\Config\Factory;
 use App\Entity\Bed;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ObjectManager;
-use Exception;
 use Faker\Factory as Faker;
 
 class BedFactory extends Factory
@@ -15,35 +13,7 @@ class BedFactory extends Factory
         $this->item = new Bed();
     }
 
-    public function persist(ObjectManager $manager): void
-    {
-        $this->distribute(fn(Bed $bed) => $manager->persist($bed));
-    }
-
-    public function make(int $number = 1): self
-    {
-        if ($number === 1) {
-            $this->item = self::build();
-        } else {
-            $tempCollection = new ArrayCollection();
-            for ($i = 0; $i < $number; $i++) {
-                $tempCollection->add(self::build());
-            }
-            $this->item = $tempCollection;
-        }
-        return $this;
-    }
-
-    public function withCriteria(array $criteria): self
-    {
-        $this->distribute(/**
-         * @throws Exception
-         */ fn(Bed $bed) => $this->applyCriteria($criteria));
-
-        return $this;
-    }
-
-    private function build(): Bed
+    public function build(): Bed
     {
         $faker = Faker::create();
         $bed = new Bed();

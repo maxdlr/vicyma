@@ -75,10 +75,6 @@ class Lodging
     #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'lodgings')]
     private Collection $reservations;
 
-    #[ORM\ManyToOne(inversedBy: 'lodgings')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?ReservationStatus $reservationStatus = null;
-
     public function __construct()
     {
         $this->beds = new ArrayCollection();
@@ -369,18 +365,6 @@ class Lodging
         if ($this->reservations->removeElement($reservation)) {
             $reservation->removeLodging($this);
         }
-
-        return $this;
-    }
-
-    public function getReservationStatus(): ?ReservationStatus
-    {
-        return $this->reservationStatus;
-    }
-
-    public function setReservationStatus(?ReservationStatus $reservationStatus): static
-    {
-        $this->reservationStatus = $reservationStatus;
 
         return $this;
     }

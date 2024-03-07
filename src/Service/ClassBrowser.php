@@ -5,6 +5,7 @@ namespace App\Service;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
+use function Symfony\Component\String\u;
 
 class ClassBrowser
 {
@@ -60,6 +61,7 @@ class ClassBrowser
     ): ?string
     {
         $reflection = new ReflectionClass($classFQCN);
+        $needle = u($needle)->title()->toString();
 
         try {
             foreach ($reflection->getMethods() as $method) {

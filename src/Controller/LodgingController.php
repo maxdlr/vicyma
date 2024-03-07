@@ -18,10 +18,10 @@ class LodgingController extends AbstractController
     #[Route(path: '/', name: 'app_home', methods: ['GET'])]
     public function index(): Response
     {
-        $lodging = $this->lodgingRepository->findOneBy(['capacity' => rand(2, 5)]);
+        $lodgings = $this->lodgingRepository->findAll();
 
         return $this->render('home/index.html.twig', [
-            'lodging' => $lodging
+            'lodgings' => $lodgings
         ]);
     }
 }

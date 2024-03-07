@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints\Unique;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -15,6 +17,10 @@ class Reservation
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[ORM\Column]
+    #[Unique]
+    private ?string $reservationNumber = null;
 
     #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'reservations')]
     private Collection $lodgings;
@@ -34,14 +40,24 @@ class Reservation
     #[ORM\Column(nullable: true)]
     private ?float $price = null;
 
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?ReservationStatus $reservationStatus = null;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
+        $this->reservationNumber = Uuid::v4();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getReservationNumber(): ?string
+    {
+        return $this->reservationNumber;
     }
 
     /**
@@ -124,6 +140,18 @@ class Reservation
     public function setPrice(?float $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getReservationStatus(): ?ReservationStatus
+    {
+        return $this->reservationStatus;
+    }
+
+    public function setReservationStatus(?ReservationStatus $reservationStatus): static
+    {
+        $this->reservationStatus = $reservationStatus;
 
         return $this;
     }
