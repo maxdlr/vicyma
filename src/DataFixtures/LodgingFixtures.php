@@ -11,8 +11,7 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $lodgingFactory = new LodgingFactory();
-        $lodgings = $lodgingFactory->make(AppFixtures::LODGING_COUNT)->generate();
+        $lodgings = LodgingFactory::make(AppFixtures::LODGING_COUNT)->generate();
 
         $y = 1;
         foreach ($lodgings as $lodging) {

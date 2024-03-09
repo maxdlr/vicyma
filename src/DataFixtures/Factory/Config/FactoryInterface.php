@@ -4,5 +4,5 @@ namespace App\DataFixtures\Factory\Config;
 
 interface FactoryInterface
 {
-    function build(): object;
+    static function build(): object;
 }

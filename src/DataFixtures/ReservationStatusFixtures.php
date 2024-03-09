@@ -17,12 +17,13 @@ class ReservationStatusFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $reservationStatusFactory = new ReservationStatusFactory();
 
+//        dd(ReservationStatusFactory::make()->withCriteria(['name' => self::STATUS_NAMES[0]])->generate());
         $reservationStatuses = [];
         foreach (self::STATUS_NAMES as $statusName) {
-            $reservationStatuses[] = $reservationStatusFactory->make()->withCriteria(['name' => $statusName])->generate();
+            $reservationStatuses[] = ReservationStatusFactory::make()->withCriteria(['name' => $statusName])->generate();
         }
+//        dd($reservationStatuses);
 
         foreach ($reservationStatuses as $reservationStatus) {
             $this->setReference('reservationStatus_' . $reservationStatus->getName(), $reservationStatus);

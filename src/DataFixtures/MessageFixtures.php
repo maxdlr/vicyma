@@ -13,8 +13,7 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        $messageFactory = new MessageFactory();
-        $messages = $messageFactory->make(AppFixtures::MESSAGE_COUNT)->generate();
+        $messages = MessageFactory::make(AppFixtures::MESSAGE_COUNT)->generate();
 
         $i = 1;
         foreach ($messages as $message) {

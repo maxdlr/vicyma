@@ -10,10 +10,10 @@ class BedFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new Bed();
+        static::$item = new Bed();
     }
 
-    public function build(): Bed
+    public static function build(): Bed
     {
         $faker = Faker::create();
         $bed = new Bed();

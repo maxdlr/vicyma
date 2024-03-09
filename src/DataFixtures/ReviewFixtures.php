@@ -13,8 +13,7 @@ class ReviewFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        $reviewFactory = new ReviewFactory();
-        $reviews = $reviewFactory->make(AppFixtures::REVIEW_COUNT)->generate();
+        $reviews = ReviewFactory::make(AppFixtures::REVIEW_COUNT)->generate();
 
         $i = 1;
         foreach ($reviews as $review) {

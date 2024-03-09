@@ -10,10 +10,10 @@ class LodgingFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new Lodging();
+        static::$item = new Lodging();
     }
 
-    public function build(): Lodging
+    public static function build(): Lodging
     {
         $faker = Faker::create();
         $lodging = new Lodging();

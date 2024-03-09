@@ -10,10 +10,10 @@ class ReviewFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new Review();
+        static::$item = new Review();
     }
 
-    public function build(): Review
+    public static function build(): Review
     {
         $faker = Faker::create();
         $review = new Review();

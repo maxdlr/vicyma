@@ -10,10 +10,10 @@ class ReservationStatusFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new ReservationStatus();
+        static::$item = new ReservationStatus();
     }
 
-    public function build(): ReservationStatus
+    public static function build(): ReservationStatus
     {
         $faker = Faker::create();
         $reservationStatus = new ReservationStatus();

@@ -13,8 +13,7 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        $reservationFactory = new ReservationFactory();
-        $reservations = $reservationFactory->make(AppFixtures::RESERVATION_COUNT)->generate();
+        $reservations = ReservationFactory::make(AppFixtures::RESERVATION_COUNT)->generate();
 
         $i = 1;
         foreach ($reservations as $reservation) {

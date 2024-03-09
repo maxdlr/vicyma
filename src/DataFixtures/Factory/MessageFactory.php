@@ -10,10 +10,10 @@ class MessageFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new Message();
+        static::$item = new Message();
     }
 
-    public function build(): Message
+    public static function build(): Message
     {
         $faker = Faker::create();
         $message = new Message();

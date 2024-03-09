@@ -10,10 +10,10 @@ class FileFactory extends Factory
 {
     public function __construct()
     {
-        $this->item = new File();
+        static::$item = new File();
     }
 
-    public function build(): File
+    public static function build(): File
     {
         $faker = Faker::create();
         $file = new File();

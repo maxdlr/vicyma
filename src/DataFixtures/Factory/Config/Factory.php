@@ -9,47 +9,47 @@ use Exception;
 
 abstract class Factory implements FactoryInterface
 {
-    protected object $item;
+    protected static object $item;
 
-    public function generate(): object
+    public static function generate(): object
     {
-        return $this->item;
+        return static::$item;
     }
 
-    public function persist(ObjectManager $manager): void
+    public static function persist(ObjectManager $manager): void
     {
-        $this->distribute(fn(object $item) => $manager->persist($item));
+        static::distribute(fn(object $item) => $manager->persist($item));
     }
 
-    public function withCriteria(array $criteria): self
+    public static function withCriteria(array $criteria): static
     {
-        $this->distribute(/**
+        static::distribute(/**
          * @throws Exception
-         */ fn(object $item) => $this->applyCriteria($criteria));
+         */ fn(object $item) => static::applyCriteria($criteria));
 
-        return $this;
+        return new static;
     }
 
-    public function make(int $number = 1): self
+    public static function make(int $number = 1): static
     {
         if ($number === 1) {
-            $this->item = $this->build();
+            static::$item = static::build();
         } else {
             $tempCollection = new ArrayCollection();
             for ($i = 0; $i < $number; $i++) {
-                $tempCollection->add($this->build());
+                $tempCollection->add(static::build());
             }
-            $this->item = $tempCollection;
+            static::$item = $tempCollection;
         }
-        return $this;
+        return new static;
     }
 
     /**
      * @throws Exception
      */
-    protected function applyCriteria(array $criteria): void
+    protected static function applyCriteria(array $criteria): void
     {
-        $entityClass = get_class($this->item);
+        $entityClass = get_class(static::$item);
 
         $properties = ClassBrowser::findAllProperties($entityClass);
 
@@ -60,23 +60,23 @@ abstract class Factory implements FactoryInterface
                 throw new Exception('"' . $field . '" does not exist.' . PHP_EOL . 'Choices are ' . $choices . '.');
 
             $setter = ClassBrowser::findSetter($entityClass, $field);
-            $this->item->$setter($value);
+            static::$item->$setter($value);
         }
     }
 
-    protected function isMany(): bool
+    protected static function isMany(): bool
     {
-        return $this->item instanceof ArrayCollection;
+        return static::$item instanceof ArrayCollection;
     }
 
-    protected function distribute(callable $fn): void
+    protected static function distribute(callable $fn): void
     {
-        if ($this->isMany()) {
-            foreach ($this->item as $item) {
+        if (static::isMany()) {
+            foreach (static::$item as $item) {
                 $fn($item);
             }
         } else {
-            $fn($this->item);
+            $fn(static::$item);
         }
     }
 }

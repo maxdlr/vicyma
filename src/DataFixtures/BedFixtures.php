@@ -10,8 +10,7 @@ class BedFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $bedFactory = new BedFactory();
-        $beds = $bedFactory->make(AppFixtures::BED_COUNT)->generate();
+        $beds = BedFactory::make(AppFixtures::BED_COUNT)->generate();
 
         $i = 1;
         foreach ($beds as $bed) {
