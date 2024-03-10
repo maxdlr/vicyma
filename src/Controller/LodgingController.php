@@ -19,6 +19,7 @@ class LodgingController extends AbstractController
     public function index(): Response
     {
         $lodgings = $this->lodgingRepository->findAll();
+        dd($lodgings);
 
         return $this->render('home/index.html.twig', [
             'lodgings' => $lodgings

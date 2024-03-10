@@ -2,10 +2,6 @@
 
 {% block body %}
 
-    {% for lodging in lodgings %}
-        {{ dump(lodging.name) }}
-        {% for reservation in lodging.reservations %}
-            {{ dump(reservation.arrivalDate|date('Y-m-d H:i:s')) }}
-        {% endfor %}
-    {% endfor %}
+{#    {{ dump(lodgings) }}#}
+
 {% endblock %}

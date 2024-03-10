@@ -227,12 +227,12 @@ class Lodging
         return $this;
     }
 
-    public function isAllowAnimals(): ?bool
+    public function isAnimalAllowed(): ?bool
     {
         return $this->animalAllowed;
     }
 
-    public function setAllowAnimals(bool $animalAllowed): static
+    public function setAnimalAllowed(bool $animalAllowed): static
     {
         $this->animalAllowed = $animalAllowed;
 

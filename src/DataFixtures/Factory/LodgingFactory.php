@@ -18,7 +18,6 @@ class LodgingFactory extends Factory
         $faker = Faker::create();
         $lodging = new Lodging();
 
-
         $lodging
             ->setName($faker->word())
             ->setDescription($faker->paragraph(10, true))
@@ -32,11 +31,12 @@ class LodgingFactory extends Factory
             ->setWaterHeater($faker->boolean(80))
             ->setParking($faker->boolean(80))
             ->setGate($faker->boolean(80))
-            ->setAllowAnimals($faker->boolean(20))
+            ->setAnimalAllowed($faker->boolean(20))
             ->setTerrace($faker->boolean(80))
             ->setTerraceSurface($faker->randomFloat(2, 10, 20))
             ->setFloor($faker->numberBetween(0, 3))
-            ->setPriceByNight($faker->randomFloat(2, 130, 150));
+            ->setPriceByNight($faker->randomFloat(2, 130, 150))
+        ;
 
         return $lodging;
     }
