@@ -47,6 +47,10 @@ class Reservation
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation')]
     private Collection $messages;
 
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
@@ -186,6 +190,18 @@ class Reservation
                 $message->setReservation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -25,6 +25,7 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
         $i = 1;
         foreach ($reservations as $reservation) {
             $this->setReference('reservation_' . $i, $reservation);
+            $reservation->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT)));
             $reservation->setReservationStatus($this->getReference('reservationStatus_' . $faker->randomElement(ReservationStatusFixtures::STATUS_NAMES)));
             $manager->persist($reservation);
             $i++;
@@ -36,7 +37,8 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            ReservationStatusFixtures::class
+            ReservationStatusFixtures::class,
+            UserFixtures::class
         ];
     }
 }

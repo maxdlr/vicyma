@@ -111,6 +111,10 @@ runtests: ## Run Tests / testName=TESTNAME to only run TESTNAME
 		php bin/phpunit --colors=always --filter=$(testName); \
 	fi
 
+bakery: ## Create a Bakery / ex - make bakery model=AddressRequest
+	@make command-intro-msg msg="Creating a Bakery for $(model)"
+	@php -r "require 'bakeryMakerScript.php'; createBakery('$(model)');"
+
 yarn-install: ## Install node packages
 	@make command-intro-msg msg="Installing Yarn packages"
 	@yarn install

@@ -22,6 +22,8 @@ class ReviewFixtures extends Fixture implements DependentFixtureInterface
 
         $i = 1;
         foreach ($reviews as $review) {
+            $review->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT)));
+
             $review->setLodging($faker->randomElement(
                 [
                     null,
@@ -40,6 +42,7 @@ class ReviewFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             LodgingFixtures::class,
+            UserFixtures::class
         ];
     }
 

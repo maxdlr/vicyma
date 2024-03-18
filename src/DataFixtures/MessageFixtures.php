@@ -24,6 +24,8 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
 
         $i = 1;
         foreach ($messages as $message) {
+            $message->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT)));
+
             $message
                 ->setLodging($faker->randomElement(
                     [
@@ -49,7 +51,8 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             LodgingFixtures::class,
-            ReservationFixtures::class
+            ReservationFixtures::class,
+            UserFixtures::class
         ];
     }
 
