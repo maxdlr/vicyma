@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\FileRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -26,7 +27,7 @@ class File
     private Collection $lodgings;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdOn = null;
+    private ?DateTimeInterface $createdOn = null;
 
     public function __construct()
     {
@@ -86,12 +87,12 @@ class File
         return $this;
     }
 
-    public function getCreatedOn(): ?\DateTimeInterface
+    public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
     }
 
-    public function setCreatedOn(\DateTimeInterface $createdOn): static
+    public function setCreatedOn(DateTimeInterface $createdOn): static
     {
         $this->createdOn = $createdOn;
 

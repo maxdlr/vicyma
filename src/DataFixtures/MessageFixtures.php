@@ -2,19 +2,25 @@
 
 namespace App\DataFixtures;
 
-use App\DataFixtures\Factory\MessageFactory;
+use App\Bakery\MessageBakery;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Faker\Factory;
+use ReflectionException;
 
 class MessageFixtures extends Fixture implements DependentFixtureInterface
 {
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        $messageFactory = new MessageFactory();
-        $messages = $messageFactory->make(AppFixtures::MESSAGE_COUNT)->generate();
+        $messageFactory = new MessageBakery();
+        $messages = $messageFactory->makeMany(AppFixtures::MESSAGE_COUNT)->bake();
 
         $i = 1;
         foreach ($messages as $message) {

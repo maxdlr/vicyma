@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\DataFixtures\Factory\ReviewFactory;
+use App\Bakery\ReviewBakery;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -10,11 +10,15 @@ use Faker\Factory;
 
 class ReviewFixtures extends Fixture implements DependentFixtureInterface
 {
+    /**
+     * @throws \ReflectionException
+     * @throws \Exception
+     */
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        $reviewFactory = new ReviewFactory();
-        $reviews = $reviewFactory->make(AppFixtures::REVIEW_COUNT)->generate();
+        $reviewFactory = new ReviewBakery();
+        $reviews = $reviewFactory->makeMany(AppFixtures::REVIEW_COUNT)->bake();
 
         $i = 1;
         foreach ($reviews as $review) {

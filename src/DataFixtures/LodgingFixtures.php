@@ -2,17 +2,23 @@
 
 namespace App\DataFixtures;
 
-use App\DataFixtures\Factory\LodgingFactory;
+use App\Bakery\LodgingBakery;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
+use ReflectionException;
 
 class LodgingFixtures extends Fixture implements DependentFixtureInterface
 {
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
     public function load(ObjectManager $manager): void
     {
-        $lodgingFactory = new LodgingFactory();
-        $lodgings = $lodgingFactory->make(AppFixtures::LODGING_COUNT)->generate();
+        $lodgingFactory = new LodgingBakery();
+        $lodgings = $lodgingFactory->makeMany(AppFixtures::LODGING_COUNT)->bake();
 
         $y = 1;
         foreach ($lodgings as $lodging) {
