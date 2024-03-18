@@ -81,9 +81,9 @@ class ClassBrowser
     public static function findSetter(
         string $classFQCN,
         string $property
-    ): ?string
+    ): ?ReflectionMethod
     {
-        return self::findMethod($classFQCN, $property, 'set')?->name;
+        return self::findMethod($classFQCN, $property, 'set');
     }
 
     /**
@@ -92,9 +92,9 @@ class ClassBrowser
     public static function findGetter(
         string $classFQCN,
         string $property
-    ): ?string
+    ): ?ReflectionMethod
     {
-        return self::findMethod($classFQCN, $property, 'get')?->name;
+        return self::findMethod($classFQCN, $property, 'get');
     }
 
     /**
@@ -146,7 +146,7 @@ class ClassBrowser
         string $property
     ): bool
     {
-        return !is_null(self::findSetter($classFQCN, $property));
+        return !is_null(self::findSetter($classFQCN, $property)?->name);
     }
 
     /**
@@ -199,5 +199,26 @@ class ClassBrowser
         $reflection = new ReflectionClass($classFQCN);
 
         return $reflection->getAttributes(Entity::class) !== [];
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public static function isRelational(string $classFQCN, ReflectionProperty $property): bool
+    {
+        foreach ($property->getAttributes() as $attribute) {
+            if ($attribute->getName() === 'Doctrine\ORM\Mapping\OneToOne')
+                return true;
+        }
+        return false;
+//
+//        $propertyType = $property->getType();
+//        assert($propertyType instanceof ReflectionNamedType);
+//
+//        $entities = array_diff(scandir(__DIR__ . '/../Entity'), ['.', '..', '.gitignore']);
+//        $entities = array_map(fn(string $path) => str_replace('.php', '', $path), $entities);
+//        $entities = array_map(fn(string $entityName) => 'App\Entity\\' . $entityName, $entities);
+//
+//        return in_array($propertyType->getName(), $entities);
     }
 }

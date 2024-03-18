@@ -110,8 +110,14 @@ abstract class AbstractBakery implements BakeryInterface
         $object = ClassBrowser::instantiateWithoutConstructor($objectClass);
         $properties = ClassBrowser::findAllProperties($objectClass);
 
+        ClassBrowser::isRelational($objectClass, $properties[rand(0, count($properties) - 1)]);
+
         for ($i = 0; $i < count($properties); $i++) {
-            if ($properties[$i]->getName() === 'id' || $properties[$i]->getType()->getName() === Collection::class) {
+            dump(ClassBrowser::isRelational($objectClass, $properties[$i]));
+            if ($properties[$i]->getName() === 'id' ||
+                $properties[$i]->getType()->getName() === Collection::class ||
+                ClassBrowser::isRelational($objectClass, $properties[$i])
+            ) {
                 unset($properties[$i]);
                 $properties = array_values($properties);
             }
@@ -173,16 +179,14 @@ abstract class AbstractBakery implements BakeryInterface
             throw new Exception('Cannot find ' . $property . ' in class "' . $classFQCN . '"' . PHP_EOL);
         }
 
-        $reflection = new \ReflectionClass($classFQCN);
-
         if (ClassBrowser::isPropertyPublic($classFQCN, $property)) {
             $object->$property = $value;
         } elseif (ClassBrowser::hasPropertySetter($classFQCN, $property)) {
-            $setter = ClassBrowser::findSetter($classFQCN, $property);
+            $setter = ClassBrowser::findSetter($classFQCN, $property)?->name;
             $object->$setter($value);
         } else {
-            $getter = ClassBrowser::findGetter($classFQCN, $property);
-            if ($object->$getter($property) === null || $object->$getter($property) === '') {
+            $getter = ClassBrowser::findGetter($classFQCN, $property)?->name;
+            if ($getter === null || $object->$getter($property) === null || $object->$getter($property) === '') {
                 throw new Exception('Cannot set this property in "' . $classFQCN . '". "' . $property . '" is neither public nor has a Setter.');
             }
         }

@@ -14,6 +14,7 @@ class AppFixtures extends Fixture
     public const MESSAGE_COUNT = 30;
     public const REVIEW_COUNT = 15;
     public const USER_COUNT = 20;
+    public const ADDRESS_COUNT = 30;
 
     public function load(ObjectManager $manager): void
     {
