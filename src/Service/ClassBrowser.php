@@ -12,6 +12,8 @@ use ReflectionNamedType;
 
 use ReflectionProperty;
 
+use Symfony\Component\Uid\Uuid;
+use function PHPUnit\Framework\stringContains;
 use function Symfony\Component\String\u;
 
 class ClassBrowser
@@ -138,6 +140,16 @@ class ClassBrowser
         return $type;
     }
 
+    public static function findPropertyType(
+        ReflectionProperty $reflectionProperty
+    ): ReflectionNamedType
+    {
+        $type = $reflectionProperty->getType();
+        assert($type instanceof ReflectionNamedType);
+
+        return $type;
+    }
+
     /**
      * @throws ReflectionException
      */
@@ -185,9 +197,8 @@ class ClassBrowser
         $reflection = new ReflectionClass($classFQCN);
 
         if (!$reflection->isInstantiable()) {
-            throw new Exception('Object is not instantiable.');
+            throw new Exception('Object ' . $classFQCN . ' is not instantiable.');
         }
-
         return $reflection->newInstance();
     }
 
@@ -201,24 +212,42 @@ class ClassBrowser
         return $reflection->getAttributes(Entity::class) !== [];
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    public static function isRelational(string $classFQCN, ReflectionProperty $property): bool
+    public static function isPropertyRelational(ReflectionProperty $property): bool
     {
         foreach ($property->getAttributes() as $attribute) {
-            if ($attribute->getName() === 'Doctrine\ORM\Mapping\OneToOne')
+            if (u($attribute->getName())->containsAny(['OneToMany', 'OneToOne', 'ManyToOne', 'ManyToMany']))
                 return true;
         }
         return false;
-//
-//        $propertyType = $property->getType();
-//        assert($propertyType instanceof ReflectionNamedType);
-//
-//        $entities = array_diff(scandir(__DIR__ . '/../Entity'), ['.', '..', '.gitignore']);
-//        $entities = array_map(fn(string $path) => str_replace('.php', '', $path), $entities);
-//        $entities = array_map(fn(string $entityName) => 'App\Entity\\' . $entityName, $entities);
-//
-//        return in_array($propertyType->getName(), $entities);
+    }
+
+    /**
+     * @param ReflectionProperty[]|ReflectionMethod[]|ReflectionAttribute[]|ReflectionNamedType[]|ReflectionClass[] $reflectionObjects
+     * @return string[]
+     */
+    public static function getNames(array $reflectionObjects): array
+    {
+        $names = [];
+        foreach ($reflectionObjects as $object) {
+            $names[] = $object->getName();
+        }
+        return $names;
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    public static function isPropertyNullable(ReflectionProperty|string $reflectionProperty, string $classFQCN = null): bool
+    {
+        if (is_string($reflectionProperty)) {
+            $reflection = new ReflectionClass($classFQCN);
+            $property = $reflection->getProperty($reflectionProperty);
+            $type = $property->getType();
+        } else {
+            $type = $reflectionProperty->getType();
+        }
+
+        assert($type instanceof ReflectionNamedType);
+        return $type->allowsNull();
     }
 }

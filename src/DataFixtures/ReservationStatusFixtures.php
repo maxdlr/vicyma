@@ -2,9 +2,10 @@
 
 namespace App\DataFixtures;
 
-use App\Bakery\ReservationStatusBakery;
+use App\Entity\ReservationStatus;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 
 class ReservationStatusFixtures extends Fixture
 {
@@ -16,23 +17,16 @@ class ReservationStatusFixtures extends Fixture
     ];
 
     /**
-     * @throws \ReflectionException
-     * @throws \Exception
+     * @throws Exception
      */
     public function load(ObjectManager $manager): void
     {
-        $reservationStatusFactory = new ReservationStatusBakery();
-
-        $reservationStatuses = [];
         foreach (self::STATUS_NAMES as $statusName) {
-            $reservationStatuses[] = $reservationStatusFactory->makeOne()->withCriteria(['name' => $statusName])->bake();
-        }
-
-        foreach ($reservationStatuses as $reservationStatus) {
-            $this->setReference('reservationStatus_' . $reservationStatus->getName(), $reservationStatus);
+            $reservationStatus = new ReservationStatus();
+            $reservationStatus->setName($statusName);
+            $this->setReference('reservationStatus_' . $statusName, $reservationStatus);
             $manager->persist($reservationStatus);
         }
-
         $manager->flush();
     }
 }

@@ -2,28 +2,30 @@
 
 namespace App\DataFixtures;
 
-use App\Bakery\FileBakery;
+use App\Entity\File;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
-use ReflectionException;
+use Faker\Factory;
 
 class FileFixtures extends Fixture
 {
     /**
-     * @throws ReflectionException
      * @throws Exception
      */
     public function load(ObjectManager $manager): void
     {
-        $fileFactory = new FileBakery();
-        $files = $fileFactory->makeMany(AppFixtures::FILE_COUNT)->bake();
+        $faker = Factory::create();
+        for ($i = 0; $i < AppFixtures::FILE_COUNT; $i++) {
+            $file = new File();
 
-        $i = 1;
-        foreach ($files as $file) {
+            $file
+                ->setFileName($faker->word())
+                ->setFileSize($faker->randomFloat(2, 2, 30))
+                ->setCreatedOn($faker->dateTimeBetween('- 5 days'));
+
             $this->setReference('file_' . $i, $file);
             $manager->persist($file);
-            $i++;
         }
 
         $manager->flush();

@@ -2,10 +2,11 @@
 
 namespace App\DataFixtures;
 
-use App\Bakery\BedBakery;
+use App\Entity\Bed;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
+use Faker\Factory;
 use ReflectionException;
 
 class BedFixtures extends Fixture
@@ -16,14 +17,17 @@ class BedFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-        $bedFactory = new BedBakery();
-        $beds = $bedFactory->makeMany(AppFixtures::BED_COUNT)->bake();
+        $faker = Factory::create();
+        for ($i = 0; $i < AppFixtures::BED_COUNT; $i++) {
+            $bed = new Bed();
 
-        $i = 1;
-        foreach ($beds as $bed) {
+            $bed
+                ->setHeight($faker->randomElement([190, 180, 200]))
+                ->setWidth($faker->randomElement([140, 90, 180, 200]))
+                ->setIsExtra($faker->boolean());
+
             $this->setReference('bed_' . $i, $bed);
             $manager->persist($bed);
-            $i++;
         }
 
         $manager->flush();

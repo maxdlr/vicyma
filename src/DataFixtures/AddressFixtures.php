@@ -2,28 +2,32 @@
 
 namespace App\DataFixtures;
 
-use App\Bakery\AddressBakery;
+use App\Entity\Address;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Faker\Factory;
 
 class AddressFixtures extends Fixture
 {
     /**
-     * @throws \ReflectionException
-     * @throws \Exception
+     * @throws Exception
      */
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        $addressFactory = new AddressBakery();
-        $addresses = $addressFactory->makeMany(AppFixtures::ADDRESS_COUNT)->bake();
+        for ($i = 0; $i < AppFixtures::ADDRESS_COUNT; $i++) {
+            $address = new Address();
+            $address
+                ->setLine1($faker->streetAddress())
+                ->setLine2($faker->randomElement([null, $faker->streetName()]))
+                ->setZipcode($faker->postcode())
+                ->setCity($faker->city())
+                ->setRegion($faker->domainName())
+                ->setCountry($faker->country());
 
-        $i = 1;
-        foreach ($addresses as $address) {
             $this->setReference('address_' . $i, $address);
             $manager->persist($address);
-            $i++;
         }
 
         $manager->flush();

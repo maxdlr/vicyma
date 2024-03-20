@@ -2,35 +2,35 @@
 
 namespace App\DataFixtures;
 
-use App\Bakery\ReservationBakery;
+use App\Entity\Reservation;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Faker\Factory;
-use ReflectionException;
 
 class ReservationFixtures extends Fixture implements DependentFixtureInterface
 {
     /**
-     * @throws ReflectionException
      * @throws Exception
      */
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        $reservationFactory = new ReservationBakery();
-        $reservations = $reservationFactory->makeMany(AppFixtures::RESERVATION_COUNT)->bake();
 
-        $i = 1;
-        foreach ($reservations as $reservation) {
+        for ($i = 0; $i < AppFixtures::RESERVATION_COUNT; $i++) {
+            $reservation = new Reservation();
+            $reservation
+                ->setAdultCount($faker->numberBetween(1, 6))
+                ->setChildCount($faker->numberBetween(0, 4))
+                ->setPrice($faker->randomElement([null, $faker->randomFloat(2, 200, 10000)]))
+                ->setArrivalDate($faker->dateTimeBetween('+ 1 day', '+ 8 days'))
+                ->setDepartureDate($faker->dateTimeBetween('+ 9 days', '+ 20 days'))
+                ->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT - 1)))
+                ->setReservationStatus($this->getReference('reservationStatus_' . $faker->randomElement(ReservationStatusFixtures::STATUS_NAMES)));
             $this->setReference('reservation_' . $i, $reservation);
-            $reservation->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT)));
-            $reservation->setReservationStatus($this->getReference('reservationStatus_' . $faker->randomElement(ReservationStatusFixtures::STATUS_NAMES)));
             $manager->persist($reservation);
-            $i++;
         }
-
         $manager->flush();
     }
 
