@@ -10,6 +10,7 @@
 ###< symfony/framework-bundle ###
 /.idea
 /.idea/
+src/DataFixtures/AdminFixtures.php
 
 ###> symfony/phpunit-bridge ###
 .phpunit.result.cache

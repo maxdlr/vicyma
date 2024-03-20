@@ -16,6 +16,7 @@ class AddressFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
+
         for ($i = 0; $i < AppFixtures::ADDRESS_COUNT; $i++) {
             $address = new Address();
             $address

@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Controller\Enum\RoleEnum;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -24,7 +25,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 ->setFirstname($faker->firstName())
                 ->setLastname($faker->lastName())
                 ->setPhoneNumber($faker->phoneNumber())
-                ->setRoles([$faker->word()])
+                ->setRoles([RoleEnum::ROLE_USER])
                 ->setPassword($faker->password())
                 ->setAddress($this->getReference('address_' . rand(1, AppFixtures::ADDRESS_COUNT - 1)))
                 ->setEmail($faker->email());
