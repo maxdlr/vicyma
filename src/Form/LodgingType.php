@@ -6,6 +6,7 @@ use App\Entity\Bed;
 use App\Entity\File;
 use App\Entity\Lodging;
 use App\Entity\Reservation;
+use App\Form\Style\FormTypeStyle;
 use Doctrine\DBAL\Types\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -22,15 +23,24 @@ class LodgingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        new FormTypeStyle();
+
         $builder
-            ->add('name', TextType::class, [
-                'label' => false,
-                'attr' => [
-                    'placeholder' => 'Nom de l\'appartement',
+            ->add('name', TextType::class, FormTypeStyle::textTypeField(
+                label: "Nom de l'appartement",
+                placeholder: "Ebene"
+            ))
+            ->add('capacity', IntegerType::class, [
+                'row_attr' => [
                     'class' => 'py-5'
+                ],
+                'label_attr' => [
+                    'class' => 'py-2'
+                ],
+                'attr' => [
+                    'class' => 'py-2 ps-4 d-flex flex-column'
                 ]
             ])
-            ->add('capacity', IntegerType::class)
             ->add('roomCount', IntegerType::class)
             ->add('surface', NumberType::class)
             ->add('bathroomCount', IntegerType::class)
