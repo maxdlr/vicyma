@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Lodging;
 use App\Form\LodgingType;
 use App\Repository\LodgingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private LodgingRepository $lodgingRepository
+        private readonly LodgingRepository $lodgingRepository
     )
     {
     }
@@ -20,12 +21,15 @@ class AdminController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET'])]
     public function dashboard(): Response
     {
-        $lodgings = $this->lodgingRepository->findAll();
-        $lodgingForm = $this->createForm(LodgingType::class, $lodgings[0]);
+//        $lodgings = $this->lodgingRepository->findAll();
+        $lodging = new Lodging();
+
+
+        $lodgingForm = $this->createForm(LodgingType::class, $lodging);
 
 
         return $this->render('admin/dashboard.html.twig', [
-            'lodgings' => $lodgings,
+//            'lodgings' => $lodgings,
             'lodgingForm' => $lodgingForm,
         ]);
     }

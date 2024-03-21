@@ -23,7 +23,13 @@ class LodgingType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class)
+            ->add('name', TextType::class, [
+                'label' => false,
+                'attr' => [
+                    'placeholder' => 'Nom de l\'appartement',
+                    'class' => 'py-5'
+                ]
+            ])
             ->add('capacity', IntegerType::class)
             ->add('roomCount', IntegerType::class)
             ->add('surface', NumberType::class)
