@@ -7,7 +7,8 @@
 
 {% block body %}
     {{ form_start(lodgingForm) }}
+    {{ include('form/_text-field.html.twig', {formRow: lodgingForm.name, label: 'Nom'}) }}
+    {{ include('form/_number-field.html.twig', {formRow: lodgingForm.capacity, label: 'Capacité'}) }}
+    {{ include('form/_select-field.html.twig', {formRow: lodgingForm.roomCount, label: 'Nombre de pièces'}) }}
     {{ form_end(lodgingForm) }}
-
-    {#    {{ dump(lodgings[0]) }} #}
 {% endblock %}

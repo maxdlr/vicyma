@@ -23,25 +23,13 @@ class LodgingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        new FormTypeStyle();
-
         $builder
-            ->add('name', TextType::class, FormTypeStyle::textTypeField(
-                label: "Nom de l'appartement",
-                placeholder: "Ebene"
-            ))
-            ->add('capacity', IntegerType::class, [
-                'row_attr' => [
-                    'class' => 'py-5'
-                ],
-                'label_attr' => [
-                    'class' => 'py-2'
-                ],
-                'attr' => [
-                    'class' => 'py-2 ps-4 d-flex flex-column'
-                ]
+            ->add('name', TextType::class)
+            ->add('capacity', IntegerType::class)
+            ->add('roomCount', ChoiceType::class, [
+                'choices' => [1, 2, 3, 4, 5, 6],
+                //todo: figure out how to automate limited number of int choice
             ])
-            ->add('roomCount', IntegerType::class)
             ->add('surface', NumberType::class)
             ->add('bathroomCount', IntegerType::class)
             ->add('toiletCount', IntegerType::class)

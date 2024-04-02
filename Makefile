@@ -8,7 +8,7 @@ SYMFONY = symfony console
 MYSQL_USERNAME = root
 MYSQL_PASSWORD = root
 MYSQL_HOST = 127.0.0.1
-MYSQL_PORT = 3306
+MYSQL_PORT = 3307
 BLUE_COLOR=\033[0;36m
 YELLOW_COLOR=\033[0;33m
 SUCCESS_COLOR=\033[0;32m
@@ -73,7 +73,7 @@ create-local-env: ## Create .env.local file
 
 fill-local-env: ## Fill .env.local file with 'root/root'
 	@make command-intro-msg msg="Filling env , using 'root:root'"
-	echo "DATABASE_URL='mysql://$(MYSQL_USERNAME):$(MYSQL_PASSWORD)@$(MYSQL_HOST):$(MYSQL_PORT)/$(APP)'" | tee .env.local; \
+	echo "DATABASE_URL='mysql://$(MYSQL_USERNAME):$(MYSQL_PASSWORD)@$(MYSQL_HOST):$(MYSQL_PORT)/$(APP)?serverVersion=10.5.8-MariaDB'" | tee .env.local; \
 
 cache-clear: ## Clear symfony cache
 	@make command-intro-msg msg="Clearing cache"
