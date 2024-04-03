@@ -8,7 +8,17 @@
 {% block body %}
     {{ form_start(lodgingForm) }}
     {{ include('form/_text-field.html.twig', {formRow: lodgingForm.name, label: 'Nom'}) }}
-    {{ include('form/_number-field.html.twig', {formRow: lodgingForm.capacity, label: 'Capacité'}) }}
+    {{ include('form/_select-field.html.twig', {formRow: lodgingForm.capacity, label: 'Capacité'}) }}
     {{ include('form/_select-field.html.twig', {formRow: lodgingForm.roomCount, label: 'Nombre de pièces'}) }}
+    {{ include('form/_integer-field.html.twig', {formRow: lodgingForm.surface, label: 'Surface (m²)'}) }}
+    {{ include('form/_select-field.html.twig', {formRow: lodgingForm.bathroomCount, label: 'Nombre de salle de bain'}) }}
+    {{ include('form/_select-field.html.twig', {formRow: lodgingForm.toiletCount, label: 'Nombre de toilettes'}) }}
+    {{ include('form/_checkbox-field.html.twig', {formRow: lodgingForm.tvService, label: 'Cable TV'}) }}
+    {{ include('form/_checkbox-field.html.twig', {formRow: lodgingForm.washer, label: 'Machine à laver'}) }}
+    {{ include('form/_checkbox-field.html.twig', {formRow: lodgingForm.waterHeater, label: 'Chauffe eau'}) }}
+    {{ include('form/_checkbox-field.html.twig', {formRow: lodgingForm.parking, label: 'Parking'}) }}
+    {{ include('form/_checkbox-field.html.twig', {formRow: lodgingForm.gate, label: 'Portail'}) }}
+    {{ include('form/_checkbox-field.html.twig', {formRow: lodgingForm.animalAllowed, label: 'Animaux autorisés'}) }}
+    {{ include('form/_checkbox-field.html.twig', {formRow: lodgingForm.terrace, label: 'Terrasse'}) }}
     {{ form_end(lodgingForm) }}
 {% endblock %}

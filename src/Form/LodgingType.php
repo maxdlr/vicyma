@@ -6,6 +6,7 @@ use App\Entity\Bed;
 use App\Entity\File;
 use App\Entity\Lodging;
 use App\Entity\Reservation;
+use App\Form\FormUtils\FormTypeUtils;
 use App\Form\Style\FormTypeStyle;
 use Doctrine\DBAL\Types\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -18,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use function Symfony\Component\String\u;
 
 class LodgingType extends AbstractType
 {
@@ -25,14 +27,21 @@ class LodgingType extends AbstractType
     {
         $builder
             ->add('name', TextType::class)
-            ->add('capacity', IntegerType::class)
-            ->add('roomCount', ChoiceType::class, [
-                'choices' => [1, 2, 3, 4, 5, 6],
-                //todo: figure out how to automate limited number of int choice
+            ->add('capacity', ChoiceType::class, [
+                'choices' => FormTypeUtils::makeIntChoices(6)
             ])
-            ->add('surface', NumberType::class)
-            ->add('bathroomCount', IntegerType::class)
-            ->add('toiletCount', IntegerType::class)
+            ->add('roomCount', ChoiceType::class, [
+                'choices' => FormTypeUtils::makeIntChoices(10)
+            ])
+            ->add('surface', NumberType::class, [
+                'scale' => 2,
+            ])
+            ->add('bathroomCount', ChoiceType::class, [
+                'choices' => FormTypeUtils::makeIntChoices(3)
+            ])
+            ->add('toiletCount', ChoiceType::class, [
+                'choices' => FormTypeUtils::makeIntChoices(3)
+            ])
             ->add('tvService', CheckboxType::class)
             ->add('washer', CheckboxType::class)
             ->add('waterHeater', CheckboxType::class)
@@ -41,7 +50,9 @@ class LodgingType extends AbstractType
             ->add('animalAllowed', CheckboxType::class)
             ->add('terrace', CheckboxType::class)
             ->add('terraceSurface', NumberType::class)
-            ->add('floor', IntegerType::class)
+            ->add('floor', ChoiceType::class, [
+                'choices' => FormTypeUtils::makeIntChoices(3)
+            ])
             ->add('description', TextareaType::class)
             ->add('priceByNight', NumberType::class)
             ->add('beds', EntityType::class, [
