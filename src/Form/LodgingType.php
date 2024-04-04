@@ -54,7 +54,9 @@ class LodgingType extends AbstractType
                 'choices' => FormTypeUtils::makeIntChoices(3)
             ])
             ->add('description', TextareaType::class)
-            ->add('priceByNight', NumberType::class)
+            ->add('priceByNight', NumberType::class, [
+                'scale' => 2,
+            ])
             ->add('beds', EntityType::class, [
                 'class' => Bed::class,
                 'choice_label' => function (Bed $bed) {
@@ -77,7 +79,7 @@ class LodgingType extends AbstractType
                     return $reservation->getUser()->getLastname() . ' - ' . $reservation->getArrivalDate()->format('d-m-Y') . ' - ' . $reservation->getDepartureDate()->format('d-m-Y');
                 },
                 'multiple' => true,
-                'autocomplete' => true
+                'autocomplete' => true,
             ]);
     }
 

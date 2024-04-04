@@ -21,11 +21,11 @@ class AdminController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET'])]
     public function dashboard(): Response
     {
-//        $lodgings = $this->lodgingRepository->findAll();
-        $lodging = new Lodging();
+        $lodgings = $this->lodgingRepository->findAll();
+//        $lodging = new Lodging();
 
 
-        $lodgingForm = $this->createForm(LodgingType::class, $lodging);
+        $lodgingForm = $this->createForm(LodgingType::class, $lodgings[0]);
 
 
         return $this->render('admin/dashboard.html.twig', [
