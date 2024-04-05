@@ -7,35 +7,11 @@
 
 {% block body %}
     <main class="container">
-        {{ form_start(lodgingForm) }}
-        {{ include('_components/Organism/form/_standalone_form.html.twig', {
-            options:
-            [
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.tvService, label: 'Cable TV'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.washer, label: 'Machine à laver'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.waterHeater, label: 'Chauffe eau'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.parking, label: 'Parking'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.gate, label: 'Portail'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.animalAllowed, label: 'Animaux autorisés'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.terrace, label: 'Terrasse'})
-            ],
-            fields:
-            [
-                include('_components/Atom/form/_text-field.html.twig', {formRow: lodgingForm.name, label: 'Nom'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.capacity, label: 'Capacité'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.roomCount, label: 'Nombre de pièces'}),
-                include('_components/Atom/form/_integer-field.html.twig', {formRow: lodgingForm.surface, label: 'Surface (m²)'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.bathroomCount, label: 'Nombre de salle de bain'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.toiletCount, label: 'Nombre de toilettes'}),
-                include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.terraceSurface, label: 'Surface de la terrasse (m²)'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.floor, label: 'Etage'}),
-                include('_components/Atom/form/_text_area-field.html.twig', {formRow: lodgingForm.description, label: 'Description'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.beds, label: 'Lits', placeholder: 'Ajouter des lits'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.files, label: 'Photos', placeholder: 'Ajouter des photos'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.reservations, label: 'Reservations', placeholder: 'Associer des reservations'}),
-                include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.priceByNight, label: 'Prix/nuit'})
-            ]
+        {{ include('_components/_button.html.twig', {
+            link: '/',
+            label: 'Retour au site',
+            icon: 'house-fill',
         }) }}
-        {{ form_end(lodgingForm) }}
+        {{ include('_components/Organism/form/_form_address.html.twig') }}
     </main>
 {% endblock %}

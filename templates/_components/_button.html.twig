@@ -1,8 +1,20 @@
-<button class="btn {{ size is defined ? 'btn-'~size : '' }} btn-{{ colorClass|default('primary') }}">
-    {% if icon is defined %}
-        <span class="px-2"><i class="bi bi-{{ icon }}"></i></span>
-    {% endif %}
-    {% if label is defined %}
-        <span class="px-2">{{ label }}</span>
-    {% endif %}
-</button>
+{% if link is defined %}
+    <a href="{{ link }}"
+       class="btn {{ size is defined ? 'btn-'~size : '' }} btn-{{ colorClass|default('primary') }} rounded-pill">
+        {% if icon is defined %}
+            <span class="px-1"><i class="bi bi-{{ icon }}"></i></span>
+        {% endif %}
+        {% if label is defined %}
+            <span>{{ label }}</span>
+        {% endif %}</a>
+{% else %}
+    <button class="btn {{ size is defined ? 'btn-'~size : '' }} btn-{{ colorClass|default('primary') }} rounded-pill"
+            type="{{ type|default('submit') }}">
+        {% if icon is defined %}
+            <span class="px-1"><i class="bi bi-{{ icon }}"></i></span>
+        {% endif %}
+        {% if label is defined %}
+            <span>{{ label }}</span>
+        {% endif %}
+    </button>
+{% endif %}

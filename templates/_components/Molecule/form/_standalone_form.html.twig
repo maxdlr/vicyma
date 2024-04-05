@@ -1,0 +1,21 @@
+<section class="row">
+    <div class="col-sm-3">
+        {% if options is defined %}
+            {% for option in options %}
+                {{ option|raw }}
+            {% endfor %}
+        {% endif %}
+        {% if buttons is defined %}
+            {% for button in buttons %}
+                {{ button|raw }}
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if fields is defined %}
+        <div class="col-sm-9">
+            {% for field in fields %}
+                {{ field|raw }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
