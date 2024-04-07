@@ -43,6 +43,7 @@ class LodgingType extends AbstractType
                 'choices' => FormTypeUtils::makeIntChoices(3)
             ])
             ->add('tvService', CheckboxType::class)
+            ->add('airConditioning', CheckboxType::class)
             ->add('washer', CheckboxType::class)
             ->add('waterHeater', CheckboxType::class)
             ->add('parking', CheckboxType::class)

@@ -81,6 +81,9 @@ class Lodging
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'lodging')]
     private Collection $reviews;
 
+    #[ORM\Column]
+    private ?bool $airConditioning = null;
+
     public function __construct()
     {
         $this->beds = new ArrayCollection();
@@ -433,6 +436,18 @@ class Lodging
                 $review->setLodging(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isAirConditioning(): ?bool
+    {
+        return $this->airConditioning;
+    }
+
+    public function setAirConditioning(bool $airConditioning): static
+    {
+        $this->airConditioning = $airConditioning;
 
         return $this;
     }

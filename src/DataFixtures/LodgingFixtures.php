@@ -30,6 +30,7 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
                 ->setBathroomCount($faker->numberBetween(1, 3))
                 ->setToiletCount($faker->numberBetween(1, 3))
                 ->setTvService($faker->boolean(80))
+                ->setAirConditioning($faker->boolean(80))
                 ->setWasher($faker->boolean(80))
                 ->setWaterHeater($faker->boolean(80))
                 ->setParking($faker->boolean(80))

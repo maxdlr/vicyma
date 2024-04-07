@@ -2,13 +2,14 @@
         {{ include('_components/Molecule/form/_standalone_form.html.twig', {
             options:
             [
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.tvService, label: 'Cable TV'}),
                 include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.washer, label: 'Machine à laver'}),
                 include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.waterHeater, label: 'Chauffe eau'}),
+                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.animalAllowed, label: 'Animaux'}),
                 include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.parking, label: 'Parking'}),
                 include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.gate, label: 'Portail'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.animalAllowed, label: 'Animaux autorisés'}),
-                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.terrace, label: 'Terrasse'})
+                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.tvService, label: 'Cable TV'}),
+                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.terrace, label: 'Terrasse'}),
+                include('_components/Atom/form/_checkbox-field.html.twig', {formRow: lodgingForm.airConditioning, label: 'Climatisation'})
             ],
             fields:
             [
@@ -27,7 +28,7 @@
                 include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.priceByNight, label: 'Prix/nuit'})
             ],
             buttons: [
-                include('_components/_button.html.twig', {label: "Enregistrer", colorClass: "primary", icon: "save", type: 'submit'}),
+                include('_components/_button.html.twig', {label: "Enregistrer", colorClass: "primary", icon: "floppy-fill", type: 'submit'}),
                 include('_components/_button.html.twig', {label: "Supprimer", colorClass: "danger", icon: "trash", type: 'submit'}),
             ]
         }) }}

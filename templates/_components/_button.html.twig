@@ -5,7 +5,7 @@
             <span class="px-1"><i class="bi bi-{{ icon }}"></i></span>
         {% endif %}
         {% if label is defined %}
-            <span>{{ label }}</span>
+            <span class="d-none d-sm-inline">{{ label }}</span>
         {% endif %}</a>
 {% else %}
     <button class="btn {{ size is defined ? 'btn-'~size : '' }} btn-{{ colorClass|default('primary') }} rounded-pill"
@@ -14,7 +14,7 @@
             <span class="px-1"><i class="bi bi-{{ icon }}"></i></span>
         {% endif %}
         {% if label is defined %}
-            <span>{{ label }}</span>
+            <span class="d-none d-sm-inline">{{ label }}</span>
         {% endif %}
     </button>
 {% endif %}

@@ -1,21 +1,38 @@
 <section class="row">
-    <div class="col-sm-3">
-        {% if options is defined %}
-            {% for option in options %}
-                {{ option|raw }}
-            {% endfor %}
-        {% endif %}
-        {% if buttons is defined %}
-            {% for button in buttons %}
-                {{ button|raw }}
-            {% endfor %}
-        {% endif %}
-    </div>
+    {% if buttons is defined %}
+        <div class="row sticky-top py-5">
+            <h2 class="text-center col-md-6">{{ title|default('Ajouter un titre') }}</h2>
+            <div class="d-flex justify-content-center align-items-center col-md-6">
+                {% for button in buttons %}
+                    <div class="mx-2">
+                        {{ button|raw }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if options is defined %}
+        <div class="col-sm-4">
+            <div class="row">
+                {% for option in options %}
+                    <div class="col-6 col-sm-12">
+                        {{ option|raw }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+
     {% if fields is defined %}
-        <div class="col-sm-9">
+        <div class="col-sm-8">
             {% for field in fields %}
-                {{ field|raw }}
+                <div class="py-1">
+                    {{ field|raw }}
+                </div>
             {% endfor %}
         </div>
     {% endif %}
+
 </section>
