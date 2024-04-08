@@ -1,15 +1,25 @@
+{% set buttons = [
+    save ? include('_components/_button.html.twig', {type: 'submit', label: 'Enregistrer', icon: 'floppy-fill'}) : '',
+    edit ? include('_components/_button.html.twig', {type: 'submit', label: 'Modifier', icon: 'pencil-fill', colorClass: 'secondary'}) : '',
+    delete ? include('_components/_button.html.twig', {link: deletePath, label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger'}) : ''
+] %}
+
 <section class="row">
-    {% if buttons is defined %}
-        <div class="row sticky-top py-5">
-            <h2 class="text-center col-md-6">{{ title|default('Ajouter un titre') }}</h2>
-            <div class="d-flex justify-content-center align-items-center col-md-6">
-                {% for button in buttons %}
+    <div class="row sticky-top py-5">
+        {% if buttons is defined %}
+        <h2 class="text-center col-md-6 p-0 m-0">{{ reference|default('Ajouter une reference') }}</h2>
+        <div class="d-flex justify-content-center align-items-center col-md-6">
+            {% for button in buttons %}
+                {% if button is not empty %}
                     <div class="mx-2">
                         {{ button|raw }}
                     </div>
-                {% endfor %}
-            </div>
+                {% endif %}
+            {% endfor %}
         </div>
+    </div>
+    {% else %}
+        <h2 class="text-center p-0 m-0">{{ reference|default('Ajouter une reference') }}</h2>
     {% endif %}
 
     {% if options is defined %}

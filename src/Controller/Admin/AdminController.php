@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Lodging;
 use App\Form\AddressType;
+use App\Form\BedType;
 use App\Form\LodgingType;
 use App\Repository\AddressRepository;
 use App\Repository\BedRepository;
@@ -49,7 +50,7 @@ class AdminController extends AbstractController
         $user = $this->userRepository->find(1);
 
         $addressForm = $this->createForm(AddressType::class);
-//        $bedForm = $this->createForm(BedType::class, $bed);
+        $bedForm = $this->createForm(BedType::class, $bed);
 //        $fileForm = $this->createForm(FileType::class, $file);
         $lodgingForm = $this->createForm(LodgingType::class, $lodging);
 //        $messageForm = $this->createForm(MessageType::class, $message);
@@ -60,7 +61,7 @@ class AdminController extends AbstractController
 
         return $this->render('admin/dashboard.html.twig', [
             'addressForm' => $addressForm,
-//            'bedForm' => $bedForm,
+            'bedForm' => $bedForm,
 //            'fileForm' => $fileForm,
             'lodgingForm' => $lodgingForm,
 //            'messageForm' => $messageForm,

@@ -27,9 +27,6 @@
                 include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.reservations, label: 'Reservations', placeholder: 'Associer des reservations'}),
                 include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.priceByNight, label: 'Prix/nuit'})
             ],
-            buttons: [
-                include('_components/_button.html.twig', {label: "Enregistrer", colorClass: "primary", icon: "floppy-fill", type: 'submit'}),
-                include('_components/_button.html.twig', {label: "Supprimer", colorClass: "danger", icon: "trash", type: 'submit'}),
-            ]
+            deletePath: '#'
         }) }}
 {{ form_end(lodgingForm) }}

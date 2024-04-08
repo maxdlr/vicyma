@@ -1,12 +1,14 @@
 {{ form_start(addressForm) }}
     {{ include('_components/Molecule/form/_standalone_form.html.twig',{
         fields: [
+            include('_components/Atom/form/_select-field.html.twig', {formRow: addressForm.type, label: 'Type d\'address'}),
             include('_components/Atom/form/_text-field.html.twig', {formRow: addressForm.line1, label: 'Address'}),
             include('_components/Atom/form/_text-field.html.twig', {formRow: addressForm.line2, label: 'Complément d\'adresse'}),
             include('_components/Atom/form/_text-field.html.twig', {formRow: addressForm.zipcode, label: 'Code postal'}),
             include('_components/Atom/form/_text-field.html.twig', {formRow: addressForm.city, label: 'Ville'}),
             include('_components/Atom/form/_text-field.html.twig', {formRow: addressForm.region, label: 'Région'}),
             include('_components/Atom/form/_select-field.html.twig', {formRow: addressForm.country, label: 'Pays', placeholder: 'Choisissez un pays'})
-        ]
+        ],
+        deletePath: '#'
     }) }}
 {{ form_end(addressForm) }}

@@ -15,4 +15,13 @@ class FormTypeUtils
         }
         return $choices;
     }
+
+    static public function makeChoices(array $choices): array
+    {
+        $formattedChoices = [];
+        foreach ($choices as $choice) {
+            $formattedChoices[$choice] = $choice;
+        }
+        return $formattedChoices;
+    }
 }
