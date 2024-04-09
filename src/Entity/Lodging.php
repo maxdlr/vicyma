@@ -69,7 +69,7 @@ class Lodging
     #[ORM\ManyToMany(targetEntity: Bed::class, inversedBy: 'lodgings')]
     private Collection $beds;
 
-    #[ORM\ManyToMany(targetEntity: File::class, mappedBy: 'lodgings')]
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'lodgings')]
     private Collection $files;
 
     #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'lodgings')]
@@ -327,14 +327,14 @@ class Lodging
     }
 
     /**
-     * @return Collection<int, File>
+     * @return Collection<int, Media>
      */
     public function getFiles(): Collection
     {
         return $this->files;
     }
 
-    public function addFile(File $file): static
+    public function addFile(Media $file): static
     {
         if (!$this->files->contains($file)) {
             $this->files->add($file);
@@ -344,7 +344,7 @@ class Lodging
         return $this;
     }
 
-    public function removeFile(File $file): static
+    public function removeFile(Media $file): static
     {
         if ($this->files->removeElement($file)) {
             $file->removeLodging($this);

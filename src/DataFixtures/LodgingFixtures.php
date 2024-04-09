@@ -55,7 +55,7 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             BedFixtures::class,
-            FileFixtures::class,
+            MediaFixtures::class,
             ReservationFixtures::class
         ];
     }

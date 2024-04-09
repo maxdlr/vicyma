@@ -2,13 +2,13 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\File;
+use App\Entity\Media;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Faker\Factory;
 
-class FileFixtures extends Fixture
+class MediaFixtures extends Fixture
 {
     /**
      * @throws Exception
@@ -17,11 +17,11 @@ class FileFixtures extends Fixture
     {
         $faker = Factory::create();
         for ($i = 0; $i < AppFixtures::FILE_COUNT; $i++) {
-            $file = new File();
+            $file = new Media();
 
             $file
-                ->setFileName($faker->word())
-                ->setFileSize($faker->randomFloat(2, 2, 30))
+                ->setMediaName($faker->word())
+                ->setMediaSize($faker->randomFloat(2, 2, 30))
                 ->setCreatedOn($faker->dateTimeBetween('- 5 days'));
 
             $this->setReference('file_' . $i, $file);

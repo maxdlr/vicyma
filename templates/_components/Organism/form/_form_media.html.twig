@@ -1,0 +1,8 @@
+{{ form_start(mediaForm) }}
+{{ include('_components/Molecule/form/_standalone_form.html.twig', {
+    fields: [
+        include('_components/Atom/form/_upload-field.html.twig', {formRow: mediaForm.media, label: "Ajouter un fichier"}),
+    ],
+    deletePath: '#'
+}) }}
+{{ form_end(mediaForm) }}

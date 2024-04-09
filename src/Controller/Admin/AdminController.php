@@ -5,10 +5,12 @@ namespace App\Controller\Admin;
 use App\Entity\Lodging;
 use App\Form\AddressType;
 use App\Form\BedType;
+use App\Form\MediaType;
 use App\Form\LodgingType;
+use App\Form\MessageType;
 use App\Repository\AddressRepository;
 use App\Repository\BedRepository;
-use App\Repository\FileRepository;
+use App\Repository\MediaRepository;
 use App\Repository\LodgingRepository;
 use App\Repository\MessageRepository;
 use App\Repository\ReservationRepository;
@@ -25,7 +27,7 @@ class AdminController extends AbstractController
     public function __construct(
         private readonly AddressRepository           $addressRepository,
         private readonly BedRepository               $bedRepository,
-        private readonly FileRepository              $fileRepository,
+        private readonly MediaRepository             $mediaRepository,
         private readonly LodgingRepository           $lodgingRepository,
         private readonly MessageRepository           $messageRepository,
         private readonly ReservationRepository       $reservationRepository,
@@ -39,9 +41,11 @@ class AdminController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET'])]
     public function dashboard(): Response
     {
+        $user = $this->userRepository->findOneBy(['email' => 'contact@maxdlr.com']);
+
         $address = $this->addressRepository->find(1);
         $bed = $this->bedRepository->find(1);
-        $file = $this->fileRepository->find(1);
+        $media = $this->mediaRepository->find(1);
         $lodging = $this->lodgingRepository->find(1);
         $message = $this->messageRepository->find(1);
         $reservation = $this->reservationRepository->find(1);
@@ -49,11 +53,14 @@ class AdminController extends AbstractController
         $review = $this->reviewRepository->find(1);
         $user = $this->userRepository->find(1);
 
-        $addressForm = $this->createForm(AddressType::class);
+        $addressForm = $this->createForm(AddressType::class, $address);
         $bedForm = $this->createForm(BedType::class, $bed);
-//        $fileForm = $this->createForm(FileType::class, $file);
+        $mediaForm = $this->createForm(MediaType::class, $media);
         $lodgingForm = $this->createForm(LodgingType::class, $lodging);
-//        $messageForm = $this->createForm(MessageType::class, $message);
+        $messageForm = $this->createForm(MessageType::class, $message, [
+            'user' => $user,
+            'reservations' => $this->reservationRepository->findBy(['user' => $user])
+        ]);
 //        $reservationForm = $this->createForm(ReservationType::class, $reservation);
 //        $reservationStatusForm = $this->createForm(ReservationStatusType::class, $reservationStatus);
 //        $reviewForm = $this->createForm(ReviewType::class, $review);
@@ -62,9 +69,9 @@ class AdminController extends AbstractController
         return $this->render('admin/dashboard.html.twig', [
             'addressForm' => $addressForm,
             'bedForm' => $bedForm,
-//            'fileForm' => $fileForm,
+            'mediaForm' => $mediaForm,
             'lodgingForm' => $lodgingForm,
-//            'messageForm' => $messageForm,
+            'messageForm' => $messageForm,
 //            'reservationForm' => $reservationForm,
 //            'reservationStatusForm' => $reservationStatusForm,
 //            'reviewForm' => $reviewForm,

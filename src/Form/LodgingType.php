@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Bed;
-use App\Entity\File;
+use App\Entity\Media;
 use App\Entity\Lodging;
 use App\Entity\Reservation;
 use App\Form\FormUtils\FormTypeUtils;
@@ -67,9 +67,9 @@ class LodgingType extends AbstractType
                 'autocomplete' => true
             ])
             ->add('files', EntityType::class, [
-                'class' => File::class,
-                'choice_label' => function (File $file) {
-                    return $file->getFileName();
+                'class' => Media::class,
+                'choice_label' => function (Media $file) {
+                    return $file->getMediaName();
                 },
                 'multiple' => true,
                 'autocomplete' => true
