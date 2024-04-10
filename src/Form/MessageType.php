@@ -6,6 +6,8 @@ use App\Entity\Lodging;
 use App\Entity\Message;
 use App\Entity\Reservation;
 use App\Entity\User;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -28,8 +30,12 @@ class MessageType extends AbstractType
             ])
             ->add('reservation', EntityType::class, [
                 'class' => Reservation::class,
+                'query_builder' => function (EntityRepository $er) use ($options): QueryBuilder {
+                    return $er->createQueryBuilder('r')
+                        ->where('r.user = :user')
+                        ->setParameter('user', $options['user']);
+                },
                 'choice_label' => function (Reservation $reservation) use ($options) {
-                    //todo: make $reservation the user's
                     return $options['user']->getFirstname() . ' '
                         . $options['user']->getLastname() . ' - ('
                         . $reservation->getArrivalDate()->format('d-m-Y') . ' -> '
