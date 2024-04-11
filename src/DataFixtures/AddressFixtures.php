@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Address;
+use App\Enum\AddressTypeEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
@@ -25,6 +26,7 @@ class AddressFixtures extends Fixture
                 ->setZipcode($faker->postcode())
                 ->setCity($faker->city())
                 ->setRegion($faker->domainName())
+                ->setType($faker->randomElement([AddressTypeEnum::PERSONAL->value, AddressTypeEnum::PROFESSIONAL->value]))
                 ->setCountry($faker->country());
 
             $this->setReference('address_' . $i, $address);

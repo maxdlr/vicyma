@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Controller\Enum\RoleEnum;
 use App\Entity\User;
+use App\Enum\RoleEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;

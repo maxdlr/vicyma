@@ -1,0 +1,12 @@
+<div class="form-floating">
+    {{ form_help(formRow) }}
+    {{ form_errors(formRow) }}
+    {{ form_widget(formRow, {
+        'attr': {
+            'class': 'form-control',
+            'placeholder': placeholder|default('Add placeholder'),
+            'type': type|default('number')
+        }
+    }) }}
+    {{ form_label(formRow, label|default('Add label')) }}
+</div>

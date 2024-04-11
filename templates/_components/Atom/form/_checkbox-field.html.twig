@@ -1,0 +1,14 @@
+<div class="form-check form-switch">
+    {{ form_help(formRow) }}
+    {{ form_errors(formRow) }}
+    {{ form_widget(formRow, {
+        'attr': {
+            'class': 'form-check-input',
+            'role': 'switch',
+            'type': 'checkbox',
+        }
+    }) }}
+    {{ form_label(formRow, label|default('Add label'), {
+        'attr': {'class': 'form-check-label'}
+    }) }}
+</div>

@@ -24,12 +24,13 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
             $lodging
                 ->setName($faker->word())
                 ->setDescription($faker->paragraph(10, true))
-                ->setCapacity($faker->numberBetween(1, 6))
+                ->setCapacity($faker->numberBetween(4, 6))
                 ->setRoomCount($faker->numberBetween(1, 4))
                 ->setSurface($faker->randomFloat(2, 30, 50))
                 ->setBathroomCount($faker->numberBetween(1, 3))
                 ->setToiletCount($faker->numberBetween(1, 3))
                 ->setTvService($faker->boolean(80))
+                ->setAirConditioning($faker->boolean(80))
                 ->setWasher($faker->boolean(80))
                 ->setWaterHeater($faker->boolean(80))
                 ->setParking($faker->boolean(80))
@@ -54,7 +55,7 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             BedFixtures::class,
-            FileFixtures::class,
+            MediaFixtures::class,
             ReservationFixtures::class
         ];
     }

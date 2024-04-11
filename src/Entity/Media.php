@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\FileRepository;
+use App\Repository\MediaRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: FileRepository::class)]
-class File
+#[ORM\Entity(repositoryClass: MediaRepository::class)]
+class Media
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,12 +18,12 @@ class File
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $fileName = null;
+    private ?string $mediaName = null;
 
     #[ORM\Column()]
-    private ?float $fileSize = null;
+    private ?float $mediaSize = null;
 
-    #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'files')]
+    #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'medias')]
     private Collection $lodgings;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -39,26 +39,26 @@ class File
         return $this->id;
     }
 
-    public function getFileName(): ?string
+    public function getMediaName(): ?string
     {
-        return $this->fileName;
+        return $this->mediaName;
     }
 
-    public function setFileName(string $fileName): static
+    public function setMediaName(string $mediaName): static
     {
-        $this->fileName = $fileName;
+        $this->mediaName = $mediaName;
 
         return $this;
     }
 
-    public function getFileSize(): ?float
+    public function getMediaSize(): ?float
     {
-        return $this->fileSize;
+        return $this->mediaSize;
     }
 
-    public function setFileSize(float $fileSize): static
+    public function setMediaSize(float $mediaSize): static
     {
-        $this->fileSize = $fileSize;
+        $this->mediaSize = $mediaSize;
 
         return $this;
     }
