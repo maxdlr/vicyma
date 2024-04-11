@@ -13,6 +13,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -66,22 +67,7 @@ class LodgingType extends AbstractType
                 'multiple' => true,
                 'autocomplete' => true
             ])
-            ->add('files', EntityType::class, [
-                'class' => Media::class,
-                'choice_label' => function (Media $file) {
-                    return $file->getMediaName();
-                },
-                'multiple' => true,
-                'autocomplete' => true
-            ])
-            ->add('reservations', EntityType::class, [
-                'class' => Reservation::class,
-                'choice_label' => function (Reservation $reservation) {
-                    return $reservation->getUser()->getLastname() . ' - ' . $reservation->getArrivalDate()->format('d-m-Y') . ' - ' . $reservation->getDepartureDate()->format('d-m-Y');
-                },
-                'multiple' => true,
-                'autocomplete' => true,
-            ]);
+            ->add('photos', FileType::class, FormTypeUtils::makeFileUploadParameters(true));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

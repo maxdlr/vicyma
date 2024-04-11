@@ -5,7 +5,7 @@
 ] %}
 
 <section class="row">
-    <div class="row sticky-top py-5">
+    <div class="row sticky-top pt-3 pb-5 bg-light rounded-3 bg-opacity-75">
         {% if buttons is defined %}
         <h2 class="text-center col-md-6 p-0 m-0">{{ reference|default('Ajouter une reference') }}</h2>
         <div class="d-flex justify-content-center align-items-center col-md-6">
@@ -36,7 +36,7 @@
 
 
     {% if fields is defined %}
-        <div class="col-sm-8">
+        <div class="{{ options is defined ? 'col-sm-8' : '' }}">
             {% for field in fields %}
                 <div class="py-1">
                     {{ field|raw }}

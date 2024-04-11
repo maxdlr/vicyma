@@ -5,7 +5,6 @@ namespace App\Form;
 use App\Entity\Lodging;
 use App\Entity\Message;
 use App\Entity\Reservation;
-use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -49,7 +48,6 @@ class MessageType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Message::class,
             'user' => null,
-            'reservations' => []
         ]);
     }
 }

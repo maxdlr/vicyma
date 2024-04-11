@@ -3,31 +3,21 @@
 namespace App\Form;
 
 use App\Entity\Media;
+use App\Form\FormUtils\FormTypeUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File as FileConstraint;
+use Symfony\Component\Validator\Constraints\File;
 
 class MediaType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('media', FileType::class, [
-                'mapped' => false,
-                'required' => false,
-                'constraints' => [
-                    new FileConstraint([
-                        'maxSize' => '1024k',
-//                        'mimeTypes' => [
-//                            'application/pdf',
-//                            'application/x-pdf',
-//                        ],
-//                        'mimeTypesMessage' => 'Please upload a valid PDF document',
-                    ])
-                ],
-            ]);
+            ->add('media', FileType::class,
+                FormTypeUtils::makeFileUploadParameters()
+            );
     }
 
     public function configureOptions(OptionsResolver $resolver): void

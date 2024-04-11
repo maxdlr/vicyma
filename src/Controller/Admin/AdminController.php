@@ -2,19 +2,19 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Lodging;
 use App\Form\AddressType;
 use App\Form\BedType;
 use App\Form\MediaType;
 use App\Form\LodgingType;
 use App\Form\MessageType;
+use App\Form\ReservationType;
+use App\Form\ReviewType;
 use App\Repository\AddressRepository;
 use App\Repository\BedRepository;
 use App\Repository\MediaRepository;
 use App\Repository\LodgingRepository;
 use App\Repository\MessageRepository;
 use App\Repository\ReservationRepository;
-use App\Repository\ReservationStatusRepository;
 use App\Repository\ReviewRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,15 +25,14 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly AddressRepository           $addressRepository,
-        private readonly BedRepository               $bedRepository,
-        private readonly MediaRepository             $mediaRepository,
-        private readonly LodgingRepository           $lodgingRepository,
-        private readonly MessageRepository           $messageRepository,
-        private readonly ReservationRepository       $reservationRepository,
-        private readonly ReservationStatusRepository $reservationStatusRepository,
-        private readonly ReviewRepository            $reviewRepository,
-        private readonly UserRepository              $userRepository,
+        private readonly AddressRepository     $addressRepository,
+        private readonly BedRepository         $bedRepository,
+        private readonly MediaRepository       $mediaRepository,
+        private readonly LodgingRepository     $lodgingRepository,
+        private readonly MessageRepository     $messageRepository,
+        private readonly ReservationRepository $reservationRepository,
+        private readonly ReviewRepository      $reviewRepository,
+        private readonly UserRepository        $userRepository,
     )
     {
     }
@@ -49,7 +48,6 @@ class AdminController extends AbstractController
         $lodging = $this->lodgingRepository->find(1);
         $message = $this->messageRepository->find(1);
         $reservation = $this->reservationRepository->find(1);
-        $reservationStatus = $this->reservationStatusRepository->find(1);
         $review = $this->reviewRepository->find(1);
         $user = $this->userRepository->find(1);
 
@@ -58,13 +56,12 @@ class AdminController extends AbstractController
         $mediaForm = $this->createForm(MediaType::class, $media);
         $lodgingForm = $this->createForm(LodgingType::class, $lodging);
         $messageForm = $this->createForm(MessageType::class, $message, [
-            'user' => $user,
-            'reservations' => $this->reservationRepository->findBy(['user' => $user])
+            'user' => $user
         ]);
-//        $reservationForm = $this->createForm(ReservationType::class, $reservation);
-//        $reservationStatusForm = $this->createForm(ReservationStatusType::class, $reservationStatus);
-//        $reviewForm = $this->createForm(ReviewType::class, $review);
-//        $userForm = $this->createForm(UserType::class, $user);
+        $reservationForm = $this->createForm(ReservationType::class, $reservation, [
+            'lodging' => $lodging,
+        ]);
+        $reviewForm = $this->createForm(ReviewType::class, $review);
 
         return $this->render('admin/dashboard.html.twig', [
             'addressForm' => $addressForm,
@@ -72,10 +69,8 @@ class AdminController extends AbstractController
             'mediaForm' => $mediaForm,
             'lodgingForm' => $lodgingForm,
             'messageForm' => $messageForm,
-//            'reservationForm' => $reservationForm,
-//            'reservationStatusForm' => $reservationStatusForm,
-//            'reviewForm' => $reviewForm,
-//            'userForm' => $userForm,
+            'reservationForm' => $reservationForm,
+            'reviewForm' => $reviewForm,
         ]);
     }
 }

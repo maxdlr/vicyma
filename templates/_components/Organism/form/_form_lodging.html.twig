@@ -23,9 +23,8 @@
                 include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.floor, label: 'Etage'}),
                 include('_components/Atom/form/_text_area-field.html.twig', {formRow: lodgingForm.description, label: 'Description'}),
                 include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.beds, label: 'Lits', placeholder: 'Ajouter des lits'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.files, label: 'Photos', placeholder: 'Ajouter des photos'}),
-                include('_components/Atom/form/_select-field.html.twig', {formRow: lodgingForm.reservations, label: 'Reservations', placeholder: 'Associer des reservations'}),
-                include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.priceByNight, label: 'Prix/nuit'})
+                include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.priceByNight, label: 'Prix/nuit'}),
+                include('_components/Atom/form/_upload-field.html.twig', {formRow: lodgingForm.photos, label: 'Photos'})
             ],
             deletePath: '#'
         }) }}
