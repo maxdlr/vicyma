@@ -1,0 +1,12 @@
+{{ form_start(userForm) }}
+{{ include('_components/Molecule/form/_standalone_form.html.twig', {
+    fields: [
+        include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.email, label: 'E-mail', placeholder: 'monemail@gmail.com'}),
+        include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.firstname, label: 'Prénom', placeholder: 'Zinedine'}),
+        include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.lastname, label: 'Nom', placeholder: 'Zidane'}),
+        include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.phoneNumber, label: 'Numéro de téléphone', placeholder: '0123456789'}),
+        include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.password, label: 'Mot de passe'}),
+    ],
+    deletePath: '#'
+}) }}
+{{ form_end(userForm) }}
