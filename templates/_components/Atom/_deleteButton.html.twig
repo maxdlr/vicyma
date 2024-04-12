@@ -1,0 +1,7 @@
+<form method="post" action="{{ path(deleteRoute, {'id': object.id}) }}"
+      onsubmit="return confirm('Voulez-vous vraiment supprimer ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ object.id) }}">
+    {{ include('_components/Atom/_button.html.twig', {label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger'}) }}
+</form>
+
+
