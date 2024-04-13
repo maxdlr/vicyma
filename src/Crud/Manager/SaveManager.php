@@ -19,7 +19,7 @@ class SaveManager extends AbstractController
      * @param Request $request
      * @return FormInterface|true
      */
-    public function handleAndSaveAll(object $object, string $formType, Request $request): FormInterface|true
+    public function handleAndSave(object $object, string $formType, Request $request): FormInterface|true
     {
         $form = $this->createForm($formType, $object);
         $form->handleRequest($request);
