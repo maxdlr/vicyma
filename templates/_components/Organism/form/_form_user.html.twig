@@ -1,4 +1,4 @@
-{{ form_start(userForm) }}
+{% set form = addressForm %}
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
         include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.email, label: 'E-mail', placeholder: 'monemail@gmail.com'}),
@@ -7,6 +7,5 @@
         include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.phoneNumber, label: 'Numéro de téléphone', placeholder: '0123456789'}),
         include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.password, label: 'Mot de passe'}),
     ],
-    deletePath: '#'
+    deleteRoute: 'app_user_delete'
 }) }}
-{{ form_end(userForm) }}

@@ -2,12 +2,10 @@
 
 namespace App\Crud\Manager;
 
-use App\Entity\EntityInterface;
 use App\Service\ClassBrowser;
 use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractCrud
 {

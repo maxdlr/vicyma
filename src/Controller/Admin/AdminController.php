@@ -2,34 +2,32 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\AddressCrud;
-use App\Repository\AddressRepository;
-use App\Service\ClassBrowser;
+use App\Crud\LodgingCrud;
+use App\Repository\LodgingRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use function Sodium\add;
 
 #[Route(path: '/admin', name: 'app_admin_')]
 class AdminController extends AbstractController
 {
-    public function __construct(private readonly AddressCrud $addressCrud, private readonly AddressRepository $addressRepository)
+    public function __construct(private readonly LodgingCrud $lodgingCrud, private readonly LodgingRepository $lodgingRepository)
     {
     }
 
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(Request $request): Response
     {
-        $address = $this->addressRepository->find(30);
-        $addressForm = $this->addressCrud->edit($request, $address);
+        $lodging = $this->lodgingRepository->find(1);
+        $lodgingForm = $this->lodgingCrud->edit($request, $lodging);
 
-        if ($addressForm === true) {
+        if ($lodgingForm === true) {
             return $this->redirectToRoute('app_home');
         }
 
         return $this->render('admin/dashboard.html.twig', [
-            'addressForm' => $addressForm->createView(),
+            'lodgingForm' => $lodgingForm->createView(),
         ]);
     }
 }

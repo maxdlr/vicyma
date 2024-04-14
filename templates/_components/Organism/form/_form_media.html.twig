@@ -1,8 +1,8 @@
-{{ form_start(mediaForm) }}
+{% set form = mediaForm %}
+
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
         include('_components/Atom/form/_upload-field.html.twig', {formRow: mediaForm.media, label: "Ajouter un fichier"}),
     ],
-    deletePath: '#'
+    deleteRoute: 'app_media_delete'
 }) }}
-{{ form_end(mediaForm) }}

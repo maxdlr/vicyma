@@ -1,12 +1,12 @@
-{{ form_start(bedForm) }}
-    {{ include('_components/Molecule/form/_standalone_form.html.twig', {
-        options: [
-            include('_components/Atom/form/_checkbox-field.html.twig', {formRow: bedForm.isExtra, label: 'Lit d\'appoint'})
-        ],
-        fields: [
-            include('_components/Atom/form/_select-field.html.twig', {formRow: bedForm.height, label: 'Longueur', placeholder: 'Choisissez une longueur de lit'}),
-            include('_components/Atom/form/_select-field.html.twig', {formRow: bedForm.width, label: 'Largeur', placeholder: 'Choisissez une largeur de lit'}),
-        ],
-        deletePath: '#'
-    }) }}
-{{ form_end(bedForm) }}
+{% set form = bedForm %}
+
+{{ include('_components/Molecule/form/_standalone_form.html.twig', {
+    options: [
+        include('_components/Atom/form/_checkbox-field.html.twig', {formRow: bedForm.isExtra, label: 'Lit d\'appoint'})
+    ],
+    fields: [
+        include('_components/Atom/form/_select-field.html.twig', {formRow: bedForm.height, label: 'Longueur', placeholder: 'Choisissez une longueur de lit'}),
+        include('_components/Atom/form/_select-field.html.twig', {formRow: bedForm.width, label: 'Largeur', placeholder: 'Choisissez une largeur de lit'}),
+    ],
+    deleteRoute: 'app_bed_delete'
+}) }}

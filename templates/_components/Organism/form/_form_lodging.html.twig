@@ -1,4 +1,5 @@
-{{ form_start(lodgingForm) }}
+{% set form = lodgingForm %}
+
         {{ include('_components/Molecule/form/_standalone_form.html.twig', {
             options:
             [
@@ -26,6 +27,5 @@
                 include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.priceByNight, label: 'Prix/nuit'}),
                 include('_components/Atom/form/_upload-field.html.twig', {formRow: lodgingForm.photos, label: 'Photos'})
             ],
-            deletePath: '#'
+            deleteRoute: 'app_lodging_delete'
         }) }}
-{{ form_end(lodgingForm) }}

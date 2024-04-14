@@ -4,17 +4,17 @@ namespace App\Crud;
 
 use App\Crud\Manager\AbstractCrud;
 use App\Crud\Manager\CrudSetting;
-use App\Entity\Address;
-use App\Form\AddressType;
+use App\Entity\Bed;
+use App\Form\BedType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[CrudSetting(entity: Address::class, formType: AddressType::class)]
-class AddressCrud extends AbstractCrud
+#[CrudSetting(entity: Bed::class, formType: BedType::class)]
+class BedCrud extends AbstractCrud
 {
-    #[Route('address/{id}', name: 'app_address_delete', methods: ['POST'])]
-    public function delete(Request $request, Address $object): Response
+    #[Route('bed/{id}', name: 'app_bed_delete', methods: ['POST'])]
+    public function delete(Request $request, Bed $object): Response
     {
         return $this->deleteManager->delete($request, $object, 'app_home');
     }

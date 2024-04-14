@@ -4,17 +4,17 @@ namespace App\Crud;
 
 use App\Crud\Manager\AbstractCrud;
 use App\Crud\Manager\CrudSetting;
-use App\Entity\Address;
-use App\Form\AddressType;
+use App\Entity\Lodging;
+use App\Form\LodgingType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[CrudSetting(entity: Address::class, formType: AddressType::class)]
-class AddressCrud extends AbstractCrud
+#[CrudSetting(entity: Lodging::class, formType: LodgingType::class)]
+class LodgingCrud extends AbstractCrud
 {
-    #[Route('address/{id}', name: 'app_address_delete', methods: ['POST'])]
-    public function delete(Request $request, Address $object): Response
+    #[Route('lodging/{id}', name: 'app_lodging_delete', methods: ['POST'])]
+    public function delete(Request $request, Lodging $object): Response
     {
         return $this->deleteManager->delete($request, $object, 'app_home');
     }

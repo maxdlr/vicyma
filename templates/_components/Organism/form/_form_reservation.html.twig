@@ -1,4 +1,5 @@
-{{ form_start(reservationForm) }}
+{% set form = reservationForm %}
+
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
         include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.adultCount, label: 'Nombre d\'adulte'}),
@@ -6,6 +7,5 @@
         include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.arrivalDate, label: 'Date d\'arrivée', type: 'datetime'}),
         include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.departureDate, label: 'Date de départ', type: 'datetime'})
     ],
-    deletePath: '#'
+    deleteRoute: 'app_reservation_delete'
 }) }}
-{{ form_end(reservationForm) }}

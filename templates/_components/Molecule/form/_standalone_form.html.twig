@@ -1,15 +1,15 @@
+{% set object = form.vars.value %}
 {% set buttons = [
     save ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Enregistrer', icon: 'floppy-fill'}) : '',
     edit ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Modifier', icon: 'pencil-fill', colorClass: 'secondary'}) : '',
 ] %}
-{% set object = form.vars.value %}
+{% set deleteButton = delete ? include('_components/Atom/_deleteButton.html.twig', {label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger'}) : '' %}
 
 <section class="row">
     <div class="row sticky-top pt-3 pb-5 bg-light rounded-3 bg-opacity-75">
-        {% if buttons is defined %}
         <h2 class="text-center col-md-6 p-0 m-0">{{ reference|default('Ajouter une reference') }}</h2>
         <div class="d-flex justify-content-center align-items-center col-md-6">
-            {{ delete ? include('_components/Atom/_deleteButton.html.twig', {label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger'}) : '' }}
+            {{ deleteButton|raw }}
             {{ form_start(form) }}
             <div class="d-flex justify-content-center align-items-center">
                 {% for button in buttons %}
@@ -22,9 +22,6 @@
             </div>
         </div>
     </div>
-    {% else %}
-        <h2 class="text-center p-0 m-0">{{ reference|default('Ajouter une reference') }}</h2>
-    {% endif %}
 
     {% if options is defined %}
         <div class="col-sm-4">
