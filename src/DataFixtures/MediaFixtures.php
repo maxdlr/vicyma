@@ -29,15 +29,15 @@ class MediaFixtures extends Fixture
         }
 
         for ($i = 0; $i < count($photos); $i++) {
-            $file = new Media();
+            $media = new Media();
 
-            $file
+            $media
                 ->setMediaPath($photos[$i])
                 ->setMediaSize(filesize('assets/' . $photos[$i]))
                 ->setCreatedOn($faker->dateTimeBetween('- 5 days'));
 
-            $this->setReference('file_' . $i, $file);
-            $manager->persist($file);
+            $this->setReference('media_' . $i, $media);
+            $manager->persist($media);
         }
 
         $manager->flush();
