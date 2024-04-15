@@ -43,14 +43,30 @@ class LodgingType extends AbstractType
             ->add('toiletCount', ChoiceType::class, [
                 'choices' => FormTypeUtils::makeIntChoices(3)
             ])
-            ->add('tvService', CheckboxType::class)
-            ->add('airConditioning', CheckboxType::class)
-            ->add('washer', CheckboxType::class)
-            ->add('waterHeater', CheckboxType::class)
-            ->add('parking', CheckboxType::class)
-            ->add('gate', CheckboxType::class)
-            ->add('animalAllowed', CheckboxType::class)
-            ->add('terrace', CheckboxType::class)
+            ->add('tvService', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('airConditioning', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('washer', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('waterHeater', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('parking', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('gate', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('animalAllowed', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('terrace', CheckboxType::class, [
+                'required' => false
+            ])
             ->add('terraceSurface', NumberType::class)
             ->add('floor', ChoiceType::class, [
                 'choices' => FormTypeUtils::makeIntChoices(3)

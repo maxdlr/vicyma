@@ -18,7 +18,7 @@ class Media
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $mediaName = null;
+    private ?string $mediaPath = null;
 
     #[ORM\Column()]
     private ?float $mediaSize = null;
@@ -39,14 +39,14 @@ class Media
         return $this->id;
     }
 
-    public function getMediaName(): ?string
+    public function getMediaPath(): ?string
     {
-        return $this->mediaName;
+        return $this->mediaPath;
     }
 
-    public function setMediaName(string $mediaName): static
+    public function setMediaPath(string $mediaPath): static
     {
-        $this->mediaName = $mediaName;
+        $this->mediaPath = $mediaPath;
 
         return $this;
     }

@@ -1,7 +1,6 @@
 {% set object = form.vars.value %}
 {% set buttons = [
     save ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Enregistrer', icon: 'floppy-fill'}) : '',
-    edit ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Modifier', icon: 'pencil-fill', colorClass: 'secondary'}) : '',
 ] %}
 {% set deleteButton = delete ? include('_components/Atom/_deleteButton.html.twig', {label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger'}) : '' %}
 

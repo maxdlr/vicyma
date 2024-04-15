@@ -36,7 +36,7 @@ class FormTypeUtils
                 'image/jpg',
                 'image/png',
             ],
-            'mimeTypesMessage' => 'Types de ficher accepté: jpg, png',
+            'mimeTypesMessage' => 'Types de ficher accepté: jpg, jpeg, png',
         ]);
 
         $parameters = [
@@ -52,7 +52,6 @@ class FormTypeUtils
             $parameters['constraints'] = [new All([$file])];
             $parameters['multiple'] = true;
         }
-//        dd($parameters);
         return $parameters;
 
     }

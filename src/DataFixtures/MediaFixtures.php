@@ -16,12 +16,24 @@ class MediaFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        for ($i = 0; $i < AppFixtures::FILE_COUNT; $i++) {
+        $lodgingPhotoDir = 'assets/media/images/lodgings';
+        $lodgingPhotos = array_diff(scandir($lodgingPhotoDir), ['.', '..']);
+
+        $photos = [];
+        foreach ($lodgingPhotos as $floorDir) {
+            $photoPath = $lodgingPhotoDir . '/' . $floorDir;
+            foreach (array_diff(scandir($photoPath), ['.', '..']) as $photo) {
+                $photoPath = str_replace('assets/', '', $photoPath);
+                $photos[] = $photoPath . '/' . $photo;
+            }
+        }
+
+        for ($i = 0; $i < count($photos); $i++) {
             $file = new Media();
 
             $file
-                ->setMediaName($faker->word())
-                ->setMediaSize($faker->randomFloat(2, 2, 30))
+                ->setMediaPath($photos[$i])
+                ->setMediaSize(filesize('assets/' . $photos[$i]))
                 ->setCreatedOn($faker->dateTimeBetween('- 5 days'));
 
             $this->setReference('file_' . $i, $file);
