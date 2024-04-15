@@ -42,9 +42,10 @@ class UploadManager extends AbstractController
     public function uploadMany(
         FormInterface $form,
         object        $object
-    ): void
+    ): bool
     {
         $mediaFiles = $form->get('photos')->getData();
+        $validation = [];
 
         foreach ($mediaFiles as $mediaFile) {
             if ($mediaFile) {
@@ -59,8 +60,12 @@ class UploadManager extends AbstractController
                     ->addLodging($object);
 
                 $this->entityManager->persist($media);
+                $validation[] = true;
+            } else {
+                $validation[] = false;
             }
         }
+        return !in_array(false, $validation);
     }
 
     public function saveFile(UploadedFile $mediaFile): array

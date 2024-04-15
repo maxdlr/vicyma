@@ -5,6 +5,7 @@ namespace App\Crud;
 use App\Crud\Manager\AbstractCrud;
 use App\Crud\Manager\CrudSetting;
 use App\Entity\Message;
+use App\Entity\User;
 use App\Form\MessageType;
 use DateTime;
 use Symfony\Component\Form\FormInterface;
@@ -23,9 +24,17 @@ class MessageCrud extends AbstractCrud
             $request,
             $options,
             function ($form, $object) use ($options) {
+                assert();
+
+                if (!$options['user'] instanceof User || !$object instanceof Message) {
+                    return false;
+                }
+
                 $object
                     ->setSentOn(new DateTime('now'))
                     ->setUser($options['user']);
+
+                return true;
             }
         );
     }

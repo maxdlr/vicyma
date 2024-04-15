@@ -47,7 +47,9 @@ class SaveManager extends AbstractController
             try {
                 $object = $form->getData();
                 if ($do !== null) {
-                    $do($form, $object);
+                    if ($do($form, $object) !== true) {
+                        return $form;
+                    };
                 }
 
                 $this->entityManager->persist($object);
