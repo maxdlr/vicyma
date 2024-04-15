@@ -14,10 +14,10 @@ class Message
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 300)]
     private ?string $subject = null;
 
-    #[ORM\Column(length: 500)]
+    #[ORM\Column(length: 2000)]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]

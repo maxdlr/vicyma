@@ -21,11 +21,15 @@ class BedType extends AbstractType
         $builder
             ->add('height', ChoiceType::class, [
                 'choices' => FormTypeUtils::makeChoices(['180', '190', '200']),
+                'required' => true,
             ])
             ->add('width', ChoiceType::class, [
-                'choices' => FormTypeUtils::makeChoices(['140', '160', '180', '200'])
+                'choices' => FormTypeUtils::makeChoices(['140', '160', '180', '200']),
+                'required' => true,
             ])
-            ->add('isExtra', CheckboxType::class);
+            ->add('isExtra', CheckboxType::class, [
+                'required' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

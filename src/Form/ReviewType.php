@@ -19,12 +19,16 @@ class ReviewType extends AbstractType
     {
         $builder
             ->add('rate', ChoiceType::class, [
-                'choices' => FormTypeUtils::makeIntChoices(5)
+                'choices' => FormTypeUtils::makeIntChoices(5),
+                'required' => true,
             ])
-            ->add('comment', TextareaType::class)
+            ->add('comment', TextareaType::class, [
+                'required' => true,
+            ])
             ->add('lodging', EntityType::class, [
                 'class' => Lodging::class,
                 'choice_label' => 'name',
+                'required' => true,
             ]);
     }
 

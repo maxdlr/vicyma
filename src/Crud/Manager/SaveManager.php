@@ -25,6 +25,7 @@ class SaveManager extends AbstractController
      * @param object $object
      * @param string $formType
      * @param Request $request
+     * @param array $options
      * @param callable|null $do
      * @return FormInterface|true
      * @throws Exception
@@ -33,20 +34,20 @@ class SaveManager extends AbstractController
         object    $object,
         string    $formType,
         Request   $request,
+        array     $options = [],
         ?callable $do = null
     ): FormInterface|true
     {
-        $form = $this->createForm($formType, $object);
+        $form = $this->createForm($formType, $object, $options);
         $form->handleRequest($request);
         $saved = false;
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             try {
-                if ($do === null) {
-                    $object = $form->getData();
-                } else {
-                    $object = $do($form, $object);
+                $object = $form->getData();
+                if ($do !== null) {
+                    $do($form, $object);
                 }
 
                 $this->entityManager->persist($object);

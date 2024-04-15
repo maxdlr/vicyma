@@ -31,9 +31,9 @@ abstract class AbstractCrud
     /**
      * @throws Exception
      */
-    public function save(Request $request, object $object): FormInterface|true
+    public function save(Request $request, object $object, array $options = []): FormInterface|true
     {
-        return $this->saveManager->handleAndSave($object, $this->formType, $request);
+        return $this->saveManager->handleAndSave($object, $this->formType, $request, $options);
     }
 
     /**

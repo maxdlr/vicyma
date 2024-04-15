@@ -16,7 +16,10 @@ class MediaType extends AbstractType
     {
         $builder
             ->add('media', FileType::class,
-                FormTypeUtils::makeFileUploadParameters()
+                [
+                    ...FormTypeUtils::makeFileUploadParameters(),
+                    'required' => true
+                ]
             );
     }
 

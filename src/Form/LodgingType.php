@@ -83,7 +83,10 @@ class LodgingType extends AbstractType
                 'multiple' => true,
                 'autocomplete' => true
             ])
-            ->add('photos', FileType::class, FormTypeUtils::makeFileUploadParameters(true));
+            ->add('photos', FileType::class, [
+                ...FormTypeUtils::makeFileUploadParameters(true),
+                'required' => false
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

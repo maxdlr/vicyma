@@ -16,15 +16,19 @@ use Symfony\Component\Routing\Attribute\Route;
 class MediaCrud extends AbstractCrud
 {
     /**
+     * @param Request $request
+     * @param object $object
+     * @param array $options
+     * @return FormInterface|true
      * @throws Exception
      */
-    public function save(Request $request, object $object): FormInterface|true
+    public function save(Request $request, object $object, array $options = []): FormInterface|true
     {
         return $this->saveManager->handleAndSave(
             $object,
             $this->formType,
             $request,
-            fn($form, $object) => $this->uploadManager->uploadOne($form, $object)
+            do: fn($form, $object) => $this->uploadManager->uploadOne($form, $object)
         );
     }
 

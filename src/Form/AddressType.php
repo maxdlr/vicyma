@@ -19,7 +19,9 @@ class AddressType extends AbstractType
     {
         $builder
             ->add('line1', TextType::class)
-            ->add('line2', TextType::class)
+            ->add('line2', TextType::class, [
+                'required' => false,
+            ])
             ->add('zipcode', TextType::class)
             ->add('city', TextType::class)
             ->add('region', TextType::class)

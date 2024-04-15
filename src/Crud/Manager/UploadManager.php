@@ -24,7 +24,7 @@ class UploadManager extends AbstractController
     public function uploadOne(
         FormInterface $form,
         object        $object
-    ): object
+    ): void
     {
         /** @var UploadedFile $mediaFile */
         $mediaFile = $form->get('media')->getData();
@@ -36,16 +36,14 @@ class UploadManager extends AbstractController
                 ->setMediaPath('media/' . $savedFile['newFilename'])
                 ->setMediaSize($savedFile['fileSize'])
                 ->setCreatedOn(new DateTime('now'));
-
         }
-        return $object;
     }
 
     public function uploadMany(
-        FormInterface $form
-    ): object
+        FormInterface $form,
+        object        $object
+    ): void
     {
-        $object = $form->getData();
         $mediaFiles = $form->get('photos')->getData();
 
         foreach ($mediaFiles as $mediaFile) {
@@ -63,7 +61,6 @@ class UploadManager extends AbstractController
                 $this->entityManager->persist($media);
             }
         }
-        return $object;
     }
 
     public function saveFile(UploadedFile $mediaFile): array

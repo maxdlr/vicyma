@@ -34,7 +34,8 @@ class ReservationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Reservation::class,
-            'lodging' => null
+            'lodging' => null,
+            'user' => null
         ]);
     }
 }
