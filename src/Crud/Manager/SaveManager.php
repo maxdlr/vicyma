@@ -15,7 +15,9 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class SaveManager extends AbstractController
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager
+    )
     {
     }
 
@@ -57,39 +59,5 @@ class SaveManager extends AbstractController
 
         }
         return $saved ? true : $form;
-    }
-
-    public function upload(
-        FormInterface    $form,
-        object           $object,
-        SluggerInterface $slugger
-    ): object
-    {
-        /** @var UploadedFile $mediaFile */
-        $mediaFile = $form->get('media')->getData();
-
-        if ($mediaFile) {
-            $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
-
-            $safeFilename = $slugger->slug($originalFilename);
-            $newFilename = $safeFilename . '-' . uniqid() . '.' . $mediaFile->guessExtension();
-            $fileSize = $mediaFile->getSize();
-
-            try {
-                $mediaFile->move(
-                    $this->getParameter('media_directory'),
-                    $newFilename
-                );
-            } catch (FileException $e) {
-                throw new FileException($e);
-            }
-
-            $object
-                ->setMediaPath(new File('media/' . $newFilename, true))
-                ->setMediaSize($fileSize)
-                ->setCreatedOn(new DateTime('now'));
-
-        }
-        return $object;
     }
 }

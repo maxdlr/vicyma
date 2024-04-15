@@ -15,24 +15,23 @@ abstract class AbstractCrud
     /**
      * @param SaveManager $saveManager
      * @param DeleteManager $deleteManager
+     * @param UploadManager $uploadManager
      * @throws Exception
      */
     public function __construct(
         protected SaveManager   $saveManager,
         protected DeleteManager $deleteManager,
+        protected UploadManager $uploadManager,
     )
     {
         $this->entity = $this->getCrudSetting('entity');
         $this->formType = $this->getCrudSetting('formType');
     }
 
-    public function create(Request $request): FormInterface|true
-    {
-        $object = new $this->entity();
-        return $this->saveManager->handleAndSave($object, $this->formType, $request);
-    }
-
-    public function edit(Request $request, object $object): FormInterface|true
+    /**
+     * @throws Exception
+     */
+    public function save(Request $request, object $object): FormInterface|true
     {
         return $this->saveManager->handleAndSave($object, $this->formType, $request);
     }

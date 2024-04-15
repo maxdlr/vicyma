@@ -1,0 +1,15 @@
+<section class="py-4 px-2">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+        {% for media in medias %}
+            <div class="position-relative m-0 p-0">
+                <img src="{{ asset('build/'~media.mediaPath) }}" alt="" class="img-fluid rounded-4">
+                <div class="position-absolute end-0 top-0 p-3">
+                    {{ include('_components/Atom/_deleteButton.html.twig', {
+                        object: media,
+                        deleteRoute: 'app_media_delete'
+                    }) }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
