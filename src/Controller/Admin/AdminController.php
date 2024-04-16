@@ -2,10 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\ReviewCrud;
-use App\Entity\Review;
-use App\Repository\LodgingRepository;
-use App\Repository\ReviewRepository;
+use App\Crud\AddressCrud;
+use App\Entity\Address;
+use App\Repository\AddressRepository;
 use App\Repository\UserRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,9 +16,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly ReviewCrud        $reviewCrud,
-        private readonly ReviewRepository  $reviewRepository,
-        private readonly LodgingRepository $lodgingRepository,
+        private readonly AddressCrud       $addressCrud,
+        private readonly AddressRepository $addressRepository,
         private readonly UserRepository    $userRepository
     )
     {
@@ -31,19 +29,17 @@ class AdminController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(Request $request): Response
     {
-        $lodging = $this->lodgingRepository->find(5);
+        $address = new Address();
         $user = $this->userRepository->find(1);
+//        $address = $this->addressRepository->findOneBy(['isDeleted' => false]);
+        $addressForm = $this->addressCrud->save($request, $address, ['user' => $user]);
 
-//        $review = new Review();
-        $review = $this->reviewRepository->find(1);
-        $reviewForm = $this->reviewCrud->save($request, $review, ['lodging' => $lodging, 'user' => $user]);
-
-        if ($reviewForm === true) {
+        if ($addressForm === true) {
             return $this->redirectToRoute('app_home');
         }
 
         return $this->render('admin/dashboard.html.twig', [
-            'reviewForm' => $reviewForm->createView(),
+            'addressForm' => $addressForm->createView(),
         ]);
     }
 }

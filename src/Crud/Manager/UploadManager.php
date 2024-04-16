@@ -24,8 +24,9 @@ class UploadManager extends AbstractController
     public function uploadOne(
         FormInterface $form,
         object        $object
-    ): void
+    ): bool
     {
+        $uploaded = false;
         /** @var UploadedFile $mediaFile */
         $mediaFile = $form->get('media')->getData();
 
@@ -36,7 +37,9 @@ class UploadManager extends AbstractController
                 ->setMediaPath('media/' . $savedFile['newFilename'])
                 ->setMediaSize($savedFile['fileSize'])
                 ->setCreatedOn(new DateTime('now'));
+            $uploaded = true;
         }
+        return $uploaded;
     }
 
     public function uploadMany(

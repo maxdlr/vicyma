@@ -36,50 +36,45 @@ class ReservationCrud extends AbstractCrud
         parent::__construct($saveManager, $deleteManager, $uploadManager);
     }
 
-    public function save(Request $request, object $object, array $options = []): FormInterface|true
+    public function save(Request $request, object $object, array $options = [], ?callable $do = null): FormInterface|true
     {
-        return $this->saveManager->handleAndSave(
-            $object,
-            $this->formType,
-            $request,
-            $options,
-            function ($form, $object
-            ) use ($options) {
+        return parent::save($request, $object, $options, function ($form, $object
+        ) use ($options) {
 
-                $lodging = $options['lodging'];
-                $user = $options['user'];
+            $lodging = $options['lodging'];
+            $user = $options['user'];
 
-                assert($lodging instanceof Lodging);
-                assert($user instanceof User);
-                assert($object instanceof Reservation);
+            assert($lodging instanceof Lodging);
+            assert($user instanceof User);
+            assert($object instanceof Reservation);
 
-                if ($object->getArrivalDate()->diff($object->getDepartureDate())->invert) {
-                    return false;
-                }
+            if ($object->getArrivalDate()->diff($object->getDepartureDate())->invert) {
+                return false;
+            }
 
-                $reservationPrice = YieldManager::calculateReservationPrice(
-                    $object->getArrivalDate(),
-                    $object->getDepartureDate(),
-                    $lodging
+            $reservationPrice = YieldManager::calculateReservationPrice(
+                $object->getArrivalDate(),
+                $object->getDepartureDate(),
+                $lodging
+            );
+
+            $object
+                ->setReservationNumber($user, $object)
+                ->addLodging($lodging)
+                ->setPrice($reservationPrice)
+                ->setUser($user);
+
+            if ($object->getId() === null) {
+                $object->setReservationStatus(
+                    $this->reservationStatusRepository->findOneBy(
+                        [
+                            'name' => ReservationStatusEnum::PENDING->value
+                        ]
+                    )
                 );
-
-                $object
-                    ->setReservationNumber($user, $object)
-                    ->addLodging($lodging)
-                    ->setPrice($reservationPrice)
-                    ->setUser($user);
-
-                if ($object->getId() === null) {
-                    $object->setReservationStatus(
-                        $this->reservationStatusRepository->findOneBy(
-                            [
-                                'name' => ReservationStatusEnum::PENDING->value
-                            ]
-                        )
-                    );
-                }
-                return true;
-            });
+            }
+            return true;
+        });
     }
 
 

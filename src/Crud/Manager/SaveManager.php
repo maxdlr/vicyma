@@ -2,16 +2,11 @@
 
 namespace App\Crud\Manager;
 
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class SaveManager extends AbstractController
 {
@@ -40,6 +35,7 @@ class SaveManager extends AbstractController
     ): FormInterface|true
     {
         $form = $this->createForm($formType, $object, $options);
+        $entityManager = $this->entityManager;
         $form->handleRequest($request);
         $saved = false;
 
@@ -48,13 +44,13 @@ class SaveManager extends AbstractController
             try {
                 $object = $form->getData();
                 if ($do !== null) {
-                    if ($do($form, $object) !== true) {
+                    if ($do($form, $object, $entityManager) !== true) {
                         return $form;
                     };
                 }
 
-                $this->entityManager->persist($object);
-                $this->entityManager->flush();
+                $entityManager->persist($object);
+                $entityManager->flush();
                 $saved = true;
 
             } catch (Exception $e) {

@@ -1,4 +1,4 @@
-{% set form = addressForm %}
+{% set form = userForm %}
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
         include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.email, label: 'E-mail', placeholder: 'monemail@gmail.com'}),

@@ -14,14 +14,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[CrudSetting(entity: Lodging::class, formType: LodgingType::class)]
 class LodgingCrud extends AbstractCrud
 {
-    public function save(Request $request, object $object, array $options = []): FormInterface|true
+    public function save(Request $request, object $object, array $options = [], ?callable $do = null): FormInterface|true
     {
-        return $this->saveManager->handleAndSave(
-            $object,
-            $this->formType,
-            $request,
-            do: fn($form, $object) => $this->uploadManager->uploadMany($form, $object)
-        );
+        return parent::save($request, $object, $options, function ($form, $object) {
+            return $this->uploadManager->uploadMany($form, $object);
+        });
     }
 
     #[Route('lodging/{id}', name: 'app_lodging_delete', methods: ['POST'])]

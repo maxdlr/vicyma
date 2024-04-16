@@ -12,6 +12,7 @@ use App\Entity\Review;
 use App\Entity\User;
 use App\Form\ReviewType;
 use DateTime;
+use http\Client;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,33 +21,23 @@ use Symfony\Component\Routing\Attribute\Route;
 #[CrudSetting(entity: Review::class, formType: ReviewType::class)]
 class ReviewCrud extends AbstractCrud
 {
-    public function __construct(SaveManager $saveManager, DeleteManager $deleteManager, UploadManager $uploadManager)
+    public function save(Request $request, object $object, array $options = [], ?callable $do = null): FormInterface|true
     {
-        parent::__construct($saveManager, $deleteManager, $uploadManager);
-    }
+        return parent::save($request, $object, $options, function ($form, $object) use ($options) {
+            $lodging = $options['lodging'];
+            $user = $options['user'];
 
-    public function save(Request $request, object $object, array $options = []): FormInterface|true
-    {
-        return $this->saveManager->handleAndSave(
-            $object,
-            $this->formType,
-            $request,
-            $options,
-            function ($form, $object) use ($options) {
-                $lodging = $options['lodging'];
-                $user = $options['user'];
+            assert($lodging instanceof Lodging);
+            assert($user instanceof User);
+            assert($object instanceof Review);
 
-                assert($lodging instanceof Lodging);
-                assert($user instanceof User);
-                assert($object instanceof Review);
+            $object
+                ->setPublishedOn(new DateTime())
+                ->setUser($user)
+                ->setLodging($lodging);
 
-                $object
-                    ->setPublishedOn(new DateTime())
-                    ->setUser($user)
-                    ->setLodging($lodging);
-
-                return true;
-            }
+            return true;
+        }
         );
     }
 

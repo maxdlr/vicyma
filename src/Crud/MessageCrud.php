@@ -16,26 +16,20 @@ use Symfony\Component\Routing\Attribute\Route;
 #[CrudSetting(entity: Message::class, formType: MessageType::class)]
 class MessageCrud extends AbstractCrud
 {
-    public function save(Request $request, object $object, array $options = []): FormInterface|true
+    public function save(Request $request, object $object, array $options = [], ?callable $do = null): FormInterface|true
     {
-        return $this->saveManager->handleAndSave(
-            $object,
-            $this->formType,
-            $request,
-            $options,
-            function ($form, $object) use ($options) {
-                assert();
+        return parent::save($request, $object, $options, function ($form, $object) use ($options) {
+            $user = $options['user'];
 
-                if (!$options['user'] instanceof User || !$object instanceof Message) {
-                    return false;
-                }
+            assert($user instanceof User);
+            assert($object instanceof Message);
 
-                $object
-                    ->setSentOn(new DateTime('now'))
-                    ->setUser($options['user']);
+            $object
+                ->setSentOn(new DateTime('now'))
+                ->setUser($options['user']);
 
-                return true;
-            }
+            return true;
+        }
         );
     }
 
