@@ -33,13 +33,15 @@ class AdminController extends AbstractController
     {
         $lodging = $this->lodgingRepository->find(1);
         $user = $this->userRepository->find(1);
-        $reservation = $this->reservationRepository->find(1);
+        $reservation = $this->reservationRepository->find(2);
 //        $reservation = new Reservation();
         $reservationForm = $this->reservationCrud->save($request, $reservation, ['lodging' => $lodging, 'user' => $user]);
 
         if ($reservationForm === true) {
             return $this->redirectToRoute('app_home');
         }
+
+//        dump($reservation);
 
         return $this->render('admin/dashboard.html.twig', [
             'reservationForm' => $reservationForm->createView(),

@@ -23,7 +23,7 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
 
             $lodging
                 ->setName($faker->word())
-                ->setDescription($faker->paragraph(10, true))
+                ->setDescription($faker->paragraph(10))
                 ->setCapacity($faker->numberBetween(4, 6))
                 ->setRoomCount($faker->numberBetween(1, 4))
                 ->setSurface($faker->randomFloat(2, 30, 50))

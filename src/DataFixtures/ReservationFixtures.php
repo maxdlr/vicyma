@@ -26,7 +26,7 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
             $departureDate = $faker->dateTimeBetween('+ 9 days', '+ 20 days');
             $user = $this->getReference('user_' . rand(1, AppFixtures::USER_COUNT - 1));
             $reservation
-                ->setAdultCount($faker->numberBetween(1, 6))
+                ->setAdultCount($faker->numberBetween(1, 4))
                 ->setChildCount($faker->numberBetween(0, 4))
                 ->setPrice($faker->randomElement([null, $faker->randomFloat(2, 200, 10000)]))
                 ->setArrivalDate($arrivalDate)
