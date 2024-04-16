@@ -2,10 +2,10 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\ReservationCrud;
-use App\Entity\Reservation;
+use App\Crud\ReviewCrud;
+use App\Entity\Review;
 use App\Repository\LodgingRepository;
-use App\Repository\ReservationRepository;
+use App\Repository\ReviewRepository;
 use App\Repository\UserRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,10 +17,10 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly ReservationCrud       $reservationCrud,
-        private readonly ReservationRepository $reservationRepository,
-        private readonly LodgingRepository     $lodgingRepository,
-        private readonly UserRepository        $userRepository
+        private readonly ReviewCrud        $reviewCrud,
+        private readonly ReviewRepository  $reviewRepository,
+        private readonly LodgingRepository $lodgingRepository,
+        private readonly UserRepository    $userRepository
     )
     {
     }
@@ -31,20 +31,19 @@ class AdminController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(Request $request): Response
     {
-        $lodging = $this->lodgingRepository->find(1);
+        $lodging = $this->lodgingRepository->find(5);
         $user = $this->userRepository->find(1);
-        $reservation = $this->reservationRepository->find(2);
-//        $reservation = new Reservation();
-        $reservationForm = $this->reservationCrud->save($request, $reservation, ['lodging' => $lodging, 'user' => $user]);
 
-        if ($reservationForm === true) {
+//        $review = new Review();
+        $review = $this->reviewRepository->find(1);
+        $reviewForm = $this->reviewCrud->save($request, $review, ['lodging' => $lodging, 'user' => $user]);
+
+        if ($reviewForm === true) {
             return $this->redirectToRoute('app_home');
         }
 
-//        dump($reservation);
-
         return $this->render('admin/dashboard.html.twig', [
-            'reservationForm' => $reservationForm->createView(),
+            'reviewForm' => $reviewForm->createView(),
         ]);
     }
 }

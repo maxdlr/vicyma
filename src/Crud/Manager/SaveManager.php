@@ -22,6 +22,7 @@ class SaveManager extends AbstractController
     }
 
     /**
+     * $do() inherits some vars: $do($form, $object)
      * @param object $object
      * @param string $formType
      * @param Request $request

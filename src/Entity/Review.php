@@ -17,7 +17,7 @@ class Review
     #[ORM\Column]
     private ?int $rate = null;
 
-    #[ORM\Column(length: 500, nullable: true)]
+    #[ORM\Column(length: 1000, nullable: true)]
     private ?string $comment = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

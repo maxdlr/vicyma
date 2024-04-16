@@ -1,7 +1,6 @@
-{% set form = addressForm %}
+{% set form = reviewForm %}
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
-        include('_components/Atom/form/_select-field.html.twig', {formRow: reviewForm.lodging, label: 'Appartement', placeholder: 'Appartement concerné'}),
         include('_components/Atom/form/_select-field.html.twig', {formRow: reviewForm.rate, label: 'Note'}),
         include('_components/Atom/form/_text_area-field.html.twig', {formRow: reviewForm.comment, label: 'Commentaire', placeholder: 'Bel emplacement...'}),
     ],
