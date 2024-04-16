@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[CrudSetting(entity: Media::class, formType: MediaType::class)]
 class MediaCrud extends AbstractCrud
 {
-    public function save(Request $request, object $object, array $options = [], ?callable $do = null): FormInterface|true
+    public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
     {
         return parent::save($request, $object, $options, function ($form, $object) {
             return $this->uploadManager->uploadOne($form, $object);

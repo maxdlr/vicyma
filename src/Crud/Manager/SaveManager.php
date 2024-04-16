@@ -22,7 +22,7 @@ class SaveManager extends AbstractController
      * @param string $formType
      * @param Request $request
      * @param array $options
-     * @param callable|null $do
+     * @param callable|null $doBeforeSave
      * @return FormInterface|true
      * @throws Exception
      */
@@ -31,7 +31,7 @@ class SaveManager extends AbstractController
         string    $formType,
         Request   $request,
         array     $options = [],
-        ?callable $do = null
+        ?callable $doBeforeSave = null
     ): FormInterface|true
     {
         $form = $this->createForm($formType, $object, $options);
@@ -43,8 +43,8 @@ class SaveManager extends AbstractController
 
             try {
                 $object = $form->getData();
-                if ($do !== null) {
-                    if ($do($form, $object, $entityManager) !== true) {
+                if ($doBeforeSave !== null) {
+                    if ($doBeforeSave($form, $object, $entityManager) !== true) {
                         return $form;
                     };
                 }

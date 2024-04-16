@@ -40,7 +40,8 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 ->setPhoneNumber($faker->phoneNumber())
                 ->setRoles([RoleEnum::ROLE_USER])
                 ->setPassword($hashedPassword)
-                ->setAddress($this->getReference('address_' . rand(1, AppFixtures::ADDRESS_COUNT - 1)))
+//                ->setAddress($this->getReference('address_' . rand(1, AppFixtures::ADDRESS_COUNT - 1)))
+                ->setAddress(null)
                 ->setEmail($faker->email());
 
             $this->setReference('user_' . $i, $user);

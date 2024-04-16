@@ -17,15 +17,17 @@ use Symfony\Component\Routing\Attribute\Route;
 #[CrudSetting(entity: Address::class, formType: AddressType::class)]
 class AddressCrud extends AbstractCrud
 {
-    public function save(Request $request, object $object, array $options = [], ?callable $do = null): FormInterface|true
+    public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
     {
         return parent::save($request, $object, $options, function ($form, $object, $entityManager) use ($options) {
+
             $user = $options['user'];
             assert($object instanceof Address);
             assert($user instanceof User);
             assert($entityManager instanceof EntityManagerInterface);
             $user->setAddress($object);
             return true;
+
         });
     }
 

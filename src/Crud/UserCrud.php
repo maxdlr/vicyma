@@ -32,7 +32,7 @@ class UserCrud extends AbstractCrud
         parent::__construct($saveManager, $deleteManager, $uploadManager);
     }
 
-    public function save(Request $request, object $object, array $options = [], ?callable $do = null): FormInterface|true
+    public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
     {
         $passwordHasher = $this->passwordHasher;
         return parent::save($request, $object, $options, function ($form, $object) use ($passwordHasher) {
@@ -45,7 +45,8 @@ class UserCrud extends AbstractCrud
                 $plainTextPassword
             );
             $object->setPassword($hashedPassword);
-            $object->setRoles(['ROLE_USER']);
+
+            if ($object->getRoles() === []) $object->setRoles(['ROLE_USER']);
 
             return true;
         }
