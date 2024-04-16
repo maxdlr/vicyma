@@ -8,7 +8,7 @@ Appartment renting website for the Vicyma residence in Bafoussam, Cameroon.
 make run
 ```
 
-### Run tests
+### Run test
 ```bash
 make tests
 ```
