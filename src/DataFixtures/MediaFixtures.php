@@ -6,7 +6,6 @@ use App\Entity\Media;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
-use Faker\Factory;
 
 class MediaFixtures extends Fixture
 {
@@ -15,17 +14,26 @@ class MediaFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create();
-        for ($i = 0; $i < AppFixtures::FILE_COUNT; $i++) {
-            $file = new Media();
+        $lodgingPhotoDir = 'assets/media/images/lodgings';
+        $lodgingPhotos = array_diff(scandir($lodgingPhotoDir), ['.', '..']);
 
-            $file
-                ->setMediaName($faker->word())
-                ->setMediaSize($faker->randomFloat(2, 2, 30))
-                ->setCreatedOn($faker->dateTimeBetween('- 5 days'));
+        $photos = [];
+        foreach ($lodgingPhotos as $floorDir) {
+            $photoPath = $lodgingPhotoDir . '/' . $floorDir;
+            foreach (array_diff(scandir($photoPath), ['.', '..']) as $photo) {
+                $photoPath = str_replace('assets/', '', $photoPath);
+                $photos[] = $photoPath . '/' . $photo;
+            }
+        }
 
-            $this->setReference('file_' . $i, $file);
-            $manager->persist($file);
+        for ($i = 0; $i < count($photos); $i++) {
+            $media = new Media();
+            $media
+                ->setMediaPath($photos[$i])
+                ->setMediaSize(filesize('assets/' . $photos[$i]));
+
+            $this->setReference('media_' . $i, $media);
+            $manager->persist($media);
         }
 
         $manager->flush();

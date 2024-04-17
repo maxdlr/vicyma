@@ -1,26 +1,26 @@
+{% set object = form.vars.value %}
 {% set buttons = [
-    save ? include('_components/_button.html.twig', {type: 'submit', label: 'Enregistrer', icon: 'floppy-fill'}) : '',
-    edit ? include('_components/_button.html.twig', {type: 'submit', label: 'Modifier', icon: 'pencil-fill', colorClass: 'secondary'}) : '',
-    delete ? include('_components/_button.html.twig', {link: deletePath, label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger'}) : ''
+    save ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Enregistrer', icon: 'floppy-fill'}) : '',
 ] %}
+{% set deleteButton = delete ? include('_components/Atom/_deleteButton.html.twig', {label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger'}) : '' %}
 
 <section class="row">
     <div class="row sticky-top pt-3 pb-5 bg-light rounded-3 bg-opacity-75">
-        {% if buttons is defined %}
         <h2 class="text-center col-md-6 p-0 m-0">{{ reference|default('Ajouter une reference') }}</h2>
         <div class="d-flex justify-content-center align-items-center col-md-6">
-            {% for button in buttons %}
-                {% if button is not empty %}
-                    <div class="mx-2">
-                        {{ button|raw }}
-                    </div>
-                {% endif %}
-            {% endfor %}
+            {{ deleteButton|raw }}
+            {{ form_start(form) }}
+            <div class="d-flex justify-content-center align-items-center">
+                {% for button in buttons %}
+                    {% if button is not empty %}
+                        <div class="mx-2">
+                            {{ button|raw }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
-    {% else %}
-        <h2 class="text-center p-0 m-0">{{ reference|default('Ajouter une reference') }}</h2>
-    {% endif %}
 
     {% if options is defined %}
         <div class="col-sm-4">
@@ -44,5 +44,5 @@
             {% endfor %}
         </div>
     {% endif %}
-
+    {{ form_end(form) }}
 </section>

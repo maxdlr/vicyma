@@ -103,8 +103,13 @@ composer-install: ## Install dependencies
 	@make command-intro-msg msg="Installing composer dependencies"
 	@composer install --no-interaction
 
-runtests: ## Run Tests / testName=TESTNAME to only run TESTNAME
+test: ## Run Tests / testName=TESTNAME to only run TESTNAME
 	@make command-intro-msg msg="Running tests"
+	@$(SYMFONY) d:d:d -f --env=test --if-exists && \
+	$(SYMFONY) d:d:c --env=test --if-not-exists && \
+	$(SYMFONY) --env=test doctrine:schema:create && \
+	$(SYMFONY) --env=test doctrine:fixtures:load --no-interaction \
+
 	@if [ -z $(testName) ]; then \
 		php bin/phpunit --colors=always; \
     else \
@@ -114,6 +119,10 @@ runtests: ## Run Tests / testName=TESTNAME to only run TESTNAME
 yarn-install: ## Install node packages
 	@make command-intro-msg msg="Installing Yarn packages"
 	@yarn install
+
+crud: ## Make a custom CrudController / ex: make crud entity=Lodging var=lodging
+	@make command-intro-msg msg="Creating Crud controller for ${entity}"
+	@sed 's/Address/${entity}/g ; s/address/${var}/g' src/Crud/AddressCrud.php | tee src/Crud/${entity}Crud.php
 
 help: ## Show this help menu
 	@awk -F ':|##' '/^[^\t].+?:.*?##/ {printf "\033[36m%-30s\033[0m %s\n", $$1, $$NF}' $(MAKEFILE_LIST)

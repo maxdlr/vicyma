@@ -26,6 +26,8 @@ class MessageType extends AbstractType
                 'choice_label' => function (Lodging $lodging) {
                     return $lodging->getName();
                 },
+                'empty_data' => null,
+                'required' => false,
             ])
             ->add('reservation', EntityType::class, [
                 'class' => Reservation::class,
@@ -40,6 +42,8 @@ class MessageType extends AbstractType
                         . $reservation->getArrivalDate()->format('d-m-Y') . ' -> '
                         . $reservation->getDepartureDate()->format('d-m-Y') . ')';
                 },
+                'empty_data' => null,
+                'required' => false,
             ]);
     }
 

@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\LodgingRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LodgingRepository::class)]
@@ -70,7 +72,7 @@ class Lodging
     private Collection $beds;
 
     #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'lodgings')]
-    private Collection $files;
+    private Collection $medias;
 
     #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'lodgings')]
     private Collection $reservations;
@@ -84,13 +86,20 @@ class Lodging
     #[ORM\Column]
     private ?bool $airConditioning = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
     public function __construct()
     {
         $this->beds = new ArrayCollection();
-        $this->files = new ArrayCollection();
+        $this->medias = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->createdOn = new \DateTime();
     }
 
     public function getId(): ?int
@@ -329,24 +338,24 @@ class Lodging
     /**
      * @return Collection<int, Media>
      */
-    public function getFiles(): Collection
+    public function getMedias(): Collection
     {
-        return $this->files;
+        return $this->medias;
     }
 
-    public function addFile(Media $file): static
+    public function addMedia(Media $file): static
     {
-        if (!$this->files->contains($file)) {
-            $this->files->add($file);
+        if (!$this->medias->contains($file)) {
+            $this->medias->add($file);
             $file->addLodging($this);
         }
 
         return $this;
     }
 
-    public function removeFile(Media $file): static
+    public function removeMedia(Media $file): static
     {
-        if ($this->files->removeElement($file)) {
+        if ($this->medias->removeElement($file)) {
             $file->removeLodging($this);
         }
 
@@ -450,5 +459,21 @@ class Lodging
         $this->airConditioning = $airConditioning;
 
         return $this;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+    public function getCreatedOn(): ?DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }

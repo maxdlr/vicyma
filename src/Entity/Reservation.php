@@ -3,12 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\ReservationRepository;
+use App\ValueObject\ReservationNumber;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Uid\Uuid;
-use Symfony\Component\Validator\Constraints\Unique;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -18,8 +18,7 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    #[Unique]
+    #[ORM\Column(unique: true)]
     private ?string $reservationNumber = null;
 
     #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'reservations')]
@@ -32,10 +31,10 @@ class Reservation
     private ?int $childCount = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $arrivalDate = null;
+    private ?DateTimeInterface $arrivalDate = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $departureDate = null;
+    private ?DateTimeInterface $departureDate = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $price = null;
@@ -51,11 +50,17 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedOn = null;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
-        $this->reservationNumber = Uuid::v4();
         $this->messages = new ArrayCollection();
+        $this->createdOn = new \DateTime();
     }
 
     public function getId(): ?int
@@ -66,6 +71,13 @@ class Reservation
     public function getReservationNumber(): ?string
     {
         return $this->reservationNumber;
+    }
+
+    public function setReservationNumber(User $user, Reservation $reservation): static
+    {
+
+        $this->reservationNumber = ReservationNumber::new($user, $reservation);
+        return $this;
     }
 
     /**
@@ -116,24 +128,24 @@ class Reservation
         return $this;
     }
 
-    public function getArrivalDate(): ?\DateTimeInterface
+    public function getArrivalDate(): ?DateTimeInterface
     {
         return $this->arrivalDate;
     }
 
-    public function setArrivalDate(\DateTimeInterface $arrivalDate): static
+    public function setArrivalDate(DateTimeInterface $arrivalDate): static
     {
         $this->arrivalDate = $arrivalDate;
 
         return $this;
     }
 
-    public function getDepartureDate(): ?\DateTimeInterface
+    public function getDepartureDate(): ?DateTimeInterface
     {
         return $this->departureDate;
     }
 
-    public function setDepartureDate(\DateTimeInterface $departureDate): static
+    public function setDepartureDate(DateTimeInterface $departureDate): static
     {
         $this->departureDate = $departureDate;
 
@@ -204,5 +216,15 @@ class Reservation
         $this->user = $user;
 
         return $this;
+    }
+
+    public function getCreatedOn(): ?\DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?\DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }

@@ -24,7 +24,6 @@ class ReviewFixtures extends Fixture implements DependentFixtureInterface
             $review
                 ->setRate(rand(1, 5))
                 ->setComment($faker->sentences(5, true))
-                ->setPublishedOn($faker->dateTimeBetween('-2 months'))
                 ->setLodging($faker->randomElement(
                     [
                         null,

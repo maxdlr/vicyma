@@ -6,6 +6,7 @@ use App\Entity\Reservation;
 use App\Form\FormUtils\FormTypeUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,13 +21,15 @@ class ReservationType extends AbstractType
             ->add('childCount', ChoiceType::class, [
                 'choices' => FormTypeUtils::makeIntChoices($options['lodging']->getCapacity())
             ])
-            ->add('arrivalDate', null, [
+            ->add('arrivalDate', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
+                'view_timezone' => 'Africa/Dakar',
             ])
-            ->add('departureDate', null, [
+            ->add('departureDate', DateType::class, [
                 'widget' => 'single_text',
                 'html5' => true,
+                'view_timezone' => 'Africa/Dakar',
             ]);
     }
 
@@ -34,7 +37,8 @@ class ReservationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Reservation::class,
-            'lodging' => null
+            'lodging' => null,
+            'user' => null
         ]);
     }
 }

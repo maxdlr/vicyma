@@ -18,7 +18,7 @@ class Media
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $mediaName = null;
+    private ?string $mediaPath = null;
 
     #[ORM\Column()]
     private ?float $mediaSize = null;
@@ -29,9 +29,13 @@ class Media
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTimeInterface $createdOn = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
+        $this->createdOn = new \DateTime();
     }
 
     public function getId(): ?int
@@ -39,14 +43,14 @@ class Media
         return $this->id;
     }
 
-    public function getMediaName(): ?string
+    public function getMediaPath(): ?string
     {
-        return $this->mediaName;
+        return $this->mediaPath;
     }
 
-    public function setMediaName(string $mediaName): static
+    public function setMediaPath(string $mediaPath): static
     {
-        $this->mediaName = $mediaName;
+        $this->mediaPath = $mediaPath;
 
         return $this;
     }
@@ -87,15 +91,19 @@ class Media
         return $this;
     }
 
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
     public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
     }
 
-    public function setCreatedOn(DateTimeInterface $createdOn): static
+    public function getUpdatedOn(): ?DateTimeInterface
     {
-        $this->createdOn = $createdOn;
-
-        return $this;
+        return $this->updatedOn;
     }
 }

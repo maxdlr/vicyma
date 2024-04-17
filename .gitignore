@@ -15,6 +15,7 @@ src/DataFixtures/AdminFixtures.php
 ###> symfony/phpunit-bridge ###
 .phpunit.result.cache
 /phpunit.xml
+.phpunit.cache/
 ###< symfony/phpunit-bridge ###
 
 ###> symfony/webpack-encore-bundle ###

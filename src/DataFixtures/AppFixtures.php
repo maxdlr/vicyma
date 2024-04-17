@@ -9,7 +9,7 @@ class AppFixtures extends Fixture
 {
     public const BED_COUNT = 10;
     public const LODGING_COUNT = 10;
-    public const FILE_COUNT = 30;
+    public const MEDIA_COUNT = 30;
     public const RESERVATION_COUNT = 10;
     public const MESSAGE_COUNT = 30;
     public const REVIEW_COUNT = 15;

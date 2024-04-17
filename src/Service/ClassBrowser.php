@@ -164,12 +164,12 @@ class ClassBrowser
     /**
      * @throws Exception
      */
-    public static function findAttribute(string $classFQCN, string $search): ?ReflectionAttribute
+    public static function findAttribute(string $classFQCN, string $searchFQCN): ?ReflectionAttribute
     {
         try {
             $reflection = new ReflectionClass($classFQCN);
             foreach ($reflection->getAttributes() as $attribute) {
-                if ($attribute->getName() === $search) {
+                if ($attribute->getName() === $searchFQCN) {
                     return $attribute;
                 }
             }

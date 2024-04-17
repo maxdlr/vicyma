@@ -3,24 +3,18 @@
 namespace App\Form;
 
 use App\Entity\Bed;
-use App\Entity\Media;
 use App\Entity\Lodging;
-use App\Entity\Reservation;
 use App\Form\FormUtils\FormTypeUtils;
-use App\Form\Style\FormTypeStyle;
-use Doctrine\DBAL\Types\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use function Symfony\Component\String\u;
 
 class LodgingType extends AbstractType
 {
@@ -43,14 +37,30 @@ class LodgingType extends AbstractType
             ->add('toiletCount', ChoiceType::class, [
                 'choices' => FormTypeUtils::makeIntChoices(3)
             ])
-            ->add('tvService', CheckboxType::class)
-            ->add('airConditioning', CheckboxType::class)
-            ->add('washer', CheckboxType::class)
-            ->add('waterHeater', CheckboxType::class)
-            ->add('parking', CheckboxType::class)
-            ->add('gate', CheckboxType::class)
-            ->add('animalAllowed', CheckboxType::class)
-            ->add('terrace', CheckboxType::class)
+            ->add('tvService', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('airConditioning', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('washer', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('waterHeater', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('parking', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('gate', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('animalAllowed', CheckboxType::class, [
+                'required' => false
+            ])
+            ->add('terrace', CheckboxType::class, [
+                'required' => false
+            ])
             ->add('terraceSurface', NumberType::class)
             ->add('floor', ChoiceType::class, [
                 'choices' => FormTypeUtils::makeIntChoices(3)
@@ -67,7 +77,10 @@ class LodgingType extends AbstractType
                 'multiple' => true,
                 'autocomplete' => true
             ])
-            ->add('photos', FileType::class, FormTypeUtils::makeFileUploadParameters(true));
+            ->add('photos', FileType::class, [
+                ...FormTypeUtils::makeFileUploadParameters(true),
+                'required' => false
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

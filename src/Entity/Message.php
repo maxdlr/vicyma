@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\MessageRepository;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,10 +15,10 @@ class Message
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 300)]
     private ?string $subject = null;
 
-    #[ORM\Column(length: 500)]
+    #[ORM\Column(length: 2000)]
     private ?string $content = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
@@ -26,12 +27,20 @@ class Message
     #[ORM\ManyToOne(inversedBy: 'messages')]
     private ?Reservation $reservation = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $sentOn = null;
-
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
+    public function __construct()
+    {
+        $this->createdOn = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -86,18 +95,6 @@ class Message
         return $this;
     }
 
-    public function getSentOn(): ?\DateTimeInterface
-    {
-        return $this->sentOn;
-    }
-
-    public function setSentOn(\DateTimeInterface $sentOn): static
-    {
-        $this->sentOn = $sentOn;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -108,5 +105,21 @@ class Message
         $this->user = $user;
 
         return $this;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+    public function getCreatedOn(): ?DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }
