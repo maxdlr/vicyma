@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ReviewRepository;
+use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,15 +21,23 @@ class Review
     #[ORM\Column(length: 1000, nullable: true)]
     private ?string $comment = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $publishedOn = null;
-
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     private ?Lodging $lodging = null;
 
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
+    public function __construct()
+    {
+        $this->createdOn = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -59,18 +68,6 @@ class Review
         return $this;
     }
 
-    public function getPublishedOn(): ?\DateTimeInterface
-    {
-        return $this->publishedOn;
-    }
-
-    public function setPublishedOn(\DateTimeInterface $publishedOn): static
-    {
-        $this->publishedOn = $publishedOn;
-
-        return $this;
-    }
-
     public function getLodging(): ?Lodging
     {
         return $this->lodging;
@@ -93,5 +90,21 @@ class Review
         $this->user = $user;
 
         return $this;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+    public function getCreatedOn(): ?DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }

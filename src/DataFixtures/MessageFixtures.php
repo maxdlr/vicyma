@@ -24,7 +24,6 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
             $message
                 ->setSubject($faker->sentence())
                 ->setContent($faker->paragraph())
-                ->setSentOn($faker->dateTimeBetween('-2 months'))
                 ->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT - 1)))
                 ->setLodging($faker->randomElement(
                     [

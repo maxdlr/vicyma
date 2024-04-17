@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -59,12 +61,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $isDeleted = false;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
 
     public function __construct()
     {
         $this->messages = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->createdOn = new \DateTime();
     }
 
     public function getId(): ?int
@@ -290,5 +299,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isDeleted = $isDeleted;
 
         return $this;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+    public function getCreatedOn(): ?DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }

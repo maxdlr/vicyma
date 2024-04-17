@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\BedRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BedRepository::class)]
@@ -27,9 +29,19 @@ class Bed
     #[ORM\ManyToMany(targetEntity: Lodging::class, mappedBy: 'beds')]
     private Collection $lodgings;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
+
+        $this->createdOn = new \DateTime();
+
+
     }
 
     public function getId(): ?int
@@ -98,5 +110,21 @@ class Bed
         }
 
         return $this;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+    public function getCreatedOn(): ?DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }

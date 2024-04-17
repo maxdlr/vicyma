@@ -32,7 +32,6 @@ class ReviewCrud extends AbstractCrud
             assert($object instanceof Review);
 
             $object
-                ->setPublishedOn(new DateTime())
                 ->setUser($user)
                 ->setLodging($lodging);
 

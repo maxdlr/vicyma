@@ -6,7 +6,6 @@ use App\Entity\Media;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
-use Faker\Factory;
 
 class MediaFixtures extends Fixture
 {
@@ -15,7 +14,6 @@ class MediaFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create();
         $lodgingPhotoDir = 'assets/media/images/lodgings';
         $lodgingPhotos = array_diff(scandir($lodgingPhotoDir), ['.', '..']);
 
@@ -30,11 +28,9 @@ class MediaFixtures extends Fixture
 
         for ($i = 0; $i < count($photos); $i++) {
             $media = new Media();
-
             $media
                 ->setMediaPath($photos[$i])
-                ->setMediaSize(filesize('assets/' . $photos[$i]))
-                ->setCreatedOn($faker->dateTimeBetween('- 5 days'));
+                ->setMediaSize(filesize('assets/' . $photos[$i]));
 
             $this->setReference('media_' . $i, $media);
             $manager->persist($media);

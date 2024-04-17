@@ -52,10 +52,17 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedOn = null;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->createdOn = new \DateTime();
     }
 
     public function getId(): ?int
@@ -211,5 +218,15 @@ class Reservation
         $this->user = $user;
 
         return $this;
+    }
+
+    public function getCreatedOn(): ?\DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?\DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }

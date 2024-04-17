@@ -7,7 +7,6 @@ use App\Crud\Manager\CrudSetting;
 use App\Entity\Address;
 use App\Entity\User;
 use App\Form\AddressType;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +18,11 @@ class AddressCrud extends AbstractCrud
 {
     public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
     {
-        return parent::save($request, $object, $options, function ($form, $object, $entityManager) use ($options) {
+        return parent::save($request, $object, $options, function ($form, $object) use ($options) {
 
             $user = $options['user'];
             assert($object instanceof Address);
             assert($user instanceof User);
-            assert($entityManager instanceof EntityManagerInterface);
             $user->setAddress($object);
             return true;
 

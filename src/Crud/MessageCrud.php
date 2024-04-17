@@ -25,7 +25,6 @@ class MessageCrud extends AbstractCrud
             assert($object instanceof Message);
 
             $object
-                ->setSentOn(new DateTime('now'))
                 ->setUser($options['user']);
 
             return true;

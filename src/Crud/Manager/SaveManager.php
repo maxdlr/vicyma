@@ -2,6 +2,7 @@
 
 namespace App\Crud\Manager;
 
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,6 +48,10 @@ class SaveManager extends AbstractController
                     if ($doBeforeSave($form, $object, $entityManager) !== true) {
                         return $form;
                     };
+                }
+
+                if ($object->getId() !== null) {
+                    $object->setUpdatedOn(new DateTime());
                 }
 
                 $entityManager->persist($object);

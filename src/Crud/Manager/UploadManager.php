@@ -27,46 +27,54 @@ class UploadManager extends AbstractController
     ): bool
     {
         $uploaded = false;
-        /** @var UploadedFile $mediaFile */
-        $mediaFile = $form->get('media')->getData();
 
-        if ($mediaFile) {
-            $savedFile = $this->saveFile($mediaFile);
+        try {
+            /** @var UploadedFile $mediaFile */
+            $mediaFile = $form->get('media')->getData();
 
-            $object
-                ->setMediaPath('media/' . $savedFile['newFilename'])
-                ->setMediaSize($savedFile['fileSize'])
-                ->setCreatedOn(new DateTime('now'));
-            $uploaded = true;
+            if ($mediaFile) {
+                $savedFile = $this->saveFile($mediaFile);
+
+                $object
+                    ->setMediaPath('media/' . $savedFile['newFilename'])
+                    ->setMediaSize($savedFile['fileSize']);
+                $uploaded = true;
+            }
+            return $uploaded;
+        } catch (FileException $e) {
+            throw new FileException($e);
         }
-        return $uploaded;
     }
 
     public function uploadMany(
         FormInterface $form,
-        object        $object
+        ?object       $object = null
     ): bool
     {
         $mediaFiles = $form->get('photos')->getData();
         $validation = [];
 
         foreach ($mediaFiles as $mediaFile) {
+
             if ($mediaFile) {
                 $savedFile = $this->saveFile($mediaFile);
-                assert($object instanceof Lodging);
 
                 $media = new Media();
                 $media
                     ->setMediaPath('media/' . $savedFile['newFilename'])
-                    ->setMediaSize($savedFile['fileSize'])
-                    ->setCreatedOn(new DateTime('now'))
-                    ->addLodging($object);
+                    ->setMediaSize($savedFile['fileSize']);
+
+                match (true) {
+                    $object instanceof Lodging => $media->addLodging($object),
+                    default => ''
+                };
 
                 $this->entityManager->persist($media);
                 $validation[] = true;
             } else {
                 $validation[] = false;
             }
+
         }
         return !in_array(false, $validation);
     }
@@ -80,14 +88,15 @@ class UploadManager extends AbstractController
         $fileSize = $mediaFile->getSize();
 
         try {
+            
             $mediaFile->move(
                 $this->getParameter('media_directory'),
                 $newFilename
             );
+            return ['newFilename' => $newFilename, 'fileSize' => $fileSize];
+
         } catch (FileException $e) {
             throw new FileException($e);
         }
-
-        return ['newFilename' => $newFilename, 'fileSize' => $fileSize];
     }
 }

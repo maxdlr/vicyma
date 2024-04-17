@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\LodgingRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LodgingRepository::class)]
@@ -84,6 +86,12 @@ class Lodging
     #[ORM\Column]
     private ?bool $airConditioning = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?DateTimeInterface $createdOn = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
     public function __construct()
     {
         $this->beds = new ArrayCollection();
@@ -91,6 +99,7 @@ class Lodging
         $this->reservations = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->reviews = new ArrayCollection();
+        $this->createdOn = new \DateTime();
     }
 
     public function getId(): ?int
@@ -450,5 +459,21 @@ class Lodging
         $this->airConditioning = $airConditioning;
 
         return $this;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+    public function getCreatedOn(): ?DateTimeInterface
+    {
+        return $this->createdOn;
+    }
+
+    public function getUpdatedOn(): ?DateTimeInterface
+    {
+        return $this->updatedOn;
     }
 }

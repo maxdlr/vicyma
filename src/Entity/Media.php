@@ -29,9 +29,13 @@ class Media
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTimeInterface $createdOn = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedOn = null;
+
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
+        $this->createdOn = new \DateTime();
     }
 
     public function getId(): ?int
@@ -87,15 +91,19 @@ class Media
         return $this;
     }
 
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
     public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
     }
 
-    public function setCreatedOn(DateTimeInterface $createdOn): static
+    public function getUpdatedOn(): ?DateTimeInterface
     {
-        $this->createdOn = $createdOn;
-
-        return $this;
+        return $this->updatedOn;
     }
 }
