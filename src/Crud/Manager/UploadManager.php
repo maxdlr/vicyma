@@ -88,7 +88,7 @@ class UploadManager extends AbstractController
         $fileSize = $mediaFile->getSize();
 
         try {
-            
+
             $mediaFile->move(
                 $this->getParameter('media_directory'),
                 $newFilename
