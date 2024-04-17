@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
+/**
+ * @author Maxime de la Rocheterie
+ */
 class UploadManager extends AbstractController
 {
     public function __construct(

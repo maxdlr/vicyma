@@ -53,23 +53,49 @@ class UserCrud extends AbstractCrud
         );
     }
 
-
     /**
+     * Takes the $request and sets the user->isDeleted to true.
+     * By default, it then redirects to the referer page.
+     *
+     * $redirectRoute is an optional string that has to be a valid route name.
+     *
+     * $redirectParams is an optional array that has to be valid parameters associated with $redirectRoute
+     *
+     * $doBeforeDelete() is an optional ?callable function that executes before the actual delete.
+     * Return array|void
+     * It inherits $object, $redirectRoute and $redirectParams.
+     * @param callable|null $doBeforeDelete
      * @throws Exception
+     *
+     * @example fn($object, $redirectRoute, $redirectParams) => {}
+     * If it returns void, it executes and delete() continues.
+     * If it returns an array, the array can only contain 'save' and|or 'exit'.
+     * If it returns 'save', it persists the user object, flushes and delete() continues.
+     * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
+     * If it returns both 'save' and 'exit', it will then persist the object, flush, interrupt delete() and redirect to $redirectRoute
+     *
      */
     #[Route('user/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $object): Response
+    public function delete(Request $request, User $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
     {
         return $this->deleteManager->delete(
             $request,
             $object,
-            'app_home',
-            [],
-            function ($object) use ($request) {
+            $redirectRoute,
+            $redirectParams,
+            function ($object, $redirectRoute, $redirectParams) use ($doBeforeDelete) {
                 assert($object instanceof User);
-                $object->setIsDeleted(true);
-                return ['persist', 'flush', 'exit'];
+                $doBeforeDelete($object, $redirectRoute, $redirectParams);
+                $this->softDelete($object);
+                return ['save', 'exit'];
             }
         );
+    }
+
+    private function softDelete(User $user): void
+    {
+        if (!$user->getIsDeleted()) {
+            $user->setIsDeleted(true);
+        }
     }
 }

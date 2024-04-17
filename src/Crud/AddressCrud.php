@@ -31,11 +31,30 @@ class AddressCrud extends AbstractCrud
 
 
     /**
+     * Takes the $request and deletes the address object from the database.
+     * By default, it just deletes the address object as is and redirects to the referer page.
+     *
+     * $redirectRoute is an optional string that has to be a valid route name.
+     *
+     * $redirectParams is an optional array that has to be valid parameters associated with $redirectRoute
+     *
+     * $doBeforeDelete() is an optional ?callable function that executes before the actual delete.
+     * Return array|void
+     * It inherits $object, $redirectRoute and $redirectParams.
+     * @param callable|null $doBeforeDelete
      * @throws Exception
+     *
+     * @example fn($object, $redirectRoute, $redirectParams) => {}
+     * If it returns void, it executes and delete() continues.
+     * If it returns an array, the array can only contain 'save' or 'exit'.
+     * If it returns 'save', it persists the address object, flushes and delete() continues.
+     * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
+     * If it returns both 'save' and 'exit', it will then persist the object, flush, interrupt delete() and redirect to $redirectRoute
+     *
      */
     #[Route('address/{id}', name: 'app_address_delete', methods: ['POST'])]
-    public function delete(Request $request, Address $object): Response
+    public function delete(Request $request, Address $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
     {
-        return $this->deleteManager->delete($request, $object, 'app_home');
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $doBeforeDelete);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\MediaCrud;
-use App\Entity\Media;
-use App\Repository\MediaRepository;
+use App\Crud\LodgingCrud;
+use App\Entity\Lodging;
+use App\Repository\LodgingRepository;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,8 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly MediaCrud       $mediaCrud,
-        private readonly MediaRepository $mediaRepository,
+        private readonly LodgingCrud       $lodgingCrud,
+        private readonly LodgingRepository $lodgingRepository,
     )
     {
     }
@@ -27,17 +27,18 @@ class AdminController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(Request $request): Response
     {
-//        $media = new Media();
-        $media = $this->mediaRepository->find(1);
-//        $media = $this->mediaRepository->findOneBy(['isDeleted' => false]);
-        $mediaForm = $this->mediaCrud->save($request, $media);
+//        $lodging = new Lodging();
+        $lodging = $this->lodgingRepository->findOneBy(['updatedOn' => null]);
+//        $lodging = $this->lodgingRepository->findOneBy(['isDeleted' => false]);
+        $lodgingForm = $this->lodgingCrud->save($request, $lodging);
+//        $lodgingForm = $this->lodgingCrud->delete($request, $lodging);
 
-        if ($mediaForm === true) {
+        if ($lodgingForm === true) {
             return $this->redirectToRoute('app_home');
         }
 
         return $this->render('admin/dashboard.html.twig', [
-            'mediaForm' => $mediaForm->createView(),
+            'lodgingForm' => $lodgingForm->createView(),
         ]);
     }
 }

@@ -7,9 +7,20 @@ use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @author Maxime de la Rocheterie
+ */
 abstract class AbstractCrud
 {
+    /**
+     * Fully Qualified Class Name
+     * @var string
+     */
     protected string $entity;
+    /**
+     * Fully Qualified Class Name
+     * @var string
+     */
     protected string $formType;
 
     /**
@@ -29,6 +40,9 @@ abstract class AbstractCrud
     }
 
     /**
+     * Creates and handles a Symfony FormType.
+     * If the form is submitted, it returns true, otherwise it returns the form.
+     *
      * @param Request $request
      * @param object $object
      * @param array $options

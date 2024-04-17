@@ -6,8 +6,18 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @author Maxime de la Rocheterie
+ */
 trait AfterCrudTrait
 {
+    /**
+     * If $url === 'referer', it redirects to the previous (rerefer) page.
+     *
+     * @param string $url
+     * @param Request $request
+     * @return Response
+     */
     protected function redirectTo(
         string  $url,
         Request $request,
