@@ -21,8 +21,8 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
 
         for ($i = 0; $i < AppFixtures::RESERVATION_COUNT; $i++) {
             $reservation = new Reservation();
-            $arrivalDate = $faker->dateTimeBetween('+ 1 day', '+ 8 days');
-            $departureDate = $faker->dateTimeBetween('+ 9 days', '+ 20 days');
+            $arrivalDate = $faker->dateTimeBetween('+ 1 day', '+ 90 days');
+            $departureDate = $faker->dateTimeBetween('+ 91 days', '+ 180 days');
             $user = $this->getReference('user_' . rand(1, AppFixtures::USER_COUNT - 1));
             $reservation
                 ->setAdultCount($faker->numberBetween(1, 4))

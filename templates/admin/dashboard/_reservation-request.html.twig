@@ -1,0 +1,24 @@
+<div {{ stimulus_controller('admin-reservation-request') }}>
+
+    <div class="form-floating">
+        <select
+                name="reservation-status"
+                id="reservation-status"
+                class="form-select form-control"
+                {{ stimulus_action('admin-reservation-request', 'filter', 'change') }}
+        >
+            {% for status in statuses %}
+                <option value="{{ status.name }}">{{ status.name }}</option>
+            {% endfor %}
+        </select>
+        <label for="reservation-status">Status</label>
+    </div>
+
+    <div {{ stimulus_target('admin-reservation-request', 'reservations') }}>
+        {% for reservation in reservations %}
+            <div data-reservationStatus="{{ reservation.reservationStatus.name }}" class="reservation-result">
+                {{ reservation.reservationNumber }}
+            </div>
+        {% endfor %}
+    </div>
+</div>
