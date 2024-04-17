@@ -4,15 +4,10 @@ namespace App\Crud;
 
 use App\Crud\Manager\AbstractCrud;
 use App\Crud\Manager\CrudSetting;
-use App\Crud\Manager\DeleteManager;
-use App\Crud\Manager\SaveManager;
-use App\Crud\Manager\UploadManager;
 use App\Entity\Lodging;
 use App\Entity\Review;
 use App\Entity\User;
 use App\Form\ReviewType;
-use DateTime;
-use http\Client;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

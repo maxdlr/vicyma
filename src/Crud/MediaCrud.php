@@ -6,7 +6,6 @@ use App\Crud\Manager\AbstractCrud;
 use App\Crud\Manager\CrudSetting;
 use App\Entity\Media;
 use App\Form\MediaType;
-use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
