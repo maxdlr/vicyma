@@ -24,8 +24,7 @@ class MessageCrud extends AbstractCrud
             assert($user instanceof User);
             assert($object instanceof Message);
 
-            $object
-                ->setUser($options['user']);
+            $object->setUser($user);
 
             return true;
         }

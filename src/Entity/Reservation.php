@@ -20,7 +20,7 @@ class Reservation
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(unique: true)]
     private ?string $reservationNumber = null;
 
     #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'reservations')]
