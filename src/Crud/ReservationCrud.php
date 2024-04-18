@@ -15,6 +15,7 @@ use App\Enum\ReservationStatusEnum;
 use App\Form\ReservationType;
 use App\Repository\ReservationStatusRepository;
 use App\Service\YieldManager;
+use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -95,9 +96,13 @@ class ReservationCrud extends AbstractCrud
      * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
      *
      */
-    #[Route('reservation/{id}', name: 'app_reservation_delete', methods: ['POST'])]
+    #[Route('reservation/{id}/delete', name: 'app_reservation_delete', methods: ['GET', 'POST'])]
     public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
     {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $doBeforeDelete);
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, function ($object) {
+            assert($object instanceof Reservation);
+            $object->setReservationStatus($this->reservationStatusRepository->findOneByName(ReservationStatusEnum::DELETED->value));
+            return ['save', 'exit'];
+        });
     }
 }

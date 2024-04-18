@@ -2,9 +2,7 @@
 
 namespace App\Service;
 
-use App\Entity\Lodging;
 use App\Entity\Message;
-use App\Entity\Reservation;
 use App\Entity\ReservationStatus;
 use App\Entity\Review;
 use App\Entity\User;
@@ -49,6 +47,12 @@ class VueDataFormatter
                 $r[$property->getName()] = $value;
             }
         }
-        return $r;
+
+        $sorted = [];
+        foreach ($properties as $property) {
+            $sorted[$property] = $r[$property];
+        }
+
+        return $sorted;
     }
 }

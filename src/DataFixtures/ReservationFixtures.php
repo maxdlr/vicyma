@@ -32,6 +32,8 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
                 ->setDepartureDate($departureDate)
                 ->setUser($user)
                 ->addLodging($this->getReference('lodging_' . rand(0, AppFixtures::LODGING_COUNT - 1)))
+                ->addLodging($this->getReference('lodging_' . rand(0, AppFixtures::LODGING_COUNT - 1)))
+                ->addLodging($this->getReference('lodging_' . rand(0, AppFixtures::LODGING_COUNT - 1)))
                 ->setReservationStatus($this->getReference('reservationStatus_' . $faker->randomElement(ReservationStatusEnum::cases())->value));
             $this->setReference('reservation_' . $i, $reservation);
 

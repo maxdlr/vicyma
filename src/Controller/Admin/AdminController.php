@@ -36,17 +36,17 @@ class AdminController extends AbstractController
             return VueDataFormatter::makeVueObject(
                 $reservation, [
                     'id',
-                    'user',
+                    'reservationStatus',
                     'lodgings',
+                    'user',
                     'arrivalDate',
                     'departureDate',
                     'price',
-                    'reservationStatus'
                 ]
             );
         }, $this->reservationRepository->findAll());
 
-        dump($reservations[0]);
+//        dump($reservations[0]);
 
         return $this->render('admin/dashboard/dashboard.html.twig', [
             'reservations' => $reservations,

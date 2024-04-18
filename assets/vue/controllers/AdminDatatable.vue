@@ -1,7 +1,6 @@
 <script setup>
 import Dropdown from "../components/molecule/Dropdown.vue";
-import {computed, ref} from "vue";
-import {useStringFormatter} from "../composable/formatter/string";
+import {ref} from "vue";
 import {useObjectFormatter} from "../composable/formatter/object";
 import DataInfo from "../components/atom/DataInfo.vue";
 import Button from "../components/atom/Button.vue";
@@ -34,6 +33,11 @@ const canBeArchived = (object) => {
 const canBeDeleted = (object) => {
   return getPropertyValue(object, props.itemsFilterByProperty) === 'PENDING' || getPropertyValue(object, props.itemsFilterByProperty) === 'CONFIRMED' || getPropertyValue(object, props.itemsFilterByProperty) === 'ARCHIVED'
 }
+
+const goTo = (url, confirmMsg = null) => {
+  if (confirmMsg) confirm(confirmMsg)
+  location.href = url
+}
 </script>
 
 <template>
@@ -53,13 +57,30 @@ const canBeDeleted = (object) => {
     />
   </div>
 
-  <div v-for="(item, index) in items" :key="index">
-    <div v-if="getPropertyValue(item, itemsFilterByProperty) === selectedOption" class="row my-2">
+
+  <div v-for="(item, index) in items" :key="index" class="">
+    <div v-if="getPropertyValue(item, itemsFilterByProperty) === selectedOption"
+         class="row my-2 justify-content-center align-items-start border border-2 rounded-4 border-primary my-1 px-2 py-3">
       <DataInfo :item="item" :exclude="itemsFilterByProperty" class="col"/>
-      <Button v-if="canBeConfirmed(item)" class="col-1" label="Confirm"
-              color-class="success"/>
-      <Button v-if="canBeDeleted(item)" class="col-1" label="Delete" color-class="danger"/>
-      <Button v-if="canBeArchived(item)" class="col-1" label="Archive" size="sm" color-class="warning"/>
+      <div class="d-flex flex-column justify-content-center col-1">
+        <Button v-if="canBeConfirmed(item)"
+                label="Confirm"
+                size="sm"
+                class="my-1"
+                color-class="success"
+                @click.prevent="goTo(
+                    `/admin/reservation/${item.id}/confirm`,
+                    `Salut Maman, tu veux vraiment confirmer la reservation de ${item.user} ?`
+                    )"
+        />
+        <Button v-if="canBeDeleted(item)"
+                label="Delete"
+                size="sm"
+                color-class="danger"
+                class="my-1"
+        />
+        <Button v-if="canBeArchived(item)" label="Archive" size="sm" color-class="warning" class="my-1"/>
+      </div>
     </div>
   </div>
 </template>
