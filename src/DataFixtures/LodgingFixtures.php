@@ -41,8 +41,7 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
                 ->setFloor($faker->numberBetween(0, 3))
                 ->setPriceByNight($faker->randomFloat(2, 130, 150))
                 ->addBed($this->getReference('bed_' . rand(1, AppFixtures::BED_COUNT - 1)))
-                ->addMedia($this->getReference('media_' . rand(1, AppFixtures::MEDIA_COUNT - 1)))
-                ->addReservation($this->getReference('reservation_' . rand(1, AppFixtures::RESERVATION_COUNT - 1)));
+                ->addMedia($this->getReference('media_' . rand(1, AppFixtures::MEDIA_COUNT - 1)));
 
             $manager->persist($lodging);
             $this->addReference('lodging_' . $i, $lodging);
@@ -55,8 +54,7 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             BedFixtures::class,
-            MediaFixtures::class,
-            ReservationFixtures::class
+            MediaFixtures::class
         ];
     }
 

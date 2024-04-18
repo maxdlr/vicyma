@@ -1,24 +1,10 @@
-<div {{ stimulus_controller('admin-reservation-request') }}>
+<div {{ vue_component('AdminDatatable', {
+    'filters': [statuses],
+    'filterProperty': 'name',
+    'filterDefault': 'PENDING',
 
-    <div class="form-floating">
-        <select
-                name="reservation-status"
-                id="reservation-status"
-                class="form-select form-control"
-                {{ stimulus_action('admin-reservation-request', 'filter', 'change') }}
-        >
-            {% for status in statuses %}
-                <option value="{{ status.name }}">{{ status.name }}</option>
-            {% endfor %}
-        </select>
-        <label for="reservation-status">Status</label>
-    </div>
+    'items': reservations,
+    'itemsFilterByProperty': 'reservationStatus',
 
-    <div {{ stimulus_target('admin-reservation-request', 'reservations') }}>
-        {% for reservation in reservations %}
-            <div data-reservationStatus="{{ reservation.reservationStatus.name }}" class="reservation-result">
-                {{ reservation.reservationNumber }}
-            </div>
-        {% endfor %}
-    </div>
-</div>
+    'label': 'Status'
+}) }}></div>

@@ -2,8 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Reservation;
+use App\Entity\ReservationStatus;
 use App\Repository\ReservationRepository;
 use App\Repository\ReservationStatusRepository;
+use App\Service\VueDataFormatter;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -18,15 +22,35 @@ class AdminController extends AbstractController
     {
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(): Response
     {
-        $reservations = $this->reservationRepository->findAll();
-        $statuses = $this->reservationStatusRepository->findAll();
+        $statuses = array_map(function (ReservationStatus $reservationStatus) {
+            return VueDataFormatter::makeVueObject($reservationStatus, ['name']);
+        }, $this->reservationStatusRepository->findAll());
+
+        $reservations = array_map(function (Reservation $reservation) {
+            return VueDataFormatter::makeVueObject(
+                $reservation, [
+                    'id',
+                    'user',
+                    'lodgings',
+                    'arrivalDate',
+                    'departureDate',
+                    'price',
+                    'reservationStatus'
+                ]
+            );
+        }, $this->reservationRepository->findAll());
+
+        dump($reservations[0]);
 
         return $this->render('admin/dashboard/dashboard.html.twig', [
             'reservations' => $reservations,
-            'statuses' => $statuses
+            'statuses' => $statuses,
         ]);
     }
 }

@@ -27,10 +27,11 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
             $reservation
                 ->setAdultCount($faker->numberBetween(1, 4))
                 ->setChildCount($faker->numberBetween(0, 4))
-                ->setPrice($faker->randomElement([null, $faker->randomFloat(2, 200, 10000)]))
+                ->setPrice($faker->randomFloat(2, 200, 10000))
                 ->setArrivalDate($arrivalDate)
                 ->setDepartureDate($departureDate)
                 ->setUser($user)
+                ->addLodging($this->getReference('lodging_' . rand(0, AppFixtures::LODGING_COUNT - 1)))
                 ->setReservationStatus($this->getReference('reservationStatus_' . $faker->randomElement(ReservationStatusEnum::cases())->value));
             $this->setReference('reservation_' . $i, $reservation);
 
@@ -45,7 +46,8 @@ class ReservationFixtures extends Fixture implements DependentFixtureInterface
     {
         return [
             ReservationStatusFixtures::class,
-            UserFixtures::class
+            UserFixtures::class,
+            LodgingFixtures::class
         ];
     }
 }

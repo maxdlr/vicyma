@@ -36,7 +36,7 @@ class Reservation
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTimeInterface $departureDate = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?float $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
@@ -51,7 +51,7 @@ class Reservation
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdOn = null;
+    private ?\DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedOn = null;
