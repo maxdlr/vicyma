@@ -25,10 +25,11 @@ const props = defineProps({
       return COLOR_CLASSES.includes(value);
     },
   },
-  height: {type: [Number, String], default: 200, required: false},
-  catEmoji: {type: String, default: "⚡"},
 });
-const selectedOption = defineModel("selectedOption", {required: true});
+
+const selectedOption = defineModel('selectedOption', {required: true});
+
+const emit = defineEmits(['hasSelection'])
 
 const screenWidth = ref(screen.width);
 const screenHeight = ref(screen.height);
@@ -48,9 +49,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="form-floating">
-    <select v-model="selectedOption" name="" :id="`select-${label}`" class="form-select form-control">
-      <option v-for="(option, index) in options" :key="index">{{ option.name }}</option>
+  <div class="form-floating m-0">
+    <select v-model="selectedOption" name="" :id="`select-${label}`" class="form-select form-control"
+            @change="emit('hasSelection')">
+      <option value="">All</option>
+      <option v-for="(option, index) in options" :key="index">{{ option }}</option>
     </select>
     <label for="`select-${label}`">{{ label }}</label>
   </div>

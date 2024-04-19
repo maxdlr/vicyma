@@ -13,10 +13,39 @@ use ReflectionMethod;
 
 class VueDataFormatter
 {
+    private static array $vueObject = [];
+
     /**
      * @throws ReflectionException
      */
-    public static function makeVueObject(object $object, array $properties = []): array
+    public static function makeVueObjectOf(array $entities, array $properties): static
+    {
+        self::$vueObject = array_map(function (object $object) use ($entities, $properties) {
+            assert(get_class($object) === get_class($properties[0]));
+            return VueDataFormatter::makeVueObject($object, $properties);
+        }, $entities);
+
+        return new static;
+    }
+
+    public function regroup(string $property): static
+    {
+        self::$vueObject = array_unique(
+            array_map(fn(array $object) => $object[$property], self::$vueObject)
+        );
+        sort(self::$vueObject);
+        return new static;
+    }
+
+    public function get(): array
+    {
+        return self::$vueObject;
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private static function makeVueObject(object $object, array $properties = []): array
     {
         $r = [];
         $objectFqcn = get_class($object);
@@ -52,7 +81,6 @@ class VueDataFormatter
         foreach ($properties as $property) {
             $sorted[$property] = $r[$property];
         }
-
         return $sorted;
     }
 }

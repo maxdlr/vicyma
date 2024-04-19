@@ -96,8 +96,8 @@ class ReservationCrud extends AbstractCrud
      * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
      *
      */
-    #[Route('reservation/{id}/delete', name: 'app_reservation_delete', methods: ['GET', 'POST'])]
-    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
+    #[Route('/reservation/{id}/delete', name: 'app_reservation_delete', methods: ['GET', 'POST'])]
+    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = []): Response
     {
         return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, function ($object) {
             assert($object instanceof Reservation);

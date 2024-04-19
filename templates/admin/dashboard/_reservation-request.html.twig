@@ -1,10 +1,4 @@
-<div {{ vue_component('AdminDatatable', {
-    'filters': [statuses],
-    'filterProperty': 'name',
-    'filterDefault': 'PENDING',
-
+<div {{ vue_component('AdminReservationRequests', {
+    'filters': reservationFilters,
     'items': reservations,
-    'itemsFilterByProperty': 'reservationStatus',
-
-    'label': 'Status'
-}) }}></div>
+}) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
