@@ -227,4 +227,12 @@ class Reservation
     {
         return $this->updatedOn;
     }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): Reservation
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+
 }

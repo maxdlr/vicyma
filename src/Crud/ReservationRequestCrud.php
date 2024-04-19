@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[CrudSetting(entity: Reservation::class, formType: ReservationType::class)]
-class ReservationCrud extends AbstractCrud
+class ReservationRequestCrud extends AbstractCrud
 {
     public function __construct(
         SaveManager                                  $saveManager,
@@ -37,25 +37,30 @@ class ReservationCrud extends AbstractCrud
     public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
     {
         return parent::save($request, $object, $options, function ($form, $object
-        ) {
+        ) use ($options) {
+
+            $lodging = $options['lodging'];
+            $user = $options['user'];
+
+            assert($lodging instanceof Lodging);
+            assert($user instanceof User);
             assert($object instanceof Reservation);
 
             if ($object->getArrivalDate()->diff($object->getDepartureDate())->invert) {
                 return false;
             }
 
-            $reservationPrice = 0;
-            foreach ($object->getLodgings() as $lodging) {
-                $reservationPrice += YieldManager::calculateReservationPrice(
-                    $object->getArrivalDate(),
-                    $object->getDepartureDate(),
-                    $lodging
-                );
-            }
+            $reservationPrice = YieldManager::calculateReservationPrice(
+                $object->getArrivalDate(),
+                $object->getDepartureDate(),
+                $lodging
+            );
 
             $object
-                ->setReservationNumber($object->getUser(), $object)
-                ->setPrice($reservationPrice);
+                ->setReservationNumber($user, $object)
+                ->addLodging($lodging)
+                ->setPrice($reservationPrice)
+                ->setUser($user);
 
             if ($object->getId() === null) {
                 $object->setReservationStatus(

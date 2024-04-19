@@ -2,7 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use App\Crud\Manager\AfterCrudTrait;
 use App\Crud\ReservationCrud;
+use App\Crud\ReservationRequestCrud;
 use App\Entity\Reservation;
 use App\Enum\ReservationStatusEnum;
 use App\Repository\LodgingRepository;
@@ -20,6 +22,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route(path: '/admin/reservation', name: 'app_admin_reservation_')]
 class AdminReservationController extends AbstractController
 {
+    use AfterCrudTrait;
+
     public function __construct(
         private readonly ReservationStatusRepository $reservationStatusRepository,
         private readonly ReservationRepository       $reservationRepository,
@@ -33,13 +37,15 @@ class AdminReservationController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(path: '/{id}/show', name: 'show', methods: ['GET'])]
+    #[Route(path: '/{id}/show', name: 'show', methods: ['GET', 'POST'])]
     public function show(
         Reservation $reservation,
         Request     $request
     ): Response
     {
         $reservationForm = $this->reservationCrud->save($request, $reservation);
+
+        if ($reservationForm === true) return $this->redirectTo('referer', $request);
 
         return $this->render('admin/show/reservation-details.html.twig', [
             'reservationForm' => $reservationForm,

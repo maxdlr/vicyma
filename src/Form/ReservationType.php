@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Lodging;
 use App\Entity\Reservation;
+use App\Entity\User;
 use App\Form\FormUtils\FormTypeUtils;
 use App\Repository\LodgingRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -24,6 +25,11 @@ class ReservationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('user', EntityType::class, [
+                'class' => User::class,
+                'choice_label' => fn(User $user) => $user->getFirstname() . ' ' . $user->getLastname(),
+                'autocomplete' => true
+            ])
             ->add('adultCount', ChoiceType::class, [
                 'choices' => FormTypeUtils::makeIntChoices(6)
             ])
@@ -41,18 +47,18 @@ class ReservationType extends AbstractType
                 'view_timezone' => 'Africa/Dakar',
             ])
             ->add('price', NumberType::class)
-//            ->add('lodgings', ChoiceType::class, [
-//                'choices' => FormTypeUtils::makeChoices($this->lodgingRepository->findAll())
-//            ])
-        ;
+            ->add('lodgings', EntityType::class, [
+                'class' => Lodging::class,
+                'choice_label' => fn(Lodging $lodging) => $lodging->getName(),
+                'multiple' => true,
+                'autocomplete' => true
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Reservation::class,
-            'lodging' => null,
-            'user' => null
         ]);
     }
 }
