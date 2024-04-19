@@ -35,7 +35,10 @@ const canBeDeleted = (object) => {
       :exclude-from-row-properties="['id', 'reservationStatus']"
   >
     <template #buttons="{item}">
-      <Button label="Détails..." class="my-1">
+      <Button
+          label="Détails..."
+          class="my-1"
+          @click.prevent="goTo(`/admin/reservation/${item.id}/show`)">
         <template #iconEnd><i class="bi bi-box-arrow-up-right"></i></template>
       </Button>
       <Button v-if="canBeConfirmed(item)"

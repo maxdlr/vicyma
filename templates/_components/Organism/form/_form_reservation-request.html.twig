@@ -6,7 +6,6 @@
         include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.childCount, label:'Nombre d\'enfants'}),
         include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.arrivalDate, label: 'Date d\'arrivée'}),
         include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.departureDate, label: 'Date de départ'}),
-        include('_components/Atom/form/_number-field.html.twig', {formRow: reservationForm.price, label: 'Prix'}),
     ],
     deleteRoute: 'app_reservation_delete'
 }) }}

@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Crud\ReservationCrud;
 use App\Entity\Reservation;
 use App\Enum\ReservationStatusEnum;
 use App\Repository\LodgingRepository;
@@ -23,9 +24,27 @@ class AdminReservationController extends AbstractController
         private readonly ReservationStatusRepository $reservationStatusRepository,
         private readonly ReservationRepository       $reservationRepository,
         private readonly LodgingRepository           $lodgingRepository,
-        private readonly EntityManagerInterface      $entityManager
+        private readonly EntityManagerInterface      $entityManager,
+        private readonly ReservationCrud             $reservationCrud
     )
     {
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(path: '/{id}/show', name: 'show', methods: ['GET'])]
+    public function show(
+        Reservation $reservation,
+        Request     $request
+    ): Response
+    {
+        $reservationForm = $this->reservationCrud->save($request, $reservation);
+
+        return $this->render('admin/show/reservation-details.html.twig', [
+            'reservationForm' => $reservationForm,
+            'reservation' => $reservation
+        ]);
     }
 
     /**
