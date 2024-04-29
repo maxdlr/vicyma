@@ -1,5 +1,5 @@
 <script setup>
-import AdminDatatable from "../components/organism/AdminDatatable.vue";
+import AdminDatatable from "../components/organism/VDatatable.vue";
 import Button from "../components/atom/Button.vue";
 import {useObjectFormatter} from "../composable/formatter/object";
 import {goTo} from "../composable/action/redirect";

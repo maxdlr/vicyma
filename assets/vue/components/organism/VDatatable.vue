@@ -1,12 +1,12 @@
 <script setup>
-import Dropdown from "../molecule/Dropdown.vue";
+import Dropdown from "./Dropdown.vue";
 import {onBeforeMount, ref} from "vue";
-import AdminDataRow from "../atom/AdminDataRow.vue";
-import Button from "../atom/Button.vue";
+import VDatatableRow from "../atom/VDatatableRow.vue";
+import VDatatableResults from "./VDatatableResults.vue";
+import VDatatableSettings from "./VDatatableSettings.vue";
 
 const props = defineProps({
   filters: {type: Object, required: true},
-
   items: {type: Object, required: true},
   excludeFromRowProperties: {type: Array},
 });
@@ -57,31 +57,23 @@ const filterResults = () => {
 </script>
 
 <template>
-  <div :class="`row row-cols-${Object.keys(filters).length}`">
-    <div v-for="(filter, index) in filters" :key="index">
+  <VDatatableSettings :filters="filters">
+    <template #filters="{filter}">
       <Dropdown
           :label="filter['name']"
           :options="filter['values']"
           v-model:selected-option="selectedFilterOptions[filter['name']]"
           @has-selection="filterResults"
       />
-    </div>
-  </div>
-  <div class="p-3">
-    <div v-if="resultCount > 0">{{ resultCount }} result{{ resultCount > 1 ? 's' : '' }} found!</div>
-    <div v-if="resultCount === 0">
-      <span>No results found!</span>
-      <Button label="reset" size="sm" @click.prevent="resetFilters" class="mx-1"/>
-    </div>
-  </div>
+    </template>
+  </VDatatableSettings>
 
-  <div v-for="(item, index) in filteredItems" :key="item.id" class="">
-    <div
-        class="row my-2 justify-content-center align-items-start border border-2 rounded-4 border-primary my-1 px-2 py-3">
-      <AdminDataRow :item="item" :exclude-properties="excludeFromRowProperties" class="col"/>
-      <div class="d-flex flex-column justify-content-center col-2">
-        <slot name="buttons" :item="item"/>
-      </div>
-    </div>
-  </div>
+  <VDatatableResults :items="filteredItems" @reset="resetFilters">
+    <template #row="{item}">
+      <VDatatableRow :item="item" :exclude-properties="excludeFromRowProperties" class="col"/>
+    </template>
+    <template #buttons="{item}">
+      <slot name="buttons" :item="item"/>
+    </template>
+  </VDatatableResults>
 </template>

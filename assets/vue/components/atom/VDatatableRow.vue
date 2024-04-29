@@ -20,8 +20,6 @@ onBeforeMount(() => {
     }
   }
 })
-
-
 </script>
 
 <template>
