@@ -3,24 +3,22 @@ import {
   COLOR_CLASSES,
 } from "../../constant/bootstrap-constants";
 import {onMounted, onUnmounted, ref} from "vue";
+import {useStringFormatter} from "../../composable/formatter/string";
+import {useObjectFormatter} from "../../composable/formatter/object";
+
+const {toTitle} = useStringFormatter();
+const {getPropertyValue} = useObjectFormatter()
+
 
 const props = defineProps({
   label: {type: String, default: "label", required: true},
-  options: {
-    type: Array,
-    required: true,
-  },
+  options: {type: Array, required: true},
+  noEmpty: {type: Boolean, default: false, required: false},
+  propertyOf: {type: String, required: false},
 
   mainColorClass: {
     type: String,
     default: "primary",
-    validator(value) {
-      return COLOR_CLASSES.includes(value);
-    },
-  },
-  successColorClass: {
-    type: String,
-    default: "success",
     validator(value) {
       return COLOR_CLASSES.includes(value);
     },
@@ -50,11 +48,19 @@ onUnmounted(() => {
 
 <template>
   <div class="form-floating m-0">
-    <select v-model="selectedOption" name="" :id="`select-${label}`" class="form-select form-control"
-            @change="emit('hasSelection')">
-      <option value="">All</option>
-      <option v-for="(option, index) in options" :key="index">{{ option }}</option>
+    <select
+        v-model="selectedOption"
+        name=""
+        :id="`select-${label}`"
+        class="form-select form-control"
+        :class="`bg-${mainColorClass}`"
+        @change="emit('hasSelection')"
+    >
+      <option value="" v-if="!noEmpty">All</option>
+      <option v-for="(option, index) in options" :value="option" :key="index">
+        {{ propertyOf ? toTitle(getPropertyValue(option, propertyOf)) : option }}
+      </option>
     </select>
-    <label for="`select-${label}`">{{ label }}</label>
+    <label for="`select-${label}`">{{ toTitle(label) }}</label>
   </div>
 </template>

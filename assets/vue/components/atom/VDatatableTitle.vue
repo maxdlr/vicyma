@@ -1,4 +1,8 @@
 <script setup>
+import {useStringFormatter} from "../../composable/formatter/string";
+
+const {toTitle} = useStringFormatter();
+
 const props = defineProps({
   title: {type: String, required: true},
   description: {type: String}
@@ -7,7 +11,7 @@ const props = defineProps({
 
 <template>
   <div>
-    <h1>{{ title }}</h1>
+    <h1>{{ toTitle(title) }}</h1>
     <p v-if="description">{{ description }}</p>
   </div>
 </template>

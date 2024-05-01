@@ -4,10 +4,11 @@ import {computed, onBeforeMount, onMounted, ref} from "vue";
 import VDatatableRow from "../atom/VDatatableRow.vue";
 import VDatatableResults from "./VDatatableResults.vue";
 import VDatatableSettings from "./VDatatableSettings.vue";
-import {useStringFormatter} from "../../composable/formatter/string";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
+import {useStringFormatter} from "../../composable/formatter/string";
 
-const {filterByStringProperty} = useStringFormatter();
+const {toTitle} = useStringFormatter();
+
 
 const props = defineProps({
   title: {type: String, required: true},
@@ -18,6 +19,7 @@ const props = defineProps({
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
+const selectedOrderByOption = ref({});
 const resultCount = ref(0)
 const searchQuery = ref('')
 const isFiltered = computed(() => {
@@ -30,8 +32,18 @@ const isFiltered = computed(() => {
 })
 
 onBeforeMount(() => {
+  setDefaultOrderBy()
   setDefaultFilters();
 })
+
+const setDefaultOrderBy = () => {
+  const defaultOrderBy = props.filters['user'];
+
+  selectedOrderByOption.value = {
+    'name': defaultOrderBy.name,
+    'codeName': defaultOrderBy.codeName
+  }
+}
 
 const setDefaultFilters = () => {
   for (const filter in props.filters) {
@@ -46,6 +58,17 @@ const resetFilters = () => {
   }
   searchQuery.value = '';
   filterResults()
+}
+
+const orderBy = () => {
+  let options = [];
+  for (const filterName in props.filters) {
+    options.push(props.filters[filterName].codeName)
+  }
+  filteredItems.value.sort((a, b) => {
+    return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
+  });
+  console.log(selectedOrderByOption.value)
 }
 
 const filterResults = () => {
@@ -91,6 +114,7 @@ const filterResults = () => {
   })
   resultCount.value = matches.length;
   filteredItems.value = matches
+  orderBy();
 }
 
 </script>
@@ -99,10 +123,12 @@ const filterResults = () => {
   <VDatatableTitle :title="title"/>
   <VDatatableSettings
       :filters="filters"
-      v-model:search-query="searchQuery"
-      @searching="filterResults"
       :is-filtered="isFiltered"
+      v-model:search-query="searchQuery"
+      v-model:order-by-value="selectedOrderByOption"
+      @search="filterResults"
       @reset="resetFilters"
+      @order="orderBy"
   >
     <template #filters="{filter}">
       <Dropdown
