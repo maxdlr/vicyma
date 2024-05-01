@@ -1,5 +1,5 @@
 <script setup>
-import AdminDatatable from "../components/organism/VDatatable.vue";
+import VDatatable from "../components/organism/VDatatable.vue";
 import Button from "../components/atom/Button.vue";
 import {useObjectFormatter} from "../composable/formatter/object";
 import {goTo} from "../composable/action/redirect";
@@ -29,11 +29,12 @@ const canBeDeleted = (object) => {
 </script>
 
 <template>
-  <AdminDatatable
+  <VDatatable
       :filters="filters"
       :items="items"
       :exclude-from-row-properties="['id', 'reservationStatus']"
-  >
+      :searchable-properties="['user', 'lodgings']"
+      title="Reservation requests">
     <template #buttons="{item}">
       <Button
           label="Détails..."
@@ -76,7 +77,7 @@ const canBeDeleted = (object) => {
         <template #iconEnd><i class="bi bi-archive"></i></template>
       </Button>
     </template>
-  </AdminDatatable>
+  </VDatatable>
 </template>
 
 <style scoped>

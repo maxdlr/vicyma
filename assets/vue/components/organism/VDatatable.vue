@@ -1,18 +1,33 @@
 <script setup>
 import Dropdown from "./Dropdown.vue";
-import {onBeforeMount, ref} from "vue";
+import {computed, onBeforeMount, onMounted, ref} from "vue";
 import VDatatableRow from "../atom/VDatatableRow.vue";
 import VDatatableResults from "./VDatatableResults.vue";
 import VDatatableSettings from "./VDatatableSettings.vue";
+import {useStringFormatter} from "../../composable/formatter/string";
+import VDatatableTitle from "../atom/VDatatableTitle.vue";
+
+const {filterByStringProperty} = useStringFormatter();
 
 const props = defineProps({
+  title: {type: String, required: true},
   filters: {type: Object, required: true},
   items: {type: Object, required: true},
+  searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const resultCount = ref(0)
+const searchQuery = ref('')
+const isFiltered = computed(() => {
+  const vote = [];
+  for (const filter in props.filters) {
+    vote.push(selectedFilterOptions.value[props.filters[filter].name] !== '');
+  }
+  vote.push(searchQuery.value !== '')
+  return vote.includes(true)
+})
 
 onBeforeMount(() => {
   setDefaultFilters();
@@ -29,11 +44,13 @@ const resetFilters = () => {
   for (const filter in props.filters) {
     selectedFilterOptions.value[props.filters[filter].name] = '';
   }
+  searchQuery.value = '';
   filterResults()
 }
 
 const filterResults = () => {
   resultCount.value = 0;
+  const re = RegExp(`.*${searchQuery.value.toLowerCase().split("").join(".*")}.*`);
   let matches = []
   matches = props.items.filter((item) => {
     let isMatch = [];
@@ -41,10 +58,32 @@ const filterResults = () => {
       const selectedFilterValue = selectedFilterOptions.value[props.filters[key].name]
 
       if (selectedFilterValue !== '') {
+
         if (typeof item[key] === 'object') {
           isMatch.push(item[key].includes(selectedFilterValue))
-        } else if (typeof item[key] === 'string') {
+        }
+
+        if (typeof item[key] === 'string') {
           isMatch.push(item[key] === selectedFilterValue)
+        }
+
+      }
+
+      if (searchQuery.value !== '') {
+
+        let nestedIsMatch = []
+        for (const searchableProperty of props.searchableProperties) {
+
+          if (typeof item[searchableProperty] === 'string') {
+            nestedIsMatch.push(item[searchableProperty].toLowerCase().includes(searchQuery.value));
+          }
+
+          if (typeof item[searchableProperty] === 'object') {
+            for (const searchablePropertyElement of item[searchableProperty]) {
+              nestedIsMatch.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value))
+            }
+            isMatch.push(nestedIsMatch.includes(true))
+          }
         }
       }
     }
@@ -57,7 +96,14 @@ const filterResults = () => {
 </script>
 
 <template>
-  <VDatatableSettings :filters="filters">
+  <VDatatableTitle :title="title"/>
+  <VDatatableSettings
+      :filters="filters"
+      v-model:search-query="searchQuery"
+      @searching="filterResults"
+      :is-filtered="isFiltered"
+      @reset="resetFilters"
+  >
     <template #filters="{filter}">
       <Dropdown
           :label="filter['name']"
@@ -68,9 +114,13 @@ const filterResults = () => {
     </template>
   </VDatatableSettings>
 
-  <VDatatableResults :items="filteredItems" @reset="resetFilters">
+  <VDatatableResults :items="filteredItems">
     <template #row="{item}">
-      <VDatatableRow :item="item" :exclude-properties="excludeFromRowProperties" class="col"/>
+      <VDatatableRow
+          :item="item"
+          :exclude-properties="excludeFromRowProperties"
+          class="col"
+      />
     </template>
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>
