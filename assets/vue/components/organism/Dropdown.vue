@@ -18,7 +18,7 @@ const props = defineProps({
 
   mainColorClass: {
     type: String,
-    default: "primary",
+    default: "",
     validator(value) {
       return COLOR_CLASSES.includes(value);
     },
@@ -47,10 +47,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="form-floating m-0">
+  <div class="form-floating">
     <select
         v-model="selectedOption"
-        name=""
         :id="`select-${label}`"
         class="form-select form-control"
         :class="`bg-${mainColorClass}`"
@@ -61,6 +60,6 @@ onUnmounted(() => {
         {{ propertyOf ? toTitle(getPropertyValue(option, propertyOf)) : option }}
       </option>
     </select>
-    <label for="`select-${label}`">{{ toTitle(label) }}</label>
+    <label :for="`select-${label}`">{{ toTitle(label) }}</label>
   </div>
 </template>

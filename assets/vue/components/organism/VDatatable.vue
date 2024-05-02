@@ -1,14 +1,8 @@
 <script setup>
-import Dropdown from "./Dropdown.vue";
 import {computed, onBeforeMount, onMounted, ref} from "vue";
-import VDatatableRow from "../atom/VDatatableRow.vue";
 import VDatatableResults from "./VDatatableResults.vue";
 import VDatatableSettings from "./VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
-import {useStringFormatter} from "../../composable/formatter/string";
-
-const {toTitle} = useStringFormatter();
-
 
 const props = defineProps({
   title: {type: String, required: true},
@@ -68,12 +62,10 @@ const orderBy = () => {
   filteredItems.value.sort((a, b) => {
     return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
   });
-  console.log(selectedOrderByOption.value)
 }
 
 const filterResults = () => {
   resultCount.value = 0;
-  const re = RegExp(`.*${searchQuery.value.toLowerCase().split("").join(".*")}.*`);
   let matches = []
   matches = props.items.filter((item) => {
     let isMatch = [];
@@ -126,28 +118,15 @@ const filterResults = () => {
       :is-filtered="isFiltered"
       v-model:search-query="searchQuery"
       v-model:order-by-value="selectedOrderByOption"
+      v-model:filter-options="selectedFilterOptions"
       @search="filterResults"
       @reset="resetFilters"
       @order="orderBy"
+      @filter="filterResults"
   >
-    <template #filters="{filter}">
-      <Dropdown
-          :label="filter['name']"
-          :options="filter['values']"
-          v-model:selected-option="selectedFilterOptions[filter['name']]"
-          @has-selection="filterResults"
-      />
-    </template>
   </VDatatableSettings>
 
-  <VDatatableResults :items="filteredItems">
-    <template #row="{item}">
-      <VDatatableRow
-          :item="item"
-          :exclude-properties="excludeFromRowProperties"
-          class="col"
-      />
-    </template>
+  <VDatatableResults :items="filteredItems" :exclude-from-row-properties="excludeFromRowProperties">
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>
     </template>

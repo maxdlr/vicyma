@@ -9,11 +9,13 @@ const props = defineProps({
   isFiltered: {type: Boolean, required: true}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
-const emit = defineEmits(['search', 'reset', 'order'])
-
+const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
 const orderByValue = defineModel('orderByValue', {
   type: Object, required: true
 })
+
+const emit = defineEmits(['search', 'filter', 'reset', 'order'])
+
 const orderByOptions = computed(() => {
   let options = [];
   for (const filterName in props.filters) {
@@ -35,12 +37,19 @@ const orderByOptions = computed(() => {
         :no-empty="true"
         :options="orderByOptions"
         property-of="name"
-        label="Order by"
+        label="Order"
         v-model:selected-option="orderByValue"
         @has-selection="emit('order')"
     />
     <div v-for="(filter, index) in filters" :key="index">
-      <slot name="filters" :filter="filter"/>
+      <slot name="filters" :filter="filter">
+        <Dropdown
+            :label="filter['name']"
+            :options="filter['values']"
+            v-model:selected-option="selectedFilterOptions[filter['name']]"
+            @has-selection="emit('filter')"
+        />
+      </slot>
     </div>
     <VSearchInput v-model:query="searchQuery" @typing="emit('search')"/>
   </div>
