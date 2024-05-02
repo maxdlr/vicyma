@@ -2,8 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Repository\ReservationRepository;
-use App\Repository\ReservationStatusRepository;
+use App\Repository\UserRepository;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,9 +12,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly ReservationRepository       $reservationRepository,
-        private readonly ReservationStatusRepository $reservationStatusRepository,
-        private readonly AdminReservationController  $adminReservationController,
+        private readonly UserRepository      $reservationRepository,
+        private readonly AdminUserController $adminUserController,
     )
     {
     }
@@ -26,11 +24,11 @@ class AdminController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(): Response
     {
-        $reservationRequests = $this->adminReservationController->getReservationRequestData();
+        $users = $this->adminUserController->getUserData();
 
         return $this->render('admin/dashboard/dashboard.html.twig', [
-            'reservations' => $reservationRequests['items'],
-            'reservationFilters' => $reservationRequests['filters'],
+            'users' => $users['items'],
+            'userFilters' => $users['filters'],
         ]);
     }
 }

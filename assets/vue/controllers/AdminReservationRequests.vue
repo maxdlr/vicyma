@@ -6,10 +6,16 @@ import {goTo} from "../composable/action/redirect";
 
 const {getPropertyValue} = useObjectFormatter();
 
-const props = defineProps({
+defineProps({
   filters: {type: Object, required: true},
   items: {type: Object, required: true},
 });
+
+const baseUrl = '/admin/reservation';
+
+const url = (id) => {
+  return `${baseUrl}/${id}`
+}
 
 const canBeConfirmed = (object) => {
   return getPropertyValue(object, 'reservationStatus') === 'PENDING'
@@ -39,7 +45,7 @@ const canBeDeleted = (object) => {
       <Button
           label="Détails..."
           class="my-1"
-          @click.prevent="goTo(`/admin/reservation/${item.id}/show`)">
+          @click.prevent="goTo(`${url(item.id)}/show`)">
         <template #iconEnd><i class="bi bi-box-arrow-up-right"></i></template>
       </Button>
       <Button v-if="canBeConfirmed(item)"
@@ -47,7 +53,7 @@ const canBeDeleted = (object) => {
               class="my-1"
               color-class="success"
               @click.prevent="goTo(
-                        `/admin/reservation/${item.id}/confirm`,
+                        `${url(item.id)}/confirm`,
                         `Salut Maman, tu veux vraiment confirmer la reservation de ${item.user} ?`
                         )"
       >
@@ -58,7 +64,7 @@ const canBeDeleted = (object) => {
               color-class="danger"
               class="my-1"
               @click.prevent="goTo(
-                        `/admin/reservation/${item.id}/delete`,
+                        `${url(item.id)}/delete`,
                         `Salut Maman, tu veux vraiment supprimer la reservation de ${item.user} ?`
                         )"
       >
@@ -70,7 +76,7 @@ const canBeDeleted = (object) => {
           color-class="warning"
           class="my-1"
           @click.prevent="goTo(
-                  `/admin/reservation/${item.id}/archive`,
+                  `${url(item.id)}/archive`,
                   `Salut Maman, tu veux vraiment archiver la reservation de ${item.user} ?`
               )"
       >

@@ -6,5 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ include('admin/dashboard/_reservation-request.html.twig') }}
-{% endblock %}
+    <div {{ vue_component('AdminUsers', {
+    'filters': userFilters,
+    'items': users,
+}) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>{% endblock %}

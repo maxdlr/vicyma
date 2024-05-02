@@ -31,7 +31,12 @@ onBeforeMount(() => {
 })
 
 const setDefaultOrderBy = () => {
-  const defaultOrderBy = props.filters['user'];
+  let defaultOrderBy = '';
+
+  for (const key in props.filters) {
+    defaultOrderBy = props.filters[key];
+    break;
+  }
 
   selectedOrderByOption.value = {
     'name': defaultOrderBy.name,

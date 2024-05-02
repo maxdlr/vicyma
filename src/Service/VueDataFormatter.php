@@ -2,7 +2,9 @@
 
 namespace App\Service;
 
+use App\Entity\Address;
 use App\Entity\Message;
+use App\Entity\Reservation;
 use App\Entity\ReservationStatus;
 use App\Entity\Review;
 use App\Entity\User;
@@ -63,10 +65,12 @@ class VueDataFormatter
                     $value instanceof DateTimeInterface => $value = $value->format('d-m-Y'),
                     $value instanceof User => $value = $value->getFirstname() . ' ' . $value->getLastname(),
                     $value instanceof ReservationStatus => $value = $value->getName(),
+                    $value instanceof Address => $value = $value->getCity() . ' - ' . $value->getCountry(),
                     $value instanceof Collection => $value = array_map(function ($object) {
                         match (true) {
                             $object instanceof Message => $collectionProperty = 'subject',
                             $object instanceof Review => $collectionProperty = 'rate',
+                            $object instanceof Reservation => $collectionProperty = 'reservationNumber',
                             default => $collectionProperty = 'name'
                         };
                         return self::makeVueObject($object, [$collectionProperty])[$collectionProperty];
