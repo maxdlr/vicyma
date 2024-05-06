@@ -68,19 +68,19 @@ class Lodging
     #[ORM\Column]
     private ?float $priceByNight = null;
 
-    #[ORM\ManyToMany(targetEntity: Bed::class, inversedBy: 'lodgings')]
+    #[ORM\ManyToMany(targetEntity: Bed::class, inversedBy: 'lodgings', fetch: 'EAGER')]
     private Collection $beds;
 
-    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'lodgings')]
+    #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'lodgings', fetch: 'EAGER')]
     private Collection $medias;
 
-    #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'lodgings')]
+    #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'lodgings', fetch: 'EAGER')]
     private Collection $reservations;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'lodging')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'lodging', fetch: 'EAGER')]
     private Collection $messages;
 
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'lodging')]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'lodging', fetch: 'EAGER')]
     private Collection $reviews;
 
     #[ORM\Column]

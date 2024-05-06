@@ -39,7 +39,7 @@ const canBeDeleted = (object) => {
       :filters="filters"
       :items="items"
       :exclude-from-row-properties="['id', 'reservationStatus']"
-      :searchable-properties="['user', 'lodgings']"
+      :searchable-properties="['user', 'lodgings', 'reservationNumber']"
       title="Reservation requests">
     <template #buttons="{item}">
       <Button

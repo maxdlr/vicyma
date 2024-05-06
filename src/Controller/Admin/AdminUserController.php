@@ -68,8 +68,8 @@ class AdminUserController extends AbstractController
     public function getUserData(): array
     {
         $lastnames = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(), ['lastname']
-        )->regroup('lastname')->get();
+            $this->userRepository->findAll(), ['firstname']
+        )->regroup('firstname')->get();
 
         $users = VueDataFormatter::makeVueObjectOf(
             $this->userRepository->findAll(),
@@ -78,12 +78,8 @@ class AdminUserController extends AbstractController
                 'firstname',
                 'lastname',
                 'email',
-                'roles',
-                'address',
                 'phoneNumber',
-                'messages',
-//                'reservations',
-                'reviews',
+                'reservations',
                 'isDeleted'
             ])->get();
 

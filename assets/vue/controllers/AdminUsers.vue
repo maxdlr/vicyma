@@ -23,9 +23,9 @@ const url = (id) => {
   <VDatatable
       :filters="filters"
       :items="items"
-      :exclude-from-row-properties="['id', 'reservationStatus']"
+      :exclude-from-row-properties="['id', 'isDeleted']"
       :searchable-properties="['user', 'lodgings']"
-      title="Reservation requests">
+      title="Clients">
     <template #buttons="{item}">
       <Button
           label="Détails..."

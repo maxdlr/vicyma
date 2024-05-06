@@ -23,7 +23,7 @@ class VueDataFormatter
     public static function makeVueObjectOf(array $entities, array $properties): static
     {
         self::$vueObject = array_map(function (object $object) use ($entities, $properties) {
-            assert(get_class($object) === get_class($properties[0]));
+            assert(get_class($object) === get_class($entities[0]));
             return VueDataFormatter::makeVueObject($object, $properties);
         }, $entities);
 
@@ -49,6 +49,7 @@ class VueDataFormatter
      */
     private static function makeVueObject(object $object, array $properties = []): array
     {
+
         $r = [];
         $objectFqcn = get_class($object);
         $allProperties = ClassBrowser::findAllProperties($objectFqcn);
@@ -81,9 +82,10 @@ class VueDataFormatter
             }
         }
 
+
         $sorted = [];
         foreach ($properties as $property) {
-            $sorted[$property] = $r[$property];
+            $sorted += [$property => $r[$property]];
         }
         return $sorted;
     }

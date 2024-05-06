@@ -114,6 +114,7 @@ class AdminReservationController extends AbstractController
             $this->reservationRepository->findAll(),
             [
                 'id',
+                'reservationNumber',
                 'reservationStatus',
                 'lodgings',
                 'user',

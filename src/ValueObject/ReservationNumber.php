@@ -4,6 +4,8 @@ namespace App\ValueObject;
 
 use App\Entity\Reservation;
 use App\Entity\User;
+use DateTimeInterface;
+use function Symfony\Component\String\u;
 
 class ReservationNumber
 {
@@ -12,9 +14,26 @@ class ReservationNumber
         Reservation $reservation
     ): string
     {
-        return $user->getFirstname() . '-' .
-            $user->getLastname() . '_' .
-            $reservation->getArrivalDate()->format('d-m-Y') . '_' .
-            $reservation->getDepartureDate()->format('d-m-Y');
+        return self::shortenString($user->getFirstname()) .
+            self::shortenString($user->getLastname()) . '-' .
+            self::shortenDate($reservation->getArrivalDate()) .
+            self::shortenDate($reservation->getDepartureDate());
+    }
+
+    private static function shortenString(string $string): string
+    {
+        $shortenedString = '';
+        if (u($string)->length() > 4) {
+            u($string)->replace(' ', '');
+            $shortenedString = u($string)->truncate(4);
+        }
+        return $shortenedString;
+    }
+
+    private static function shortenDate(DateTimeInterface $date): string
+    {
+        $shortenedDate = $date->format('d-m');
+        u($shortenedDate)->replace('-', '');
+        return $shortenedDate;
     }
 }
