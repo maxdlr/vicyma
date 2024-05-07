@@ -57,6 +57,8 @@ class AdminUserController extends AbstractController
     ): Response
     {
         $user->setIsDeleted(true);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
         return $this->redirect($request->headers->get('referer'));
     }
 
@@ -67,12 +69,16 @@ class AdminUserController extends AbstractController
      */
     public function getUserData(): array
     {
-        $lastnames = VueDataFormatter::makeVueObjectOf(
+        $firstnames = VueDataFormatter::makeVueObjectOf(
             $this->userRepository->findAll(), ['firstname']
         )->regroup('firstname')->get();
 
+        $lastnames = VueDataFormatter::makeVueObjectOf(
+            $this->userRepository->findAll(), ['lastname']
+        )->regroup('lastname')->get();
+
         $users = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(),
+            $this->userRepository->findBy(['isDeleted' => false]),
             [
                 'id',
                 'firstname',
@@ -80,12 +86,12 @@ class AdminUserController extends AbstractController
                 'email',
                 'phoneNumber',
                 'reservations',
-                'isDeleted'
             ])->get();
 
         return [
             'filters' => [
-                'lastnames' => ['name' => 'name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname']
+                'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
+                'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
             ],
             'items' => $users
         ];

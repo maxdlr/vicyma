@@ -21,11 +21,13 @@ const url = (id) => {
 
 <template>
   <VDatatable
+      title="Clients"
       :filters="filters"
       :items="items"
-      :exclude-from-row-properties="['id', 'isDeleted']"
-      :searchable-properties="['user', 'lodgings']"
-      title="Clients">
+      :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"
+      :exclude-filters="['firstname', 'lastname']"
+      :exclude-from-row-properties="['id']"
+  >
     <template #buttons="{item}">
       <Button
           label="Détails..."
@@ -39,7 +41,7 @@ const url = (id) => {
           class="my-1"
           @click.prevent="goTo(
                         `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer la reservation de ${item.user} ?`
+                        `Salut Maman, tu veux vraiment supprimer ${item.firstname} ${item.lastname} ?`
                         )"
       >
         <template #iconEnd><i class="bi bi-trash"></i></template>

@@ -7,6 +7,7 @@ import VDatatableTitle from "../atom/VDatatableTitle.vue";
 const props = defineProps({
   title: {type: String, required: true},
   filters: {type: Object, required: true},
+  excludeFilters: {type: Array},
   items: {type: Object, required: true},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
@@ -93,7 +94,6 @@ const filterResults = () => {
 
         let nestedIsMatch = []
         for (const searchableProperty of props.searchableProperties) {
-
           if (typeof item[searchableProperty] === 'string') {
             nestedIsMatch.push(item[searchableProperty].toLowerCase().includes(searchQuery.value));
           }
@@ -102,9 +102,9 @@ const filterResults = () => {
             for (const searchablePropertyElement of item[searchableProperty]) {
               nestedIsMatch.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value))
             }
-            isMatch.push(nestedIsMatch.includes(true))
           }
         }
+        isMatch.push(nestedIsMatch.includes(true))
       }
     }
     return !isMatch.includes(false)
@@ -121,6 +121,7 @@ const filterResults = () => {
   <VDatatableSettings
       :filters="filters"
       :is-filtered="isFiltered"
+      :exclude-filters="excludeFilters"
       v-model:search-query="searchQuery"
       v-model:order-by-value="selectedOrderByOption"
       v-model:filter-options="selectedFilterOptions"

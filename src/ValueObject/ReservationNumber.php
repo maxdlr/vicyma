@@ -16,24 +16,16 @@ class ReservationNumber
     {
         return self::shortenString($user->getFirstname()) .
             self::shortenString($user->getLastname()) . '-' .
-            self::shortenDate($reservation->getArrivalDate()) .
-            self::shortenDate($reservation->getDepartureDate());
+            $reservation->getArrivalDate()->format('dm') .
+            $reservation->getDepartureDate()->format('dm');
     }
 
     private static function shortenString(string $string): string
     {
         $shortenedString = '';
         if (u($string)->length() > 4) {
-            u($string)->replace(' ', '');
-            $shortenedString = u($string)->truncate(4);
+            $shortenedString = u(str_replace(' ', '', $string))->truncate(4);
         }
         return $shortenedString;
-    }
-
-    private static function shortenDate(DateTimeInterface $date): string
-    {
-        $shortenedDate = $date->format('d-m');
-        u($shortenedDate)->replace('-', '');
-        return $shortenedDate;
     }
 }

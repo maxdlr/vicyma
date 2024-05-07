@@ -24,7 +24,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
-        $faker = Factory::create()->unique();
+        $faker = Factory::create();
         for ($i = 0; $i < AppFixtures::USER_COUNT; $i++) {
             $user = new User();
             $plaintextPassword = $faker->password();
@@ -37,10 +37,11 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user
                 ->setFirstname($faker->firstName())
                 ->setLastname($faker->lastName())
-                ->setPhoneNumber($faker->phoneNumber())
+                ->setPhoneNumber($faker->unique()->phoneNumber())
                 ->setRoles([RoleEnum::ROLE_USER])
                 ->setPassword($hashedPassword)
-                ->setEmail($faker->email());
+                ->setIsDeleted($faker->boolean(30))
+                ->setEmail($faker->unique()->email());
 
             if ($i % rand(1, 3) === 0) $user->setAddress($this->getReference('address_' . rand(1, AppFixtures::ADDRESS_COUNT - 1)));
 
