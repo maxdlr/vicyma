@@ -6,17 +6,8 @@
 {% endblock %}
 
 {% block body %}
-    {#    <div> #}
     <div {{ vue_component('AdminUsers', {
-        'filters': userFilters,
+        'settings': userFilters,
         'items': users,
     }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
-    {#    <div {{ vue_component('AdminReservationRequests', { #}
-    {#        'filters': reservationFilters, #}
-    {#        'items': reservations, #}
-    {#    }) }}> #}
-    {#        {{ include('_components/Atom/_spinner.html.twig') }} #}
-    {#    </div> #}
-    {#    </div> #}
-
 {% endblock %}

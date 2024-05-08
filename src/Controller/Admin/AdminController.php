@@ -30,9 +30,9 @@ class AdminController extends AbstractController
 
         return $this->render('admin/dashboard/dashboard.html.twig', [
             'users' => $users['items'],
-            'userFilters' => $users['filters'],
+            'userFilters' => $users['settings'],
             'reservations' => $reservations['items'],
-            'reservationFilters' => $reservations['filters'],
+            'reservationFilters' => $reservations['settings'],
         ]);
     }
 }

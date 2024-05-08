@@ -1,13 +1,10 @@
 <script setup>
 import VDatatable from "../components/organism/VDatatable.vue";
 import Button from "../components/atom/Button.vue";
-import {useObjectFormatter} from "../composable/formatter/object";
 import {goTo} from "../composable/action/redirect";
 
-const {getPropertyValue} = useObjectFormatter();
-
 defineProps({
-  filters: {type: Object, required: true},
+  settings: {type: Object, required: true},
   items: {type: Object, required: true},
 });
 
@@ -22,7 +19,7 @@ const url = (id) => {
 <template>
   <VDatatable
       title="Clients"
-      :filters="filters"
+      :settings="settings"
       :items="items"
       :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"
       :exclude-filters="['firstname', 'lastname']"

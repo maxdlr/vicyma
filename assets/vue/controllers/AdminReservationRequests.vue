@@ -1,13 +1,11 @@
 <script setup>
 import VDatatable from "../components/organism/VDatatable.vue";
 import Button from "../components/atom/Button.vue";
-import {useObjectFormatter} from "../composable/formatter/object";
+import {getPropertyValue} from "../composable/formatter/object";
 import {goTo} from "../composable/action/redirect";
 
-const {getPropertyValue} = useObjectFormatter();
-
 defineProps({
-  filters: {type: Object, required: true},
+  settings: {type: Object, required: true},
   items: {type: Object, required: true},
 });
 
@@ -36,7 +34,7 @@ const canBeDeleted = (object) => {
 
 <template>
   <VDatatable
-      :filters="filters"
+      :settings="settings"
       :items="items"
       :exclude-from-row-properties="['id', 'reservationStatus']"
       :searchable-properties="['user', 'lodgings', 'reservationNumber']"

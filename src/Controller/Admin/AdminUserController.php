@@ -89,7 +89,7 @@ class AdminUserController extends AbstractController
             ])->get();
 
         return [
-            'filters' => [
+            'settings' => [
                 'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
                 'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
             ],

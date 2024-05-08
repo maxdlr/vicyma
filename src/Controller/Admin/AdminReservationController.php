@@ -124,7 +124,7 @@ class AdminReservationController extends AbstractController
             ])->get();
 
         return [
-            'filters' => [
+            'settings' => [
                 'reservationStatus' => ['name' => 'status', 'default' => '', 'values' => $statuses, 'codeName' => 'reservationStatus'],
                 'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
                 'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings']

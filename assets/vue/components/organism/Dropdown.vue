@@ -4,10 +4,9 @@ import {
 } from "../../constant/bootstrap-constants";
 import {onMounted, onUnmounted, ref} from "vue";
 import {useStringFormatter} from "../../composable/formatter/string";
-import {useObjectFormatter} from "../../composable/formatter/object";
+import {getPropertyValue} from "../../composable/formatter/object";
 
 const {toTitle} = useStringFormatter();
-const {getPropertyValue} = useObjectFormatter()
 
 
 const props = defineProps({

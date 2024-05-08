@@ -6,7 +6,7 @@ import VDatatableTitle from "../atom/VDatatableTitle.vue";
 
 const props = defineProps({
   title: {type: String, required: true},
-  filters: {type: Object, required: true},
+  settings: {type: Object, required: true},
   excludeFilters: {type: Array},
   items: {type: Object, required: true},
   searchableProperties: {type: Array, required: true},
@@ -19,8 +19,8 @@ const resultCount = ref(0)
 const searchQuery = ref('')
 const isFiltered = computed(() => {
   const vote = [];
-  for (const filter in props.filters) {
-    vote.push(selectedFilterOptions.value[props.filters[filter].name] !== '');
+  for (const filter in props.settings) {
+    vote.push(selectedFilterOptions.value[props.settings[filter].name] !== '');
   }
   vote.push(searchQuery.value !== '')
   return vote.includes(true)
@@ -34,8 +34,8 @@ onBeforeMount(() => {
 const setDefaultOrderBy = () => {
   let defaultOrderBy = '';
 
-  for (const key in props.filters) {
-    defaultOrderBy = props.filters[key];
+  for (const key in props.settings) {
+    defaultOrderBy = props.settings[key];
     break;
   }
 
@@ -46,15 +46,15 @@ const setDefaultOrderBy = () => {
 }
 
 const setDefaultFilters = () => {
-  for (const filter in props.filters) {
-    selectedFilterOptions.value[props.filters[filter].name] = props.filters[filter].default;
+  for (const filter in props.settings) {
+    selectedFilterOptions.value[props.settings[filter].name] = props.settings[filter].default;
   }
   filterResults();
 }
 
 const resetFilters = () => {
-  for (const filter in props.filters) {
-    selectedFilterOptions.value[props.filters[filter].name] = '';
+  for (const filter in props.settings) {
+    selectedFilterOptions.value[props.settings[filter].name] = '';
   }
   searchQuery.value = '';
   filterResults()
@@ -62,8 +62,8 @@ const resetFilters = () => {
 
 const orderBy = () => {
   let options = [];
-  for (const filterName in props.filters) {
-    options.push(props.filters[filterName].codeName)
+  for (const filterName in props.settings) {
+    options.push(props.settings[filterName].codeName)
   }
   filteredItems.value.sort((a, b) => {
     return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
@@ -75,8 +75,8 @@ const filterResults = () => {
   let matches = []
   matches = props.items.filter((item) => {
     let isMatch = [];
-    for (const key in props.filters) {
-      const selectedFilterValue = selectedFilterOptions.value[props.filters[key].name]
+    for (const key in props.settings) {
+      const selectedFilterValue = selectedFilterOptions.value[props.settings[key].name]
 
       if (selectedFilterValue !== '') {
 
@@ -119,7 +119,7 @@ const filterResults = () => {
 <template>
   <VDatatableTitle :title="title"/>
   <VDatatableSettings
-      :filters="filters"
+      :settings="settings"
       :is-filtered="isFiltered"
       :exclude-filters="excludeFilters"
       v-model:search-query="searchQuery"

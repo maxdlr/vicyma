@@ -5,7 +5,7 @@ import Dropdown from "./Dropdown.vue";
 import {computed} from "vue";
 
 const props = defineProps({
-  filters: {type: Object, required: true},
+  settings: {type: Object, required: true},
   excludeFilters: {type: Array},
   isFiltered: {type: Boolean, required: true}
 })
@@ -17,13 +17,13 @@ const orderByValue = defineModel('orderByValue', {
 const activeFilters = computed(() => {
   let activeFilters = {}
   if (props.excludeFilters) {
-    for (const key in props.filters) {
+    for (const key in props.settings) {
       if (!props.excludeFilters.includes(key)) {
-        activeFilters += props.filters[key]
+        activeFilters += props.settings[key]
       }
     }
   } else {
-    activeFilters = props.filters
+    activeFilters = props.settings
   }
   return activeFilters
 })
@@ -32,8 +32,8 @@ const emit = defineEmits(['search', 'filter', 'reset', 'order'])
 
 const orderByOptions = computed(() => {
   let options = [];
-  for (const filterName in props.filters) {
-    options.push({'name': props.filters[filterName].name, 'codeName': props.filters[filterName].codeName})
+  for (const filterName in props.settings) {
+    options.push({'name': props.settings[filterName].name, 'codeName': props.settings[filterName].codeName})
   }
   return options
 })
