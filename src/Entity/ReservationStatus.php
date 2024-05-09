@@ -20,7 +20,7 @@ class ReservationStatus
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservationStatus')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'reservationStatus', fetch: 'EAGER')]
     private Collection $reservations;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

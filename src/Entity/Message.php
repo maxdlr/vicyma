@@ -21,13 +21,13 @@ class Message
     #[ORM\Column(length: 2000)]
     private ?string $content = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
     private ?Lodging $lodging = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
     private ?Reservation $reservation = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

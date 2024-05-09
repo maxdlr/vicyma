@@ -26,7 +26,7 @@ class Bed
     #[ORM\Column]
     private ?bool $isExtra = null;
 
-    #[ORM\ManyToMany(targetEntity: Lodging::class, mappedBy: 'beds')]
+    #[ORM\ManyToMany(targetEntity: Lodging::class, mappedBy: 'beds', fetch: 'EAGER')]
     private Collection $lodgings;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -38,10 +38,7 @@ class Bed
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
-
         $this->createdOn = new \DateTime();
-
-
     }
 
     public function getId(): ?int

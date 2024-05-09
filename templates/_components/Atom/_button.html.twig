@@ -1,5 +1,5 @@
-{% if link is defined %}
-    <a href="{{ link }}"
+{% if routeName is defined %}
+    <a href="{{ path(routeName, {'id': object.id}) }}" {% if confirmMsg is defined %} onclick="return confirm({{ confirmMsg }});" {% endif %}
        class="btn {{ size is defined ? 'btn-'~size : '' }} btn-{{ colorClass|default('primary') }} rounded-pill">
         {% if icon is defined %}
             <span class="px-1"><i class="bi bi-{{ icon }}"></i></span>
@@ -9,6 +9,7 @@
         {% endif %}</a>
 {% else %}
     <button class="btn {{ size is defined ? 'btn-'~size : '' }} btn-{{ colorClass|default('primary') }} rounded-pill"
+            {% if confirmMsg is defined %} onclick="confirm({{ confirmMsg }})" {% endif %}
             type="{{ type|default('submit') }}">
         {% if icon is defined %}
             <span class="px-1"><i class="bi bi-{{ icon }}"></i></span>

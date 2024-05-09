@@ -9,7 +9,7 @@ use App\Crud\Manager\DeleteManager;
 use App\Crud\Manager\SaveManager;
 use App\Crud\Manager\UploadManager;
 use App\Entity\User;
-use App\Form\UserType;
+use App\Form\RegistrationType;
 use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[CrudSetting(entity: User::class, formType: UserType::class)]
+#[CrudSetting(entity: User::class, formType: RegistrationType::class)]
 class UserCrud extends AbstractCrud
 {
     use AfterCrudTrait;

@@ -15,6 +15,7 @@ use App\Enum\ReservationStatusEnum;
 use App\Form\ReservationType;
 use App\Repository\ReservationStatusRepository;
 use App\Service\YieldManager;
+use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,30 +37,25 @@ class ReservationCrud extends AbstractCrud
     public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
     {
         return parent::save($request, $object, $options, function ($form, $object
-        ) use ($options) {
-
-            $lodging = $options['lodging'];
-            $user = $options['user'];
-
-            assert($lodging instanceof Lodging);
-            assert($user instanceof User);
+        ) {
             assert($object instanceof Reservation);
 
             if ($object->getArrivalDate()->diff($object->getDepartureDate())->invert) {
                 return false;
             }
 
-            $reservationPrice = YieldManager::calculateReservationPrice(
-                $object->getArrivalDate(),
-                $object->getDepartureDate(),
-                $lodging
-            );
+            $reservationPrice = 0;
+            foreach ($object->getLodgings() as $lodging) {
+                $reservationPrice += YieldManager::calculateReservationPrice(
+                    $object->getArrivalDate(),
+                    $object->getDepartureDate(),
+                    $lodging
+                );
+            }
 
             $object
-                ->setReservationNumber($user, $object)
-                ->addLodging($lodging)
-                ->setPrice($reservationPrice)
-                ->setUser($user);
+                ->setReservationNumber($object->getUser(), $object)
+                ->setPrice($reservationPrice);
 
             if ($object->getId() === null) {
                 $object->setReservationStatus(
@@ -95,9 +91,13 @@ class ReservationCrud extends AbstractCrud
      * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
      *
      */
-    #[Route('reservation/{id}', name: 'app_reservation_delete', methods: ['POST'])]
-    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
+    #[Route('/reservation/{id}/delete', name: 'app_reservation_delete', methods: ['GET', 'POST'])]
+    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = []): Response
     {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $doBeforeDelete);
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, function ($object) {
+            assert($object instanceof Reservation);
+            $object->setReservationStatus($this->reservationStatusRepository->findOneByName(ReservationStatusEnum::DELETED->value));
+            return ['save', 'exit'];
+        });
     }
 }

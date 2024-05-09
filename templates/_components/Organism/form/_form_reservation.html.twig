@@ -2,10 +2,18 @@
 
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
+        include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.user, label: 'Client', placeholder: 'Chercher un client'}),
         include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.adultCount, label: 'Nombre d\'adulte'}),
         include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.childCount, label:'Nombre d\'enfants'}),
         include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.arrivalDate, label: 'Date d\'arrivée'}),
-        include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.departureDate, label: 'Date de départ'})
+        include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.departureDate, label: 'Date de départ'}),
+        include('_components/Atom/form/_number-field.html.twig', {formRow: reservationForm.price, label: 'Prix'}),
+        include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.lodgings, label: 'Appartement', placeholder: 'Chercher un appartement'}),
     ],
-    deleteRoute: 'app_reservation_delete'
+    deleteRoute: 'app_reservation_delete',
+    deleteConfirmMsg: 'Voulez-vous vraiment supprimer ?',
+    archiveRoute: 'app_admin_reservation_archive',
+    archiveConfirmMsg: 'Voulez-vous vraiment archiver ?',
+    confirmRoute: 'app_admin_reservation_confirm',
+    confirmConfirmMsg: 'Voulez-vous vraiment confirmer ?',
 }) }}

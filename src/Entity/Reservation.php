@@ -36,22 +36,22 @@ class Reservation
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTimeInterface $departureDate = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: true)]
     private ?ReservationStatus $reservationStatus = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation', fetch: 'EAGER')]
     private Collection $messages;
 
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdOn = null;
+    private ?\DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedOn = null;
@@ -227,4 +227,12 @@ class Reservation
     {
         return $this->updatedOn;
     }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): Reservation
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
+    }
+
+
 }
