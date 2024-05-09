@@ -6,8 +6,14 @@
 {% endblock %}
 
 {% block body %}
-    <div {{ vue_component('AdminUsers', {
-        'settings': userFilters,
-        'items': users,
-    }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
+    <div class="row">
+        <nav {{ vue_component('admin/AdminNavBar') }} class="col-3">
+
+        </nav>
+        <div class="col" {{ vue_component('admin/datatables/AdminUsers', {
+            'settings': userFilters,
+            'items': users,
+        }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
+    </div>
+
 {% endblock %}

@@ -1,7 +1,7 @@
 <script setup>
-import {computed, onBeforeMount, onMounted, ref} from "vue";
-import VDatatableResults from "./VDatatableResults.vue";
-import VDatatableSettings from "./VDatatableSettings.vue";
+import {onBeforeMount, ref} from "vue";
+import VDatatableResults from "../molecule/VDatatableResults.vue";
+import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
 
 const props = defineProps({

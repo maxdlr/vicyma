@@ -1,7 +1,7 @@
 <script setup>
 import Button from "../atom/Button.vue";
 import {computed} from "vue";
-import VDatatableRow from "../atom/VDatatableRow.vue";
+import VDatatableRow from "./VDatatableRow.vue";
 
 const props = defineProps({
   items: {type: Array, required: true},

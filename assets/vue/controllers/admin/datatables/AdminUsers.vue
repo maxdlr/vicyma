@@ -1,7 +1,7 @@
 <script setup>
-import VDatatable from "../components/organism/VDatatable.vue";
-import Button from "../components/atom/Button.vue";
-import {goTo} from "../composable/action/redirect";
+import VDatatable from "../../../components/organism/VDatatable.vue";
+import Button from "../../../components/atom/Button.vue";
+import {goTo} from "../../../composable/action/redirect";
 
 defineProps({
   settings: {type: Object, required: true},

@@ -1,7 +1,7 @@
 <script setup>
 import VSearchInput from "../atom/VSearchInput.vue";
 import Button from "../atom/Button.vue";
-import Dropdown from "./Dropdown.vue";
+import Dropdown from "../atom/Dropdown.vue";
 import {computed} from "vue";
 
 const props = defineProps({

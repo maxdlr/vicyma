@@ -1,6 +1,6 @@
 <script setup>
 import {onBeforeMount, ref} from "vue";
-import VDatatableCell from "./VDatatableCell.vue";
+import VDatatableCell from "../atom/VDatatableCell.vue";
 
 const props = defineProps({
   item: {type: Object, required: true},
