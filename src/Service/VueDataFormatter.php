@@ -47,10 +47,10 @@ class VueDataFormatter
     /**
      * @throws ReflectionException
      */
-    private static function makeVueObject(object $object, array $properties = []): array
+    private static function makeVueObject(object $object, array $properties): array
     {
 
-        $r = [];
+        $vueObject = [];
         $objectFqcn = get_class($object);
         $allProperties = ClassBrowser::findAllProperties($objectFqcn);
 
@@ -78,15 +78,14 @@ class VueDataFormatter
                     }, $value->toArray()),
                     default => $value
                 };
-                $r[$property->getName()] = $value;
+                $vueObject[$property->getName()] = $value;
             }
         }
 
-
-        $sorted = [];
+        $sortedVueObject = [];
         foreach ($properties as $property) {
-            $sorted += [$property => $r[$property]];
+            $sortedVueObject += [$property => $vueObject[$property]];
         }
-        return $sorted;
+        return $sortedVueObject;
     }
 }

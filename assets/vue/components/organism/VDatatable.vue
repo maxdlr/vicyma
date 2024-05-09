@@ -15,16 +15,7 @@ const props = defineProps({
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const selectedOrderByOption = ref({});
-const resultCount = ref(0)
 const searchQuery = ref('')
-const isFiltered = computed(() => {
-  const vote = [];
-  for (const filter in props.settings) {
-    vote.push(selectedFilterOptions.value[props.settings[filter].name] !== '');
-  }
-  vote.push(searchQuery.value !== '')
-  return vote.includes(true)
-})
 
 onBeforeMount(() => {
   setDefaultOrderBy()
@@ -71,7 +62,6 @@ const orderBy = () => {
 }
 
 const filterResults = () => {
-  resultCount.value = 0;
   let matches = []
   matches = props.items.filter((item) => {
     let isMatch = [];
@@ -109,7 +99,6 @@ const filterResults = () => {
     }
     return !isMatch.includes(false)
   })
-  resultCount.value = matches.length;
   filteredItems.value = matches
   orderBy();
 }
@@ -120,7 +109,6 @@ const filterResults = () => {
   <VDatatableTitle :title="title"/>
   <VDatatableSettings
       :settings="settings"
-      :is-filtered="isFiltered"
       :exclude-filters="excludeFilters"
       v-model:search-query="searchQuery"
       v-model:order-by-value="selectedOrderByOption"

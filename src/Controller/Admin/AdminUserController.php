@@ -59,7 +59,7 @@ class AdminUserController extends AbstractController
         $user->setIsDeleted(true);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        return $this->redirect($request->headers->get('referer'));
+        return $this->redirectTo('referer', $request);
     }
 
     // ---------------------------------------------------------------------------------------------------

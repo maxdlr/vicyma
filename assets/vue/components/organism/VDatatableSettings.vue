@@ -7,7 +7,6 @@ import {computed} from "vue";
 const props = defineProps({
   settings: {type: Object, required: true},
   excludeFilters: {type: Array},
-  isFiltered: {type: Boolean, required: true}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
@@ -26,6 +25,14 @@ const activeFilters = computed(() => {
     activeFilters = props.settings
   }
   return activeFilters
+})
+const isFiltered = computed(() => {
+  const vote = [];
+  for (const filter in props.settings) {
+    vote.push(selectedFilterOptions.value[props.settings[filter].name] !== '');
+  }
+  vote.push(searchQuery.value !== '')
+  return vote.includes(true)
 })
 
 const emit = defineEmits(['search', 'filter', 'reset', 'order'])

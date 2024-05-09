@@ -34,7 +34,7 @@ const resultCount = computed(() => {
             class="col"
         />
       </slot>
-      <div class="d-flex flex-column justify-content-center col-2">
+      <div class="d-flex flex-column justify-content-center col-2" v-if="$slots.buttons">
         <slot name="buttons" :item="item"/>
       </div>
     </div>

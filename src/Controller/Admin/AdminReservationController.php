@@ -62,7 +62,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::CONFIRMED);
-        return $this->redirect($request->headers->get('referer'));
+        return $this->redirectTo('referer', $request);
     }
 
     /**
@@ -75,7 +75,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::DELETED);
-        return $this->redirect($request->headers->get('referer'));
+        return $this->redirectTo('referer', $request);
     }
 
     /**
@@ -88,7 +88,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::ARCHIVED);
-        return $this->redirect($request->headers->get('referer'));
+        return $this->redirectTo('referer', $request);
     }
 
     // ---------------------------------------------------------------------------------------------------
