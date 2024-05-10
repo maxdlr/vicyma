@@ -76,7 +76,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::CONFIRMED);
-        return $this->redirectTo('referer', $request);
+        return $this->redirectTo('referer', $request, 'reservations');
     }
 
     /**
@@ -89,7 +89,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::DELETED);
-        return $this->redirectTo('referer', $request);
+        return $this->redirectTo('referer', $request, 'reservations');
     }
 
     /**
@@ -102,7 +102,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::ARCHIVED);
-        return $this->redirectTo('referer', $request);
+        return $this->redirectTo('referer', $request, 'reservations');
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -112,12 +112,14 @@ class AdminReservationController extends AbstractController
      */
     public function getReservationRequestData(): array
     {
+        $allReservations = $this->reservationRepository->findAll();
+
         $statuses = VueDataFormatter::makeVueObjectOf(
             $this->reservationStatusRepository->findAll(), ['name']
         )->regroup('name')->get();
 
         $clients = VueDataFormatter::makeVueObjectOf(
-            $this->reservationRepository->findAll(), ['user']
+            $allReservations, ['user']
         )->regroup('user')->get();
 
         $lodgings = VueDataFormatter::makeVueObjectOf(
@@ -125,7 +127,7 @@ class AdminReservationController extends AbstractController
         )->regroup('name')->get();
 
         $reservations = VueDataFormatter::makeVueObjectOf(
-            $this->reservationRepository->findAll(),
+            $allReservations,
             [
                 'id',
                 'reservationNumber',

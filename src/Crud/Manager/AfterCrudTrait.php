@@ -21,10 +21,16 @@ trait AfterCrudTrait
     protected function redirectTo(
         string  $url,
         Request $request,
+        string  $anchor = '',
     ): Response
     {
+        $anchorHash = '';
+        if ($anchor !== '') {
+            $anchorHash = '#' . $anchor;
+        }
+
         if ($url === 'referer') {
-            return new RedirectResponse($request->headers->get('referer'), 302);
+            return new RedirectResponse($request->headers->get('referer') . $anchorHash, 302);
         }
 
         return new RedirectResponse($url, 302);

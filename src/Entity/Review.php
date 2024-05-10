@@ -22,6 +22,7 @@ class Review
     private ?string $comment = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Lodging $lodging = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reviews')]

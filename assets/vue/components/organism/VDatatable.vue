@@ -3,6 +3,7 @@ import {onBeforeMount, ref} from "vue";
 import VDatatableResults from "../molecule/VDatatableResults.vue";
 import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
+import {isEmpty} from "../../composable/formatter/object";
 
 const props = defineProps({
   title: {type: String, required: true},
@@ -78,20 +79,22 @@ const filterResults = () => {
     let isMatch = [];
     for (const key in props.settings) {
       const selectedFilterValue = selectedFilterOptions.value[props.settings[key].name]
+      if (selectedFilterValue !== '' && item[key] !== null) {
 
-      if (selectedFilterValue !== '') {
+        if (typeof item[key] === 'boolean') {
+          isMatch.push(item[key].toString().length === selectedFilterValue.toString().length)
+        }
 
-        if (typeof item[key] === 'object') {
+        if (typeof item[key] === 'object' && !isEmpty(item[key])) {
           isMatch.push(item[key].includes(selectedFilterValue))
         }
 
-        if (typeof item[key] === 'string' || typeof item[key] === 'boolean') {
+        if (typeof item[key] === 'string' || typeof item[key] === 'number') {
           isMatch.push(item[key] === selectedFilterValue)
         }
-
       }
 
-      if (searchQuery.value !== '') {
+      if (searchQuery.value !== '' && item[key]) {
 
         let nestedIsMatch = []
         for (const searchableProperty of props.searchableProperties) {

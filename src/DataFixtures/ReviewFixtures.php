@@ -24,12 +24,7 @@ class ReviewFixtures extends Fixture implements DependentFixtureInterface
             $review
                 ->setRate(rand(1, 5))
                 ->setComment($faker->sentences(5, true))
-                ->setLodging($faker->randomElement(
-                    [
-                        null,
-                        $this->getReference('lodging_' . rand(1, AppFixtures::LODGING_COUNT - 1))
-                    ]
-                ))
+                ->setLodging($this->getReference('lodging_' . rand(1, AppFixtures::LODGING_COUNT - 1)))
                 ->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT - 1)));
             $this->setReference('review_' . $i, $review);
             $manager->persist($review);

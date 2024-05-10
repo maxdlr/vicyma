@@ -1,0 +1,14 @@
+{% extends 'admin-base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    Tableau de bord
+{% endblock %}
+
+{% block body %}
+    {{ include('_components/Organism/form/_form_message.html.twig', {
+        save: true,
+        delete: true,
+        reference: 'Message de ' ~ user.firstname ~ ' ' ~ user.lastname
+    }) }}
+{% endblock %}

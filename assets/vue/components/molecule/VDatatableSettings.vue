@@ -76,7 +76,7 @@ const handleMainFilter = (value) => {
   />
 
   <div :class="`row row-cols-${Object.keys(activeFilters).length + 3}`"
-       class="justify-content-center align-items-center">
+       class="justify-content-center align-items-center py-4">
     <div class="d-flex justify-content-center align-items-center">
       <h5 class="d-inline my-0 mx-2 p-0 text-center">Filters</h5>
       <div v-if="isFiltered">

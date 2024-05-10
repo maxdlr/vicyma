@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\Entity\Address;
+use App\Entity\Bed;
+use App\Entity\Lodging;
 use App\Entity\Message;
 use App\Entity\Reservation;
 use App\Entity\ReservationStatus;
@@ -61,8 +63,11 @@ class VueDataFormatter
                 $getterName = $getter->getName();
 
                 $value = $object->$getterName();
-
                 match (true) {
+                    $value instanceof Lodging => $value = $value->getName(),
+                    $value instanceof Message => $value = $value->getSubject(),
+                    $value instanceof Reservation => $value = $value->getReservationNumber(),
+                    $value instanceof Bed => $value = $value->getWidth() . ' - ' . $value->getHeight(),
                     $value instanceof DateTimeInterface => $value = $value->format('d-m-Y'),
                     $value instanceof User => $value = $value->getFirstname() . ' ' . $value->getLastname(),
                     $value instanceof ReservationStatus => $value = $value->getName(),
@@ -70,9 +75,11 @@ class VueDataFormatter
                     $value instanceof Collection => $value = array_map(function ($object) {
                         match (true) {
                             $object instanceof Message => $collectionProperty = 'subject',
+                            $object instanceof Bed => $collectionProperty = 'width',
                             $object instanceof Review => $collectionProperty = 'rate',
                             $object instanceof Reservation => $collectionProperty = 'reservationNumber',
-                            default => $collectionProperty = 'name'
+                            $object instanceof Lodging => $collectionProperty = 'name',
+                            default => $collectionProperty = null
                         };
                         return self::makeVueObject($object, [$collectionProperty])[$collectionProperty];
                     }, $value->toArray()),

@@ -59,7 +59,7 @@ class AdminUserController extends AbstractController
         $user->setIsDeleted(true);
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        return $this->redirectTo('referer', $request);
+        return $this->redirectTo('referer', $request, 'users');
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -69,20 +69,22 @@ class AdminUserController extends AbstractController
      */
     public function getUserData(): array
     {
+        $allUsers = $this->userRepository->findAll();
+
         $firstnames = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(), ['firstname']
+            $allUsers, ['firstname']
         )->regroup('firstname')->get();
 
         $lastnames = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(), ['lastname']
+            $allUsers, ['lastname']
         )->regroup('lastname')->get();
 
         $isDeleted = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(), ['isDeleted']
+            $allUsers, ['isDeleted']
         )->regroup('isDeleted')->get();
 
         $users = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(),
+            $allUsers,
             [
                 'id',
                 'firstname',
@@ -95,9 +97,9 @@ class AdminUserController extends AbstractController
 
         return [
             'settings' => [
-                'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
                 'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
-                'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted']
+                'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
+                'isDeleted' => ['name' => 'is deleted', 'default' => '', 'values' => $isDeleted, 'codeName' => 'isDeleted']
             ],
             'items' => $users
         ];

@@ -1,9 +1,9 @@
 <script setup>
 defineProps({
-  label: {type: String, default: null},
+  label: {type: [String, Number, Boolean], default: null},
   colorClass: {type: String, default: "primary"},
   size: {type: String, default: null},
-  roundClass: {type: String, default: null},
+  roundClass: {type: String, default: 'pill'},
   iconClassStart: {type: String, default: null},
   iconClassEnd: {type: String, default: null},
 });
@@ -25,7 +25,7 @@ defineProps({
         $slots['iconStart'] || iconClassStart ? 'ps-2' : '',
         $slots['iconEnd'] || iconClassEnd ? 'pe-2' : ''
           ]">
-      {{ label }}
+      {{ typeof label === 'boolean' ? label.toString() : label }}
     </span>
     <slot name="iconEnd">
       <i :class="`bi bi-${iconClassEnd}`"></i>
