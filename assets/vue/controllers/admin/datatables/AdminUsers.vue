@@ -23,6 +23,7 @@ const url = (id) => {
       :items="items"
       :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"
       :exclude-filters="['firstname', 'lastname']"
+      main-filter="isDeleted"
       :exclude-from-row-properties="['id']"
   >
     <template #buttons="{item}">

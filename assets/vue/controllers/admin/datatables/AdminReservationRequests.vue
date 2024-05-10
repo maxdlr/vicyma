@@ -36,6 +36,7 @@ const canBeDeleted = (object) => {
   <VDatatable
       :settings="settings"
       :items="items"
+      main-filter="reservationStatus"
       :exclude-from-row-properties="['id', 'reservationStatus']"
       :searchable-properties="['user', 'lodgings', 'reservationNumber']"
       title="Reservation requests">

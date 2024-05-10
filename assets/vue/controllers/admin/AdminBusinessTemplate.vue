@@ -38,13 +38,14 @@ const tabs = {
       </button>
     </div>
   </nav>
-
-  <component
-      :is="tabs[currentTab]"
-      class="tab"
-      :settings="datatables[currentTab].settings"
-      :items="datatables[currentTab].items"
-  ></component>
+  <KeepAlive>
+    <component
+        :is="tabs[currentTab]"
+        class="tab"
+        :settings="datatables[currentTab].settings"
+        :items="datatables[currentTab].items"
+    ></component>
+  </KeepAlive>
 </template>
 
 <style scoped>

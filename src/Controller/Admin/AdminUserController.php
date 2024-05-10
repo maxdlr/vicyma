@@ -77,8 +77,12 @@ class AdminUserController extends AbstractController
             $this->userRepository->findAll(), ['lastname']
         )->regroup('lastname')->get();
 
+        $isDeleted = VueDataFormatter::makeVueObjectOf(
+            $this->userRepository->findAll(), ['isDeleted']
+        )->regroup('isDeleted')->get();
+
         $users = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findBy(['isDeleted' => false]),
+            $this->userRepository->findAll(),
             [
                 'id',
                 'firstname',
@@ -86,12 +90,14 @@ class AdminUserController extends AbstractController
                 'email',
                 'phoneNumber',
                 'reservations',
+                'isDeleted'
             ])->get();
 
         return [
             'settings' => [
                 'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
                 'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
+                'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted']
             ],
             'items' => $users
         ];

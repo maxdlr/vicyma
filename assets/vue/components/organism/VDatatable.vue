@@ -7,6 +7,7 @@ import VDatatableTitle from "../atom/VDatatableTitle.vue";
 const props = defineProps({
   title: {type: String, required: true},
   settings: {type: Object, required: true},
+  mainFilter: {type: String, default: null},
   excludeFilters: {type: Array},
   items: {type: Object, required: true},
   searchableProperties: {type: Array, required: true},
@@ -15,6 +16,10 @@ const props = defineProps({
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const selectedOrderByOption = ref({});
+const mainFilterValue = ref({
+  name: props.mainFilter ? props.settings[props.mainFilter].name : null,
+  value: props.mainFilter ? props.settings[props.mainFilter].default : null
+});
 const searchQuery = ref('')
 
 onBeforeMount(() => {
@@ -62,6 +67,12 @@ const orderBy = () => {
 }
 
 const filterResults = () => {
+
+  if (props.mainFilter) {
+    selectedFilterOptions.value[mainFilterValue.value.name] = mainFilterValue.value.value
+  }
+
+
   let matches = []
   matches = props.items.filter((item) => {
     let isMatch = [];
@@ -74,7 +85,7 @@ const filterResults = () => {
           isMatch.push(item[key].includes(selectedFilterValue))
         }
 
-        if (typeof item[key] === 'string') {
+        if (typeof item[key] === 'string' || typeof item[key] === 'boolean') {
           isMatch.push(item[key] === selectedFilterValue)
         }
 
@@ -106,13 +117,15 @@ const filterResults = () => {
 </script>
 
 <template>
-  <VDatatableTitle :title="title"/>
+  <VDatatableTitle :title="title" class="pt-4"/>
   <VDatatableSettings
       :settings="settings"
       :exclude-filters="excludeFilters"
+      :main-filter="mainFilter"
       v-model:search-query="searchQuery"
       v-model:order-by-value="selectedOrderByOption"
       v-model:filter-options="selectedFilterOptions"
+      v-model:main-filter-value="mainFilterValue"
       @search="filterResults"
       @reset="resetFilters"
       @order="orderBy"

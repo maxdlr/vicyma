@@ -3,29 +3,41 @@ import VSearchInput from "../atom/VSearchInput.vue";
 import Button from "../atom/Button.vue";
 import Dropdown from "../atom/Dropdown.vue";
 import {computed} from "vue";
+import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 
 const props = defineProps({
   settings: {type: Object, required: true},
   excludeFilters: {type: Array},
+  mainFilter: {type: String, default: null}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
+const selectedMainFilter = defineModel('mainFilterValue', {type: Object})
 const orderByValue = defineModel('orderByValue', {
   type: Object, required: true
 })
+const activeMainFilter = computed(() => {
+  return props.mainFilter ? props.settings[props.mainFilter] : null
+})
 const activeFilters = computed(() => {
-  let activeFilters = {}
+  let activeFilters = {};
+
   if (props.excludeFilters) {
     for (const key in props.settings) {
       if (!props.excludeFilters.includes(key)) {
-        activeFilters += props.settings[key]
+        activeFilters[key] = props.settings[key];
       }
     }
   } else {
-    activeFilters = props.settings
+    activeFilters = {...props.settings};
   }
-  return activeFilters
-})
+
+  if (props.mainFilter) {
+    delete activeFilters[props.mainFilter];
+  }
+
+  return activeFilters;
+});
 const isFiltered = computed(() => {
   const vote = [];
   for (const filter in props.settings) {
@@ -44,9 +56,25 @@ const orderByOptions = computed(() => {
   }
   return options
 })
+
+const handleMainFilter = (value) => {
+  selectedMainFilter.value = {
+    name: activeMainFilter.value.name,
+    value: value
+  }
+  emit('filter')
+}
 </script>
 
 <template>
+  <VDatatableMainFilter
+      v-if="mainFilter"
+      :filter="activeMainFilter"
+      @selected-value="handleMainFilter"
+      v-model:active-main-filter="selectedMainFilter.value"
+      class="py-5"
+  />
+
   <div :class="`row row-cols-${Object.keys(activeFilters).length + 3}`"
        class="justify-content-center align-items-center">
     <div class="d-flex justify-content-center align-items-center">
