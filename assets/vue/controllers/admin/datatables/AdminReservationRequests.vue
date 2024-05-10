@@ -43,43 +43,39 @@ const canBeDeleted = (object) => {
       <Button
           label="Détails..."
           class="my-1"
-          @click.prevent="goTo(`${url(item.id)}/show`)">
-        <template #iconEnd><i class="bi bi-box-arrow-up-right"></i></template>
-      </Button>
+          icon-class-end="box-arrow-up-right"
+          @click.prevent="goTo(`${url(item.id)}/show`)"/>
       <Button v-if="canBeConfirmed(item)"
               label="Confirm"
               class="my-1"
               color-class="success"
+              icon-class-end="check-all"
               @click.prevent="goTo(
                         `${url(item.id)}/confirm`,
                         `Salut Maman, tu veux vraiment confirmer la reservation de ${item.user} ?`
                         )"
-      >
-        <template #iconEnd><i class="bi bi-check-all"></i></template>
-      </Button>
+      />
       <Button v-if="canBeDeleted(item)"
               label="Delete"
               color-class="danger"
               class="my-1"
+              icon-class-end="trash"
               @click.prevent="goTo(
                         `${url(item.id)}/delete`,
                         `Salut Maman, tu veux vraiment supprimer la reservation de ${item.user} ?`
                         )"
-      >
-        <template #iconEnd><i class="bi bi-trash"></i></template>
-      </Button>
+      />
       <Button
           v-if="canBeArchived(item)"
           label="Archive"
           color-class="warning"
           class="my-1"
+          icon-class-end="archive"
           @click.prevent="goTo(
                   `${url(item.id)}/archive`,
                   `Salut Maman, tu veux vraiment archiver la reservation de ${item.user} ?`
               )"
-      >
-        <template #iconEnd><i class="bi bi-archive"></i></template>
-      </Button>
+      />
     </template>
   </VDatatable>
 </template>

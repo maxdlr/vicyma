@@ -34,6 +34,20 @@ class AdminReservationController extends AbstractController
     }
 
     /**
+     * @throws ReflectionException
+     */
+    #[Route(path: '/reservations', name: 'widget', methods: ['GET'])]
+    public function widget(): Response
+    {
+        $reservations = $this->getReservationRequestData();
+
+        return $this->render('', [
+            'reservations' => $reservations['items'],
+            'reservationFilters' => $reservations['settings'],
+        ]);
+    }
+
+    /**
      * @throws Exception
      */
     #[Route(path: '/{id}/show', name: 'show', methods: ['GET', 'POST'])]
@@ -125,7 +139,7 @@ class AdminReservationController extends AbstractController
 
         return [
             'settings' => [
-                'reservationStatus' => ['name' => 'status', 'default' => '', 'values' => $statuses, 'codeName' => 'reservationStatus'],
+                'reservationStatus' => ['name' => 'status', 'default' => 'PENDING', 'values' => $statuses, 'codeName' => 'reservationStatus'],
                 'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
                 'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings']
             ],

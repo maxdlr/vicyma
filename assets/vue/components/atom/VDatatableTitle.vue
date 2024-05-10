@@ -1,7 +1,5 @@
 <script setup>
-import {useStringFormatter} from "../../composable/formatter/string";
-
-const {toTitle} = useStringFormatter();
+import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({
   title: {type: String, required: true},

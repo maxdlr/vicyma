@@ -12,23 +12,28 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository             $reservationRepository,
         private readonly AdminUserController        $adminUserController,
         private readonly AdminReservationController $adminReservationController
     )
     {
     }
 
+    #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
+    public function dashboard(): Response
+    {
+        return $this->render('admin/dashboard/dashboard.html.twig');
+    }
+
     /**
      * @throws ReflectionException
      */
-    #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
-    public function dashboard(): Response
+    #[Route(path: '/business', name: 'business', methods: ['GET', 'POST'])]
+    public function business(): Response
     {
         $reservations = $this->adminReservationController->getReservationRequestData();
         $users = $this->adminUserController->getUserData();
 
-        return $this->render('admin/dashboard/dashboard.html.twig', [
+        return $this->render('admin/dashboard/business.html.twig', [
             'users' => $users['items'],
             'userFilters' => $users['settings'],
             'reservations' => $reservations['items'],

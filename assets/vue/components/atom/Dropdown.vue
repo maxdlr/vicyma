@@ -3,10 +3,8 @@ import {
   COLOR_CLASSES,
 } from "../../constant/bootstrap-constants";
 import {onMounted, onUnmounted, ref} from "vue";
-import {useStringFormatter} from "../../composable/formatter/string";
+import {toTitle} from "../../composable/formatter/string";
 import {getPropertyValue} from "../../composable/formatter/object";
-
-const {toTitle} = useStringFormatter();
 
 
 const props = defineProps({

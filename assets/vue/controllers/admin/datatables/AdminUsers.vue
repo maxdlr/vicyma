@@ -29,20 +29,19 @@ const url = (id) => {
       <Button
           label="Détails..."
           class="my-1"
-          @click.prevent="goTo(`${url(item.id)}/show`)">
-        <template #iconEnd><i class="bi bi-box-arrow-up-right"></i></template>
-      </Button>
+          @click.prevent="goTo(`${url(item.id)}/show`)"
+          icon-class-end="box-arrow-up-right"
+      />
       <Button
           label="Delete"
           color-class="danger"
           class="my-1"
+          icon-class-end="trash"
           @click.prevent="goTo(
                         `${url(item.id)}/delete`,
                         `Salut Maman, tu veux vraiment supprimer ${item.firstname} ${item.lastname} ?`
                         )"
-      >
-        <template #iconEnd><i class="bi bi-trash"></i></template>
-      </Button>
+      />
     </template>
   </VDatatable>
 </template>
