@@ -11,24 +11,11 @@ defineProps({
 
 const baseUrl = '/admin/reservation';
 
-const url = (id) => {
-  return `${baseUrl}/${id}`
-}
-
-const canBeConfirmed = (object) => {
-  return getPropertyValue(object, 'reservationStatus') === 'PENDING'
-}
-
-const canBeArchived = (object) => {
-  return getPropertyValue(object, 'reservationStatus') === 'CONFIRMED' ||
-      getPropertyValue(object, 'reservationStatus') === 'PENDING'
-}
-
-const canBeDeleted = (object) => {
-  return getPropertyValue(object, 'reservationStatus') === 'PENDING' ||
-      getPropertyValue(object, 'reservationStatus') === 'CONFIRMED' ||
-      getPropertyValue(object, 'reservationStatus') === 'ARCHIVED'
-}
+const url = (id) => `${baseUrl}/${id}`;
+const canBeConfirmed = (object) => ['PENDING'].includes(getPropertyValue(object, 'reservationStatus'))
+const canBeArchived = (object) => ['PENDING', 'CONFIRMED', 'PAID'].includes(getPropertyValue(object, 'reservationStatus'))
+const canBeDeleted = (object) => ['PENDING', 'ARCHIVED'].includes(getPropertyValue(object, 'reservationStatus'))
+const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue(object, 'reservationStatus'))
 
 </script>
 
@@ -54,6 +41,16 @@ const canBeDeleted = (object) => {
               @click.prevent="goTo(
                         `${url(item.id)}/confirm`,
                         `Salut Maman, tu veux vraiment confirmer la reservation de ${item.user} ?`
+                        )"
+      />
+      <Button v-if="canBePaid(item)"
+              label="Set as paid"
+              class="my-1"
+              color-class="success"
+              icon-class-end="cash-coin"
+              @click.prevent="goTo(
+                        `${url(item.id)}/paid`,
+                        `Salut Maman, est-ce que ${item.user} à bien payé la réservation ${item.reservationNumber} ?`
                         )"
       />
       <Button v-if="canBeDeleted(item)"

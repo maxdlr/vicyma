@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onBeforeMount, ref} from "vue";
+import {onBeforeMount, ref} from "vue";
 import AdminReservationRequests from "./datatables/AdminReservationRequests.vue";
 import AdminUsers from "./datatables/AdminUsers.vue";
 import AdminMessages from "./datatables/AdminMessages.vue";
@@ -11,12 +11,7 @@ const props = defineProps({
 
 onBeforeMount(() => {
   const currentAnchor = window.location.hash;
-
-  if (currentAnchor) {
-    currentTab.value = currentAnchor.substring(1)
-  } else {
-    currentTab.value = 'reservations'
-  }
+  currentTab.value = currentAnchor ? currentAnchor.substring(1) : 'reservations';
 })
 
 const changeTab = (newTab) => {
@@ -41,7 +36,7 @@ const tabs = {
       <button
           v-for="(datatable, index) in datatables"
           :key="index"
-          :class="['nav-link',{active: currentTab === index}]"
+          :class="['nav-link', {active: currentTab === index}]"
           @click="changeTab(index)"
           data-bs-toggle="tab"
           type="button"
@@ -56,7 +51,6 @@ const tabs = {
     <component
         :title="datatables[currentTab].name"
         :is="tabs[currentTab]"
-        class="tab"
         :data="datatables[currentTab].data"
     ></component>
   </KeepAlive>

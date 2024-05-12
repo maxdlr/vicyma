@@ -105,6 +105,19 @@ class AdminReservationController extends AbstractController
         return $this->redirectTo('referer', $request, 'reservations');
     }
 
+    /**
+     * @throws Exception
+     */
+    #[Route(path: '/{id}/paid', name: 'paid', methods: ['GET'])]
+    public function paid(
+        Reservation $reservation,
+        Request     $request
+    ): Response
+    {
+        $this->editStatus($reservation, ReservationStatusEnum::PAID);
+        return $this->redirectTo('referer', $request, 'reservations');
+    }
+
     // ---------------------------------------------------------------------------------------------------
 
     /**

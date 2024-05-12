@@ -7,8 +7,8 @@ const props = defineProps({
 </script>
 
 <template>
-  <ul class="list-unstyled">
-    <li v-for="(link, index) in navigation" :key="index">
+  <ul class="nav nav-pills">
+    <li v-for="(link, index) in navigation" :key="index" class="nav-item">
       <div class="py-1">
         <VNavItem
             :name="link.name"

@@ -1,5 +1,5 @@
 <script setup>
-import {onBeforeMount, ref} from "vue";
+import {onBeforeMount, onMounted, ref} from "vue";
 import VDatatableResults from "../molecule/VDatatableResults.vue";
 import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
@@ -16,15 +16,23 @@ const props = defineProps({
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const selectedOrderByOption = ref({});
-const mainFilterValue = ref({
-  name: props.mainFilter ? props.data.settings[props.mainFilter].name : null,
-  value: props.mainFilter ? props.data.settings[props.mainFilter].default : null
-});
+const mainFilterValue = ref({name: '', value: ''});
 const searchQuery = ref('')
+const isLoading = ref(false)
 
 onBeforeMount(() => {
   setDefaultOrderBy()
+})
+
+onMounted(() => {
+  isLoading.value = true;
   setDefaultFilters();
+
+  mainFilterValue.value = {
+    name: props.mainFilter ? props.data.settings[props.mainFilter].name : null,
+    value: props.mainFilter ? selectedFilterOptions.value[props.data.settings[props.mainFilter].name] : null
+  }
+  isLoading.value = false;
 })
 
 const setDefaultOrderBy = () => {
@@ -43,7 +51,14 @@ const setDefaultOrderBy = () => {
 
 const setDefaultFilters = () => {
   for (const filter in props.data.settings) {
-    selectedFilterOptions.value[props.data.settings[filter].name] = props.data.settings[filter].default;
+    const storedFilterKey = `datatable/${props.title}/filterState/${props.data.settings[filter].name}`;
+
+    if (localStorage.getItem(storedFilterKey) || localStorage.getItem(storedFilterKey) === '') {
+      selectedFilterOptions.value[props.data.settings[filter].name] = localStorage.getItem(storedFilterKey)
+      localStorage.removeItem(storedFilterKey)
+    } else {
+      selectedFilterOptions.value[props.data.settings[filter].name] = props.data.settings[filter].default;
+    }
   }
   filterResults();
 }
@@ -51,6 +66,7 @@ const setDefaultFilters = () => {
 const resetFilters = () => {
   for (const filter in props.data.settings) {
     selectedFilterOptions.value[props.data.settings[filter].name] = '';
+    mainFilterValue.value.value = ''
   }
   searchQuery.value = '';
   filterResults()
@@ -114,6 +130,14 @@ const filterResults = () => {
   })
   filteredItems.value = matches
   orderBy();
+  storeFilters()
+}
+
+const storeFilters = () => {
+  localStorage.clear();
+  for (const setting in props.data.settings) {
+    localStorage.setItem(`datatable/${props.title}/filterState/${props.data.settings[setting].name}`, selectedFilterOptions.value[props.data.settings[setting].name])
+  }
 }
 </script>
 
@@ -133,7 +157,8 @@ const filterResults = () => {
       @filter="filterResults"
   />
 
-  <VDatatableResults :items="filteredItems" :exclude-from-row-properties="excludeFromRowProperties">
+  <VDatatableResults :items="filteredItems" :exclude-from-row-properties="excludeFromRowProperties"
+                     :is-loading="isLoading">
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>
     </template>

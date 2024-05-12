@@ -10,10 +10,7 @@ defineProps({
 
 const baseUrl = '/admin/message';
 
-const url = (id) => {
-  return `${baseUrl}/${id}`
-}
-
+const url = (id) => `${baseUrl}/${id}`;
 </script>
 
 <template>

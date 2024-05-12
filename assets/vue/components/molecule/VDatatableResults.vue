@@ -2,10 +2,12 @@
 import Button from "../atom/Button.vue";
 import {computed} from "vue";
 import VDatatableRow from "./VDatatableRow.vue";
+import LoadingSpinner from "../atom/LoadingSpinner.vue";
 
 const props = defineProps({
   items: {type: Array, required: true},
-  excludeFromRowProperties: {type: Array}
+  excludeFromRowProperties: {type: Array},
+  isLoading: {type: Boolean}
 })
 
 const resultCount = computed(() => {
@@ -24,7 +26,10 @@ const resultCount = computed(() => {
     </div>
   </div>
 
-  <div v-for="(item) in items" :key="item.id">
+  <div v-if="isLoading">
+    <LoadingSpinner/>
+  </div>
+  <div v-for="(item) in items" :key="item.id" v-else>
     <div
         class="row my-2 justify-content-center align-items-start border border-2 rounded-4 border-primary my-1 px-2 py-3">
       <slot name="row" :item="item">

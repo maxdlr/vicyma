@@ -11,13 +11,8 @@ defineProps({
 
 const baseUrl = '/admin/user';
 
-const url = (id) => {
-  return `${baseUrl}/${id}`
-}
-
-const canBeDeleted = (object) => {
-  return !getPropertyValue(object, 'isDeleted')
-}
+const url = (id) => `${baseUrl}/${id}`;
+const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
 
 </script>
 
