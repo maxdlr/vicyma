@@ -54,11 +54,10 @@ const tabs = {
   </nav>
   <KeepAlive>
     <component
-        :name="datatables[currentTab].name"
+        :title="datatables[currentTab].name"
         :is="tabs[currentTab]"
         class="tab"
-        :settings="datatables[currentTab].settings"
-        :items="datatables[currentTab].items"
+        :data="datatables[currentTab].data"
     ></component>
   </KeepAlive>
 </template>

@@ -5,9 +5,8 @@ import {getPropertyValue} from "../../../composable/formatter/object";
 import {goTo} from "../../../composable/action/redirect";
 
 defineProps({
-  name: {type: String, required: true},
-  settings: {type: Object, required: true},
-  items: {type: Object, required: true},
+  data: {type: Object, required: true},
+  title: {type: String},
 });
 
 const baseUrl = '/admin/reservation';
@@ -35,9 +34,8 @@ const canBeDeleted = (object) => {
 
 <template>
   <VDatatable
-      :title="name"
-      :settings="settings"
-      :items="items"
+      :title="title"
+      :data="data"
       main-filter="reservationStatus"
       :exclude-from-row-properties="['id', 'reservationStatus']"
       :searchable-properties="['user', 'lodgings', 'reservationNumber']"

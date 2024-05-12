@@ -26,7 +26,7 @@ const selectMainFilterValue = (value) => {
           :color-class="'' === active ? 'primary' : 'outline-secondary'"
           size="lg"
       />
-      <div v-for="(data, index) in filter.values" :key="index">
+      <div v-for="(data, index) in filter.values" :key="index" class="p-0">
         <Button
             :label="data"
             @click.prevent="selectMainFilterValue(data)"

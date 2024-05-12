@@ -6,11 +6,10 @@ import VDatatableTitle from "../atom/VDatatableTitle.vue";
 import {isEmpty} from "../../composable/formatter/object";
 
 const props = defineProps({
-  title: {type: String, required: true},
-  settings: {type: Object, required: true},
+  data: {type: Object, required: true},
+  title: {type: String},
   mainFilter: {type: String, default: null},
   excludeFilters: {type: Array},
-  items: {type: Object, required: true},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
 });
@@ -18,8 +17,8 @@ const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const selectedOrderByOption = ref({});
 const mainFilterValue = ref({
-  name: props.mainFilter ? props.settings[props.mainFilter].name : null,
-  value: props.mainFilter ? props.settings[props.mainFilter].default : null
+  name: props.mainFilter ? props.data.settings[props.mainFilter].name : null,
+  value: props.mainFilter ? props.data.settings[props.mainFilter].default : null
 });
 const searchQuery = ref('')
 
@@ -31,8 +30,8 @@ onBeforeMount(() => {
 const setDefaultOrderBy = () => {
   let defaultOrderBy = '';
 
-  for (const key in props.settings) {
-    defaultOrderBy = props.settings[key];
+  for (const key in props.data.settings) {
+    defaultOrderBy = props.data.settings[key];
     break;
   }
 
@@ -43,15 +42,15 @@ const setDefaultOrderBy = () => {
 }
 
 const setDefaultFilters = () => {
-  for (const filter in props.settings) {
-    selectedFilterOptions.value[props.settings[filter].name] = props.settings[filter].default;
+  for (const filter in props.data.settings) {
+    selectedFilterOptions.value[props.data.settings[filter].name] = props.data.settings[filter].default;
   }
   filterResults();
 }
 
 const resetFilters = () => {
-  for (const filter in props.settings) {
-    selectedFilterOptions.value[props.settings[filter].name] = '';
+  for (const filter in props.data.settings) {
+    selectedFilterOptions.value[props.data.settings[filter].name] = '';
   }
   searchQuery.value = '';
   filterResults()
@@ -59,8 +58,8 @@ const resetFilters = () => {
 
 const orderBy = () => {
   let options = [];
-  for (const filterName in props.settings) {
-    options.push(props.settings[filterName].codeName)
+  for (const filterName in props.data.settings) {
+    options.push(props.data.settings[filterName].codeName)
   }
   filteredItems.value.sort((a, b) => {
     return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
@@ -75,10 +74,10 @@ const filterResults = () => {
 
 
   let matches = []
-  matches = props.items.filter((item) => {
+  matches = props.data.items.filter((item) => {
     let isMatch = [];
-    for (const key in props.settings) {
-      const selectedFilterValue = selectedFilterOptions.value[props.settings[key].name]
+    for (const key in props.data.settings) {
+      const selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].name]
       if (selectedFilterValue !== '' && item[key] !== null) {
 
         if (typeof item[key] === 'boolean') {
@@ -116,13 +115,12 @@ const filterResults = () => {
   filteredItems.value = matches
   orderBy();
 }
-
 </script>
 
 <template>
-  <VDatatableTitle :title="title" class="pt-4"/>
+  <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
   <VDatatableSettings
-      :settings="settings"
+      :settings="data.settings"
       :exclude-filters="excludeFilters"
       :main-filter="mainFilter"
       v-model:search-query="searchQuery"
@@ -133,8 +131,7 @@ const filterResults = () => {
       @reset="resetFilters"
       @order="orderBy"
       @filter="filterResults"
-  >
-  </VDatatableSettings>
+  />
 
   <VDatatableResults :items="filteredItems" :exclude-from-row-properties="excludeFromRowProperties">
     <template #buttons="{item}">

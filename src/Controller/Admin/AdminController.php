@@ -37,14 +37,10 @@ class AdminController extends AbstractController
         $users = $this->adminUserController->getUserData();
 
         return $this->render('admin/dashboard/business.html.twig', [
-            'users' => $users['items'],
-            'userFilters' => $users['settings'],
-            'reservations' => $reservations['items'],
-            'reservationFilters' => $reservations['settings'],
-            'messages' => $messages['items'],
-            'messageFilters' => $messages['settings'],
-            'reviews' => $reviews['items'],
-            'reviewFilters' => $reviews['settings']
+            'users' => $users,
+            'reservations' => $reservations,
+            'messages' => $messages,
+            'reviews' => $reviews,
         ]);
     }
 }

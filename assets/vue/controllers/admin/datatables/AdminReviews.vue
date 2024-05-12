@@ -4,9 +4,8 @@ import Button from "../../../components/atom/Button.vue";
 import {goTo} from "../../../composable/action/redirect";
 
 defineProps({
-  name: {type: String, required: true},
-  settings: {type: Object, required: true},
-  items: {type: Object, required: true},
+  data: {type: Object, required: true},
+  title: {type: String},
 });
 
 const baseUrl = '/admin/message';
@@ -19,9 +18,8 @@ const url = (id) => {
 
 <template>
   <VDatatable
-      :title="name"
-      :settings="settings"
-      :items="items"
+      :title="title"
+      :data="data"
       :searchable-properties="['user', 'rate', 'comment', 'lodging']"
       :exclude-from-row-properties="['id']"
       main-filter="rate"

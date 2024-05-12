@@ -9,7 +9,7 @@ const props = defineProps({
 
 <template>
   <div>
-    <h1>{{ toTitle(title) }}</h1>
+    <h1 class="fs-3 text-primary">{{ toTitle(title) }}</h1>
     <p v-if="description">{{ description }}</p>
   </div>
 </template>
