@@ -1,6 +1,7 @@
 <script setup>
 import {onBeforeMount, ref} from "vue";
 import VDatatableCell from "../atom/VDatatableCell.vue";
+import VYoyo from "./VYoyo.vue";
 
 const props = defineProps({
   item: {type: Object, required: true},
@@ -8,6 +9,7 @@ const props = defineProps({
 })
 
 const cleanItem = ref({})
+const hovering = ref(false)
 
 onBeforeMount(() => {
 
@@ -20,7 +22,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="row">
+  <div class="row" @mouseenter="hovering = true" @mouseleave="hovering = false">
     <div v-for="(property, index) in cleanItem" :key="index" class="col">
       <slot name="cell" :item="{property, index}">
         <VDatatableCell
@@ -30,7 +32,13 @@ onBeforeMount(() => {
         />
       </slot>
     </div>
-
+    <div class="col text-center align-self-center">
+      <VYoyo label="Action" direction="down-right" v-model:is-open="hovering">
+        <template #buttons>
+          <slot name="buttons"/>
+        </template>
+      </VYoyo>
+    </div>
   </div>
 </template>
 

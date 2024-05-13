@@ -1,7 +1,7 @@
 <script setup>
 import {COLOR_CLASSES} from "../../constant/bootstrap-constants";
 import Button from "../atom/Button.vue";
-import {onMounted, onUpdated, ref} from "vue";
+import {onUpdated, ref} from "vue";
 import {SLIDE_DOWN, SLIDE_UP} from "../../constant/animation";
 
 const props = defineProps({
@@ -24,10 +24,10 @@ const props = defineProps({
       return ['up-right', 'up-left', 'up-center', 'down-right', 'down-left', 'down-center'].includes(value)
     }
   },
-  column: {type: Boolean, default: false, required: false}
+  column: {type: Boolean, default: true, required: false},
 })
 
-const isOpen = ref(false)
+const isOpen = defineModel('isOpen', {type: Boolean, default: false, required: false})
 
 const openYoyo = () => {
   isOpen.value = true;
@@ -53,16 +53,13 @@ onUpdated(() => {
     styleButtonList(buttons.value)
   }
 })
-
-onMounted(() => {
-  console.log(buttons.value)
-})
 </script>
 
 <template>
-  <div class="position-relative d-inline-block">
+  <div class="position-relative d-inline py-2">
     <Button
         :label="label"
+        @mouseover="openYoyo"
         @click.prevent="toggleOpen"
         :icon-class-end="isOpen ? 'caret-up-fill' : 'caret-down-fill'"
         class="d-inline"
@@ -70,12 +67,14 @@ onMounted(() => {
     <Transition :name="direction.includes('up') ? SLIDE_UP : SLIDE_DOWN">
       <div
           v-if="isOpen"
-          class="d-flex position-absolute p-2"
+          class="d-flex position-absolute p-2 pt-0"
+          @mouseover="openYoyo"
           :class="[
               column ? 'flex-column' : '',
               column && direction.includes('left') ? 'align-items-end' : 'align-items-start',
-              !column && direction.includes('left') ? 'justify-content-start' : 'justify-content-end',
-              direction.includes('up') ? 'bottom-100' : 'top-100',
+              column && direction.includes('right') ? 'justify-content-start' : 'justify-content-end',
+              !column && direction.includes('left') ? 'justify-content-end' : 'justify-content-start',
+              direction.includes('up') ? 'bottom-100' : 'top-0',
               direction.includes('left') ? 'end-100' : '',
               direction.includes('right') ? 'start-100' : '',
           ]"

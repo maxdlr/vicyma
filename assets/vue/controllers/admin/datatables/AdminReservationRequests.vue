@@ -30,6 +30,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
     <template #buttons="{item}">
       <Button
           label="Détails..."
+          color-class="secondary"
           class="my-1"
           icon-class-end="box-arrow-up-right"
           @click.prevent="goTo(`${url(item.id)}/show`)"/>

@@ -11,7 +11,7 @@ defineProps({
 
 <template>
   <button
-      class="btn border-0 text-nowrap"
+      class="btn text-nowrap"
       :class="[
       `btn-${colorClass}`,
       !size ? '' : `btn-${size}`,

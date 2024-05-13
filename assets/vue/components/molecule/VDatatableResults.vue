@@ -33,22 +33,17 @@ const resultCount = computed(() => {
 
   <div v-for="(item) in items" :key="item.id" v-else>
 
-    <div class="d-flex flex-column justify-content-center" v-if="$slots.buttons">
-      <VYoyo label="Action" direction="right">
-        <template #buttons>
-          <slot name="buttons" :item="item"/>
-        </template>
-      </VYoyo>
-    </div>
-
-    <div
-        class="row my-2 justify-content-center align-items-start border border-2 rounded-4 border-primary my-1 px-2 py-3">
+    <div class="my-2 border border-2 rounded-4 border-primary p-3">
       <slot name="row" :item="item">
         <VDatatableRow
             :item="item"
             :exclude-properties="excludeFromRowProperties"
             class="col"
-        />
+        >
+          <template #buttons>
+            <slot name="buttons" :item="item"/>
+          </template>
+        </VDatatableRow>
       </slot>
 
     </div>

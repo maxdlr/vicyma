@@ -4,6 +4,10 @@
   transition: transform $duration $timing;
 }
 
+.slide-up-leave-active {
+  transition: opacity $duration ease-in-out
+}
+
 .slide-down-enter-from {
   transform: translateY(-$distance);
 }
