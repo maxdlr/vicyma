@@ -34,20 +34,6 @@ class AdminReservationController extends AbstractController
     }
 
     /**
-     * @throws ReflectionException
-     */
-    #[Route(path: '/reservations', name: 'widget', methods: ['GET'])]
-    public function widget(): Response
-    {
-        $reservations = $this->getData();
-
-        return $this->render('', [
-            'reservations' => $reservations['items'],
-            'reservationFilters' => $reservations['settings'],
-        ]);
-    }
-
-    /**
      * @throws Exception
      */
     #[Route(path: '/{id}/show', name: 'show', methods: ['GET', 'POST'])]
@@ -61,7 +47,7 @@ class AdminReservationController extends AbstractController
         if ($reservationForm === true) return $this->redirectTo('referer', $request);
 
         return $this->render('admin/show/reservation-details.html.twig', [
-            'reservationForm' => $reservationForm,
+            'reservationForm' => $reservationForm->createView(),
             'reservation' => $reservation
         ]);
     }

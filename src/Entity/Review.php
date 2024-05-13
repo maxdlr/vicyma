@@ -35,6 +35,9 @@ class Review
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
 
+    #[ORM\Column(length: 20)]
+    private ?string $status = null;
+
     public function __construct()
     {
         $this->createdOn = new \DateTime();
@@ -107,5 +110,17 @@ class Review
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Review;
+use App\Enum\ReviewStatusEnum;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -25,7 +26,8 @@ class ReviewFixtures extends Fixture implements DependentFixtureInterface
                 ->setRate(rand(1, 5))
                 ->setComment($faker->sentences(5, true))
                 ->setLodging($this->getReference('lodging_' . rand(1, AppFixtures::LODGING_COUNT - 1)))
-                ->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT - 1)));
+                ->setUser($this->getReference('user_' . rand(1, AppFixtures::USER_COUNT - 1)))
+                ->setStatus($faker->randomElement(ReviewStatusEnum::cases())->value);
             $this->setReference('review_' . $i, $review);
             $manager->persist($review);
         }

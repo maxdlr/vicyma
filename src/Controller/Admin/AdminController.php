@@ -26,7 +26,11 @@ class AdminController extends AbstractController
     public function dashboard(): Response
     {
         return $this->render('admin/dashboard/dashboard.html.twig', [
-            'reservations' => $this->adminReservationController->getNotification(),
+            'notifications' =>
+                [
+                    'reservations' => $this->adminReservationController->getNotification(),
+                    'reviews' => $this->adminReviewController->getNotification()
+                ]
         ]);
     }
 
@@ -36,18 +40,13 @@ class AdminController extends AbstractController
     #[Route(path: '/business', name: 'business', methods: ['GET', 'POST'])]
     public function business(): Response
     {
-        $reservations = $this->adminReservationController->getData();
-        $messages = $this->adminMessageController->getData();
-        $reviews = $this->adminReviewController->getData();
-        $users = $this->adminUserController->getData();
-
         return $this->render('admin/dashboard/business.html.twig', [
             'datatables' =>
                 [
-                    'reservations' => $reservations,
-                    'users' => $users,
-                    'messages' => $messages,
-                    'reviews' => $reviews
+                    'reservations' => $this->adminReservationController->getData(),
+                    'users' => $this->adminUserController->getData(),
+                    'messages' => $this->adminMessageController->getData(),
+                    'reviews' => $this->adminReviewController->getData()
                 ]
         ]);
     }

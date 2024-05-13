@@ -1,59 +1,48 @@
 <script setup>
-import VQuickLook from "../../components/organism/VQuickLook.vue";
-import {ref} from "vue";
-import {implode, toTitle} from "../../composable/formatter/string";
-import Button from "../../components/atom/Button.vue";
-import {goTo} from "../../composable/action/redirect";
+import VDashboardNotification from "../../components/organism/VDashboardNotification.vue";
+import {implode, truncate} from "../../composable/formatter/string";
 
 const props = defineProps({
-  reservations: {type: Object, required: true}
+  notifications: {type: Object, required: true}
 })
 
 const reservationBaseUrl = '/admin/reservation';
-
-const url = (id) => `${baseUrl}/${id}`;
-
+const reviewBaseUrl = '/admin/review';
 </script>
 
 <template>
+  <section class="row row-cols-2">
+    <VDashboardNotification
+        :items="notifications.reservations"
+        title-phrase="pending reservations"
+        created-on-phrase="Requested on"
+        :base-url="reservationBaseUrl"
+        see-all-url="/admin/business#reservations"
+    >
+      <template #notification="{item}">
+            <span>
+        {{ item.user }} wants to book {{ implode(item.lodgings) }} from {{ item.arrivalDate }} to {{
+                item.departureDate
+              }}
+            </span>
+      </template>
+    </VDashboardNotification>
 
-  <article>
-    <div class="d-flex justify-content-between align-items-center p-4">
-      <div>
-        <span class="py-2 px-3 bg-success fs-3 text-white fw-bold rounded-pill">{{ reservations.length }}</span>
-        <span class="fs-3 fw-bold"> pending reservations</span>
-      </div>
-      <div>
-        <Button label="See all" @click="goTo('/admin/business#reservations')"/>
-      </div>
-    </div>
-    <div v-for="reservation in reservations" :key="reservation.id">
-      <div class="border border-1 border-primary rounded-4 p-4 my-2 d-flex justify-content-between align-items-center">
-        <div>
-
-          <div><span class="badge bg-primary">Booked on {{ reservation.createdOn }}</span></div>
-
-          <div>
-    <span>
-    {{ reservation.user }} wants to book {{ implode(reservation.lodgings) }} from {{
-        reservation.arrivalDate
-      }} to {{ reservation.departureDate }}
-      </span>
-          </div>
-
-        </div>
-        <div>
-          <Button label="Détails..." @click.prevent="goTo(`${reservationBaseUrl}/${reservation.id}/show`)"/>
-        </div>
-      </div>
-    </div>
-  </article>
-
-  <!--  <div v-for="(data, index) in quickLooks" :key="index">-->
-  <!--    <span class="badge bg-success">{{ data.items.length }}</span>-->
-  <!--    <h2 class="d-inline">{{ toTitle(data.name) }}</h2>-->
-  <!--    <VQuickLook :items="data.items"/>-->
-  <!--  </div>-->
+    <VDashboardNotification
+        :items="notifications.reviews"
+        title-phrase="pending reviews"
+        created-on-phrase="Left on"
+        :base-url="reviewBaseUrl"
+        see-all-url="/admin/business#reviews"
+    >
+      <template #notification="{item}">
+        <span>
+        {{ item.user }} left a review of {{ item.rate }} stars !
+        </span>
+        <small class="d-block">{{ truncate(item.comment, 30, '...') }}</small>
+      </template>
+    </VDashboardNotification>
+  </section>
 </template>
 
 <style scoped>

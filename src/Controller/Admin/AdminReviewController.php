@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Crud\ReviewCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\Review;
+use App\Enum\ReviewStatusEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
 use App\Service\VueDataFormatter;
@@ -64,6 +65,16 @@ class AdminReviewController extends AbstractController
     }
 
     // ---------------------------------------------------------------------------------------------------
+
+    /**
+     * @throws ReflectionException
+     */
+    public function getNotification()
+    {
+        $pendingReviews = $this->reviewRepository->findBy(['status' => ReviewStatusEnum::PENDING->value]);
+
+        return VueDataFormatter::makeVueObjectOf($pendingReviews, ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
+    }
 
     /**
      * @throws ReflectionException
