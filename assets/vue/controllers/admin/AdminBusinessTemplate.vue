@@ -1,9 +1,10 @@
 <script setup>
-import {onBeforeMount, ref} from "vue";
+import {onBeforeMount, onMounted, onUnmounted, ref} from "vue";
 import AdminReservationRequests from "./datatables/AdminReservationRequests.vue";
 import AdminUsers from "./datatables/AdminUsers.vue";
 import AdminMessages from "./datatables/AdminMessages.vue";
 import AdminReviews from "./datatables/AdminReviews.vue";
+import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({
   datatables: {type: Object, required: true}
@@ -28,6 +29,10 @@ const tabs = {
   reviews: AdminReviews
 }
 
+onUnmounted(() => {
+  localStorage.clear()
+})
+
 </script>
 
 <template>
@@ -43,7 +48,7 @@ const tabs = {
           role="tab"
           :aria-selected="currentTab === index"
       >
-        {{ datatable.name }}
+        {{ toTitle(datatable.name) }}
       </button>
     </div>
   </nav>

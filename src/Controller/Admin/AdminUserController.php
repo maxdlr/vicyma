@@ -67,7 +67,7 @@ class AdminUserController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    public function getUserData(): array
+    public function getData(): array
     {
         $allUsers = $this->userRepository->findAll();
 
@@ -96,12 +96,17 @@ class AdminUserController extends AbstractController
             ])->get();
 
         return [
-            'settings' => [
-                'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
-                'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
-                'isDeleted' => ['name' => 'is deleted', 'default' => '', 'values' => $isDeleted, 'codeName' => 'isDeleted']
-            ],
-            'items' => $users
+            'name' => 'clients',
+            'component' => 'AdminUsers',
+            'data' =>
+                [
+                    'settings' => [
+                        'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
+                        'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
+                        'isDeleted' => ['name' => 'is deleted', 'default' => '', 'values' => $isDeleted, 'codeName' => 'isDeleted']
+                    ],
+                    'items' => $users
+                ]
         ];
     }
 }

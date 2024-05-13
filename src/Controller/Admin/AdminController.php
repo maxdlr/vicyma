@@ -31,16 +31,19 @@ class AdminController extends AbstractController
     #[Route(path: '/business', name: 'business', methods: ['GET', 'POST'])]
     public function business(): Response
     {
-        $reservations = $this->adminReservationController->getReservationRequestData();
-        $messages = $this->adminMessageController->getMessageData();
-        $reviews = $this->adminReviewController->getReviewData();
-        $users = $this->adminUserController->getUserData();
+        $reservations = $this->adminReservationController->getData();
+        $messages = $this->adminMessageController->getData();
+        $reviews = $this->adminReviewController->getData();
+        $users = $this->adminUserController->getData();
 
         return $this->render('admin/dashboard/business.html.twig', [
-            'users' => $users,
-            'reservations' => $reservations,
-            'messages' => $messages,
-            'reviews' => $reviews,
+            'datatables' =>
+                [
+                    'reservations' => $reservations,
+                    'users' => $users,
+                    'messages' => $messages,
+                    'reviews' => $reviews
+                ]
         ]);
     }
 }

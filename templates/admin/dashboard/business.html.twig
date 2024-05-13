@@ -6,30 +6,6 @@
 {% endblock %}
 
 {% block body %}
-
-    {% set datatables = {
-        'reservations': {
-            'data': reservations,
-            'name': 'Reservations',
-            'component': 'AdminReservationRequests'
-        },
-        'users': {
-            'data': users,
-            'name': 'Clients',
-            'component': 'AdminUsers'
-        },
-        'messages': {
-            'data': messages,
-            'name': 'Messages',
-            'component': 'AdminMessages'
-        },
-        'reviews': {
-            'data': reviews,
-            'name': 'Reviews',
-            'component': 'AdminReviews'
-        }
-    } %}
-
     <div {{ vue_component('admin/AdminBusinessTemplate', {
         datatables: datatables
     }) }}></div>

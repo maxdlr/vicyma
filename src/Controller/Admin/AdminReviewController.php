@@ -68,7 +68,7 @@ class AdminReviewController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    public function getReviewData(): array
+    public function getData(): array
     {
         $allReviews = $this->reviewRepository->findAll();
 
@@ -96,12 +96,17 @@ class AdminReviewController extends AbstractController
             ])->get();
 
         return [
-            'settings' => [
-                'rate' => ['name' => 'rates', 'default' => 1, 'values' => $rates, 'codeName' => 'rate'],
-                'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
-                'lodging' => ['name' => 'lodging', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodging'],
-            ],
-            'items' => $reviews
+            'name' => 'reviews',
+            'component' => 'AdminReviews',
+            'data' =>
+                [
+                    'settings' => [
+                        'rate' => ['name' => 'rates', 'default' => 1, 'values' => $rates, 'codeName' => 'rate'],
+                        'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
+                        'lodging' => ['name' => 'lodging', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodging'],
+                    ],
+                    'items' => $reviews
+                ]
         ];
     }
 }

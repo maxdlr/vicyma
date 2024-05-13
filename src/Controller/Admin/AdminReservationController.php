@@ -39,7 +39,7 @@ class AdminReservationController extends AbstractController
     #[Route(path: '/reservations', name: 'widget', methods: ['GET'])]
     public function widget(): Response
     {
-        $reservations = $this->getReservationRequestData();
+        $reservations = $this->getData();
 
         return $this->render('', [
             'reservations' => $reservations['items'],
@@ -123,7 +123,7 @@ class AdminReservationController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    public function getReservationRequestData(): array
+    public function getData(): array
     {
         $allReservations = $this->reservationRepository->findAll();
 
@@ -153,12 +153,17 @@ class AdminReservationController extends AbstractController
             ])->get();
 
         return [
-            'settings' => [
-                'reservationStatus' => ['name' => 'status', 'default' => 'PENDING', 'values' => $statuses, 'codeName' => 'reservationStatus'],
-                'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
-                'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings']
-            ],
-            'items' => $reservations
+            'name' => 'reservations',
+            'component' => 'AdminReservationRequests',
+            'data' =>
+                [
+                    'settings' => [
+                        'reservationStatus' => ['name' => 'status', 'default' => 'PENDING', 'values' => $statuses, 'codeName' => 'reservationStatus'],
+                        'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
+                        'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings']
+                    ],
+                    'items' => $reservations
+                ]
         ];
     }
 

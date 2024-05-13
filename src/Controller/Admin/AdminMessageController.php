@@ -66,7 +66,7 @@ class AdminMessageController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    public function getMessageData(): array
+    public function getData(): array
     {
         $allMessages = $this->messageRepository->findAll();
 
@@ -91,11 +91,16 @@ class AdminMessageController extends AbstractController
             ])->get();
 
         return [
-            'settings' => [
-                'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
-                'subject' => ['name' => 'subjects', 'default' => '', 'values' => $subjects, 'codeName' => 'subject'],
-            ],
-            'items' => $messages
+            'name' => 'messages',
+            'component' => 'AdminMessages',
+            'data' =>
+                [
+                    'settings' => [
+                        'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
+                        'subject' => ['name' => 'subjects', 'default' => '', 'values' => $subjects, 'codeName' => 'subject'],
+                    ],
+                    'items' => $messages
+                ]
         ];
     }
 }
