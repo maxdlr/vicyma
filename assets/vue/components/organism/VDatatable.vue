@@ -140,13 +140,9 @@ const filterResults = () => {
 
 const storeFilters = () => {
   for (const setting in props.data.settings) {
-    const itemKey = `datatable/${props.title}/filterState/${props.data.settings[setting].name}`
-    const itemValue = selectedFilterOptions.value[props.data.settings[setting].name]
-    if (!["", ' ', '{}'].includes(itemValue)) {
-      localStorage.setItem(itemKey, itemValue)
-    } else {
-      localStorage.removeItem(itemKey)
-    }
+    const itemKey = `datatable/${props.title}/filterState/${props.data.settings[setting].name}`;
+    const itemValue = selectedFilterOptions.value[props.data.settings[setting].name];
+    ["", ' ', '{}'].includes(itemValue) ? localStorage.removeItem(itemKey) : localStorage.setItem(itemKey, itemValue);
   }
 }
 
@@ -173,8 +169,11 @@ const storeOrderBy = () => {
       @filter="filterResults"
   />
 
-  <VDatatableResults :items="filteredItems" :exclude-from-row-properties="excludeFromRowProperties"
-                     :is-loading="isLoading">
+  <VDatatableResults
+      :items="filteredItems"
+      :exclude-from-row-properties="excludeFromRowProperties"
+      :is-loading="isLoading"
+  >
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>
     </template>

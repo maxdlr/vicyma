@@ -1,0 +1,14 @@
+@use 'animation' as *;
+
+.rotate-enter-active {
+  transition: transform $duration $timing;
+  transform-origin: center;
+}
+
+.rotate-enter-from {
+  transform: rotate(-180deg);
+}
+
+.rotate-leave-to {
+  opacity: 0;
+}

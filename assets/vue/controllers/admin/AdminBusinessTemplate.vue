@@ -1,9 +1,9 @@
 <script setup>
 import {onBeforeMount, onUnmounted, ref} from "vue";
-import AdminReservationRequests from "datatables/AdminReservationRequests.vue";
-import AdminUsers from "datatables/AdminUsers.vue";
-import AdminMessages from "datatables/AdminMessages.vue";
-import AdminReviews from "datatables/AdminReviews.vue";
+import AdminReservationRequests from "./datatables/AdminReservationRequests.vue";
+import AdminUsers from "./datatables/AdminUsers.vue";
+import AdminMessages from "./datatables/AdminMessages.vue";
+import AdminReviews from "./datatables/AdminReviews.vue";
 import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({
