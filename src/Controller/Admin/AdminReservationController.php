@@ -123,6 +123,23 @@ class AdminReservationController extends AbstractController
     /**
      * @throws ReflectionException
      */
+    public function getNotification(): array
+    {
+        $pendingReservations = $this->reservationRepository->findBy(
+            ['reservationStatus' => $this->reservationStatusRepository->findOneBy(
+                ['name' => ReservationStatusEnum::PENDING->value])
+            ]
+        );
+
+        return VueDataFormatter::makeVueObjectOf(
+            $pendingReservations,
+            ['id', 'createdOn', 'user', 'lodgings', 'arrivalDate', 'departureDate']
+        )->get();
+    }
+
+    /**
+     * @throws ReflectionException
+     */
     public function getData(): array
     {
         $allReservations = $this->reservationRepository->findAll();

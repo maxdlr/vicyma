@@ -22,9 +22,9 @@ class ReservationNumber
 
     private static function shortenString(string $string): string
     {
-        $shortenedString = '';
+        $shortenedString = u(str_replace(' ', '', $string))->upper();
         if (u($string)->length() > 4) {
-            $shortenedString = u(str_replace(' ', '', $string))->truncate(4);
+            $shortenedString = $shortenedString->truncate(4);
         }
         return $shortenedString;
     }

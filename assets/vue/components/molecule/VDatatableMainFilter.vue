@@ -20,13 +20,16 @@ const selectMainFilterValue = (value) => {
         toTitle(filter.name)
       }}</span>
     <div :class="`row row-cols-${filter.values.length + 1}`">
-      <Button
-          label="All"
-          @click.prevent="selectMainFilterValue('')"
-          :color-class="'' === active ? 'primary' : 'outline-secondary'"
-          size="lg"
-      />
-      <div v-for="(data, index) in filter.values" :key="index" class="p-0">
+      <div class="px-1">
+        <Button
+            label="All"
+            @click.prevent="selectMainFilterValue('')"
+            :color-class="'' === active ? 'primary' : 'outline-secondary'"
+            class="w-100"
+            size="lg"
+        />
+      </div>
+      <div v-for="(data, index) in filter.values" :key="index" class="px-1">
         <Button
             :label="data"
             @click.prevent="selectMainFilterValue(data)"

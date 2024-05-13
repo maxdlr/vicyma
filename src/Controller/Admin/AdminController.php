@@ -19,10 +19,15 @@ class AdminController extends AbstractController
     {
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Route(path: '/', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(): Response
     {
-        return $this->render('admin/dashboard/dashboard.html.twig');
+        return $this->render('admin/dashboard/dashboard.html.twig', [
+            'reservations' => $this->adminReservationController->getNotification(),
+        ]);
     }
 
     /**
