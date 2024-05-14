@@ -52,7 +52,9 @@ const emit = defineEmits(['search', 'filter', 'reset', 'order'])
 const orderByOptions = computed(() => {
   let options = [];
   for (const filterName in props.settings) {
-    options.push({'name': props.settings[filterName].name, 'codeName': props.settings[filterName].codeName})
+    if (props.settings[filterName].codeName !== props.mainFilter) {
+      options.push({'name': props.settings[filterName].name, 'codeName': props.settings[filterName].codeName})
+    }
   }
   return options
 })
@@ -91,6 +93,10 @@ const handleMainFilter = (value) => {
         v-model:selected-option="orderByValue"
         @has-selection="emit('order')"
     />
+
+    <!--    todo: implement optional date filter-->
+    <!--    todo: get extreme dates from active items as suggested min and max and find a way to propose before, after or within given dates-->
+
     <div v-for="(filter, index) in activeFilters" :key="index">
       <slot name="filters" :filter="filter">
         <Dropdown

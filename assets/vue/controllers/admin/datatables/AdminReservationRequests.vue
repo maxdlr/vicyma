@@ -26,6 +26,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
       main-filter="reservationStatus"
       :exclude-from-row-properties="['id', 'reservationStatus']"
       :searchable-properties="['user', 'lodgings', 'reservationNumber']"
+      :new-item-link="`${baseUrl}/new`"
   >
     <template #buttons="{item}">
       <Button

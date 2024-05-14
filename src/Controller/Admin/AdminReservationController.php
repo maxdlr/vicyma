@@ -44,11 +44,27 @@ class AdminReservationController extends AbstractController
     {
         $reservationForm = $this->reservationCrud->save($request, $reservation);
 
-        if ($reservationForm === true) return $this->redirectTo('referer', $request);
+        if ($reservationForm === true) return $this->redirectTo('referer', $request, 'reservations');
 
-        return $this->render('admin/show/reservation-details.html.twig', [
+        return $this->render('admin/reservation/reservation-details.html.twig', [
             'reservationForm' => $reservationForm->createView(),
             'reservation' => $reservation
+        ]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $reservation = new Reservation();
+        $reservationForm = $this->reservationCrud->save($request, $reservation);
+
+        if ($reservationForm === true) return $this->redirectTo('app_admin_business', $request, 'reservations');
+
+        return $this->render('admin/reservation/reservation-new.html.twig', [
+            'reservationForm' => $reservationForm->createView(),
         ]);
     }
 

@@ -80,7 +80,7 @@ class Lodging
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'lodging', fetch: 'EAGER')]
     private Collection $messages;
 
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'lodging', fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'lodging', cascade: ['persist'], fetch: 'EAGER', orphanRemoval: true)]
     private Collection $reviews;
 
     #[ORM\Column]

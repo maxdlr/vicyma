@@ -22,6 +22,7 @@ class Message
     private ?string $content = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Lodging $lodging = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]

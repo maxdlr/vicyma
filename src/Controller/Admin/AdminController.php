@@ -14,7 +14,8 @@ class AdminController extends AbstractController
         private readonly AdminUserController        $adminUserController,
         private readonly AdminReservationController $adminReservationController,
         private readonly AdminMessageController     $adminMessageController,
-        private readonly AdminReviewController      $adminReviewController
+        private readonly AdminReviewController      $adminReviewController,
+        private readonly AdminLodgingController     $adminLodgingController,
     )
     {
     }
@@ -47,6 +48,20 @@ class AdminController extends AbstractController
                     'users' => $this->adminUserController->getData(),
                     'messages' => $this->adminMessageController->getData(),
                     'reviews' => $this->adminReviewController->getData()
+                ]
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Route(path: '/management', name: 'management', methods: ['GET', 'POST'])]
+    public function management(): Response
+    {
+        return $this->render('admin/dashboard/management.html.twig', [
+            'datatables' =>
+                [
+                    'lodgings' => $this->adminLodgingController->getData(),
                 ]
         ]);
     }

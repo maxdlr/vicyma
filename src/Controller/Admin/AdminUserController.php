@@ -31,6 +31,23 @@ class AdminUserController extends AbstractController
     /**
      * @throws Exception
      */
+    #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $user = new User();
+        $userForm = $this->adminUserCrud->save($request, $user);
+
+        if ($userForm === true) return $this->redirectTo('app_admin_business', $request, 'users');
+
+        return $this->render('admin/user/user-new.html.twig', [
+            'userForm' => $userForm->createView(),
+        ]);
+    }
+
+
+    /**
+     * @throws Exception
+     */
     #[Route(path: '/{id}/show', name: 'show', methods: ['GET', 'POST'])]
     public function show(
         User    $user,
@@ -41,7 +58,7 @@ class AdminUserController extends AbstractController
 
         if ($userForm === true) return $this->redirectTo('referer', $request);
 
-        return $this->render('admin/show/user-details.html.twig', [
+        return $this->render('admin/user/user-details.html.twig', [
             'userForm' => $userForm,
             'user' => $user
         ]);
@@ -103,7 +120,7 @@ class AdminUserController extends AbstractController
                     'settings' => [
                         'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
                         'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
-                        'isDeleted' => ['name' => 'is deleted', 'default' => '', 'values' => $isDeleted, 'codeName' => 'isDeleted']
+                        'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted']
                     ],
                     'items' => $users
                 ]

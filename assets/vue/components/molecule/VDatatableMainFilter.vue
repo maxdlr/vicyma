@@ -32,8 +32,8 @@ const selectMainFilterValue = (value) => {
       <div v-for="(data, index) in filter.values" :key="index" class="px-1">
         <Button
             :label="data"
-            @click.prevent="selectMainFilterValue(data)"
-            :color-class="data === active ? 'primary' : 'outline-secondary'"
+            @click.prevent="selectMainFilterValue(data.toString())"
+            :color-class="data.toString() === active ? 'primary' : 'outline-secondary'"
             class="w-100"
             size="lg"
         />

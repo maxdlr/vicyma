@@ -15,16 +15,24 @@ const resultCount = computed(() => {
   return props.items.length
 });
 
+const isOrderReversed = defineModel('isOrderReversed', {type: Boolean, required: true})
+
 </script>
 
 <template>
-  <div class="p-3">
-    <div v-if="resultCount > 0">
-      <span>{{ resultCount }} result{{ resultCount > 1 ? 's' : '' }} found!</span>
+  <div class="justify-content-between align-items-center d-flex">
+    <div class="p-3">
+      <div v-if="resultCount > 0">
+        <span>{{ resultCount }} result{{ resultCount > 1 ? 's' : '' }} found!</span>
+      </div>
+      <div v-if="resultCount === 0">
+        <span>No results found!</span>
+      </div>
     </div>
-    <div v-if="resultCount === 0">
-      <span>No results found!</span>
-    </div>
+    <Button
+        :icon-class-start="`caret-${isOrderReversed ? 'up' : 'down'}-fill`"
+        @click.prevent="isOrderReversed = !isOrderReversed"
+    />
   </div>
 
   <div v-if="isLoading">

@@ -2,46 +2,42 @@
 import VDatatable from "../../../components/organism/VDatatable.vue";
 import Button from "../../../components/atom/Button.vue";
 import {goTo} from "../../../composable/action/redirect";
-import {getPropertyValue} from "../../../composable/formatter/object";
 
 defineProps({
   data: {type: Object, required: true},
   title: {type: String},
 });
 
-const baseUrl = '/admin/user';
+const baseUrl = '/admin/lodging';
 
 const url = (id) => `${baseUrl}/${id}`;
-const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
-
 </script>
 
 <template>
   <VDatatable
       :title="title"
       :data="data"
-      :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"
-      :exclude-filters="['firstname', 'lastname']"
-      :exclude-from-row-properties="['id', 'isDeleted']"
+      :searchable-properties="['name']"
+      :exclude-from-row-properties="['id']"
+      :exclude-filters="['name', 'priceByNight', 'reviews']"
       :new-item-link="`${baseUrl}/new`"
   >
     <template #buttons="{item}">
       <Button
           label="Détails..."
-          color-class="secondary"
           class="my-1"
+          color-class="secondary"
           @click.prevent="goTo(`${url(item.id)}/show`)"
           icon-class-end="box-arrow-up-right"
       />
       <Button
-          v-if="canBeDeleted(item)"
           label="Delete"
           color-class="danger"
           class="my-1"
           icon-class-end="trash"
           @click.prevent="goTo(
                         `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer ${item.firstname} ${item.lastname} ?`
+                        `Salut Maman, tu veux vraiment supprimer l'appartement ${item.name} ?`
                         )"
       />
     </template>

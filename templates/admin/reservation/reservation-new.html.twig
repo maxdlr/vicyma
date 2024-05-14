@@ -6,12 +6,8 @@
 {% endblock %}
 
 {% block body %}
-    {{ reservation.reservationStatus.name }}
     {{ include('_components/Organism/form/_form_reservation.html.twig', {
         save: true,
-        delete: true,
-        archive: true,
-        confirm: true,
-        reference: 'Reservation de ' ~ reservation.user.firstname ~ ' ' ~ reservation.user.lastname
+        reference: 'New reservation'
     }) }}
 {% endblock %}

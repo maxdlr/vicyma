@@ -14,14 +14,16 @@ trait AfterCrudTrait
     /**
      * If $url === 'referer', it redirects to the previous (rerefer) page.
      *
-     * @param string $url
+     * @param string $routeName
      * @param Request $request
+     * @param string $anchor
      * @return Response
      */
     protected function redirectTo(
-        string  $url,
+        string  $routeName,
         Request $request,
         string  $anchor = '',
+        array   $routeParams = [],
     ): Response
     {
         $anchorHash = '';
@@ -29,10 +31,12 @@ trait AfterCrudTrait
             $anchorHash = '#' . $anchor;
         }
 
-        if ($url === 'referer') {
+        if ($routeName === 'referer') {
             return new RedirectResponse($request->headers->get('referer') . $anchorHash, 302);
         }
 
-        return new RedirectResponse($url, 302);
+        $routeName = $this->generateUrl($routeName, $routeParams);
+
+        return new RedirectResponse($routeName, 302);
     }
 }

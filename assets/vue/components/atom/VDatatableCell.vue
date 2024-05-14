@@ -1,6 +1,7 @@
 <script setup>
 import {isEmpty} from "../../composable/formatter/object";
 import {truncate} from "../../composable/formatter/string"
+import {getAverage} from "../../composable/formatter/number";
 
 const props = defineProps({
   name: {type: String},
@@ -24,8 +25,15 @@ const templateClass = {
       {{ value.length > 30 ? truncate(value, 30, '...') : value }}
     </div>
 
-    <div v-if="typeof value === 'object'" v-for="item in value" :key="value">
-      <div :class="templateClass.property">{{ item }}</div>
+    <div v-if="typeof value === 'object'">
+
+      <div v-if="name === 'reviews'" class="text-center">
+        <span>{{ getAverage(value) }}{{ getAverage(value) ? '/5' : '' }}</span>
+      </div>
+
+      <div v-else v-for="item in value" :key="value">
+        <div :class="templateClass.property">{{ item }}</div>
+      </div>
     </div>
 
     <div v-if="(isEmpty(value) || value.length === 0) && typeof value !== 'number' && typeof value !== 'boolean'"

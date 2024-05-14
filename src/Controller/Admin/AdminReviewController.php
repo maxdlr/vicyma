@@ -112,7 +112,7 @@ class AdminReviewController extends AbstractController
             'data' =>
                 [
                     'settings' => [
-                        'rate' => ['name' => 'rates', 'default' => 1, 'values' => $rates, 'codeName' => 'rate'],
+                        'rate' => ['name' => 'rates', 'default' => '', 'values' => $rates, 'codeName' => 'rate'],
                         'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
                         'lodging' => ['name' => 'lodging', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodging'],
                     ],

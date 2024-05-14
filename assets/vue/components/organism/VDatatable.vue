@@ -1,10 +1,12 @@
 <script setup>
-import {onBeforeMount, onMounted, ref} from "vue";
+import {onBeforeMount, onMounted, ref, watch} from "vue";
 import VDatatableResults from "../molecule/VDatatableResults.vue";
 import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
 import {isEmpty} from "../../composable/formatter/object";
 import {clearEmptyLocaleStorage} from "../../composable/action/localStorage";
+import Button from "../atom/Button.vue";
+import {goTo} from "../../composable/action/redirect";
 
 const props = defineProps({
   data: {type: Object, required: true},
@@ -13,6 +15,7 @@ const props = defineProps({
   excludeFilters: {type: Array},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
+  newItemLink: {type: String, default: null, required: false}
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
@@ -20,6 +23,7 @@ const selectedOrderByOption = ref({});
 const mainFilterValue = ref({name: '', value: ''});
 const searchQuery = ref('')
 const isLoading = ref(false)
+const isOrderReversed = ref(false)
 
 onBeforeMount(() => {
   clearEmptyLocaleStorage()
@@ -88,10 +92,18 @@ const orderBy = () => {
   storeOrderBy()
 }
 
+const reverseOrder = () => {
+  filteredItems.value.reverse()
+}
+
+watch(isOrderReversed, (value) => {
+  value ? reverseOrder() : orderBy();
+})
+
 const filterResults = () => {
 
   if (props.mainFilter) {
-    selectedFilterOptions.value[mainFilterValue.value.name] = mainFilterValue.value.value
+    selectedFilterOptions.value[mainFilterValue.value.name] = mainFilterValue.value.value.toString()
   }
 
   let matches = []
@@ -110,7 +122,7 @@ const filterResults = () => {
         }
 
         if (typeof item[key] === 'string' || typeof item[key] === 'number') {
-          isMatch.push(item[key] === selectedFilterValue)
+          isMatch.push(item[key].toString() === selectedFilterValue)
         }
       }
 
@@ -154,7 +166,10 @@ const storeOrderBy = () => {
 </script>
 
 <template>
-  <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
+  <div class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2">
+    <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
+    <Button label="Create new" icon-class-end="plus-circle-fill" @click.prevent="goTo(newItemLink)" v-if="newItemLink"/>
+  </div>
   <VDatatableSettings
       :settings="data.settings"
       :exclude-filters="excludeFilters"
@@ -173,6 +188,7 @@ const storeOrderBy = () => {
       :items="filteredItems"
       :exclude-from-row-properties="excludeFromRowProperties"
       :is-loading="isLoading"
+      v-model:is-order-reversed="isOrderReversed"
   >
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>

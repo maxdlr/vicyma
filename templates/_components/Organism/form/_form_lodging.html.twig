@@ -27,7 +27,8 @@
                 include('_components/Atom/form/_number-field.html.twig', {formRow: lodgingForm.priceByNight, label: 'Prix/nuit'}),
                 include('_components/Atom/form/_upload-field.html.twig', {formRow: lodgingForm.photos, label: 'Photos'})
             ],
-            deleteRoute: 'app_lodging_delete'
+            deleteRoute: 'app_lodging_delete',
+            deleteConfirmMsg: 'Voulez-vous vraiment supprimer ?',
         }) }}
 
 {{ include('_components/Organism/form/_crud_media_gallery.html.twig', {medias: form.vars.value.medias}) }}

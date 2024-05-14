@@ -21,6 +21,12 @@ class Navigation extends AbstractController
                     'value' => $this->generateUrl('app_admin_dashboard'),
                     'iconClass' => 'house-gear-fill'
                 ],
+            'Management' =>
+                [
+                    'name' => 'management',
+                    'value' => $this->generateUrl('app_admin_management'),
+                    'iconClass' => 'gear-fill'
+                ],
             'business' =>
                 [
                     'name' => 'business',
