@@ -13,6 +13,7 @@ const props = defineProps({
   title: {type: String},
   mainFilter: {type: String, default: null},
   excludeFilters: {type: Array},
+  dateFilter: {type: String, default: null, required: false},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
   newItemLink: {type: String, default: null, required: false}
@@ -20,7 +21,8 @@ const props = defineProps({
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const selectedOrderByOption = ref({});
-const mainFilterValue = ref({name: '', value: ''});
+const selectedDateFilterOption = ref({});
+const selectedMainFilterOption = ref({name: '', value: ''});
 const searchQuery = ref('')
 const isLoading = ref(false)
 const isOrderReversed = ref(false)
@@ -34,7 +36,7 @@ onMounted(() => {
   isLoading.value = true;
   setDefaultFilters();
 
-  mainFilterValue.value = {
+  selectedMainFilterOption.value = {
     name: props.mainFilter ? props.data.settings[props.mainFilter].name : null,
     value: props.mainFilter ? selectedFilterOptions.value[props.data.settings[props.mainFilter].name] : null
   }
@@ -80,7 +82,7 @@ const resetFilters = () => {
   for (const filter in props.data.settings) {
     selectedFilterOptions.value[props.data.settings[filter].name] = '';
   }
-  mainFilterValue.value.value = ''
+  selectedMainFilterOption.value.value = ''
   searchQuery.value = '';
   filterResults()
 }
@@ -100,55 +102,82 @@ watch(isOrderReversed, (value) => {
   value ? reverseOrder() : orderBy();
 })
 
-const filterResults = () => {
-
+// Function to update selected filter options
+const updateSelectedFilterOptions = () => {
   if (props.mainFilter) {
-    selectedFilterOptions.value[mainFilterValue.value.name] = mainFilterValue.value.value.toString()
+    selectedFilterOptions.value[selectedMainFilterOption.value.name] = selectedMainFilterOption.value.value.toString();
+  }
+  // if (props.dateFilter) {
+  //   selectedFilterOptions.value[props.dateFilter] = selectedDateFilterOption.value.value;
+  // }
+}
+
+// console.log(selectedFilterOptions.value)
+
+// Function to filter items based on selected filter options
+const applyFilters = () => {
+  return props.data.items.filter((item) => isItemMatch(item));
+}
+
+// Function to check if an item matches the filter criteria
+const isItemMatch = (item) => {
+  let votes = [];
+
+  for (const key in props.data.settings) {
+    const selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].name];
+
+    if (selectedFilterValue !== '' && item[key] !== null) {
+      votes.push(checkFilterCondition(item[key], selectedFilterValue));
+    }
+
+    if (searchQuery.value !== '' && item[key]) {
+      votes.push(checkSearchQuery(item));
+    }
   }
 
-  let matches = []
-  matches = props.data.items.filter((item) => {
-    let isMatch = [];
-    for (const key in props.data.settings) {
-      const selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].name]
-      if (selectedFilterValue !== '' && item[key] !== null) {
+  return !votes.includes(false);
+}
 
-        if (typeof item[key] === 'boolean') {
-          isMatch.push(item[key].toString().length === selectedFilterValue.toString().length)
-        }
+// Function to check filter condition
+const checkFilterCondition = (itemValue, selectedFilterValue) => {
+  if (typeof itemValue === 'boolean') {
+    return itemValue.toString().length === selectedFilterValue.toString().length;
+  }
 
-        if (typeof item[key] === 'object' && !isEmpty(item[key])) {
-          isMatch.push(item[key].includes(selectedFilterValue))
-        }
+  if (typeof itemValue === 'object' && !isEmpty(itemValue)) {
+    return itemValue.includes(selectedFilterValue);
+  }
 
-        if (typeof item[key] === 'string' || typeof item[key] === 'number') {
-          isMatch.push(item[key].toString() === selectedFilterValue)
-        }
-      }
+  return itemValue.toString() === selectedFilterValue.toString();
+}
 
-      if (searchQuery.value !== '' && item[key]) {
+// Function to check if item matches search query
+const checkSearchQuery = (item) => {
+  let votes = [];
 
-        let nestedIsMatch = []
-        for (const searchableProperty of props.searchableProperties) {
-          if (typeof item[searchableProperty] === 'string') {
-            nestedIsMatch.push(item[searchableProperty].toLowerCase().includes(searchQuery.value));
-          }
+  for (const searchableProperty of props.searchableProperties) {
+    if (typeof item[searchableProperty] === 'string') {
+      votes.push(item[searchableProperty].toLowerCase().includes(searchQuery.value.toLowerCase()));
+    }
 
-          if (typeof item[searchableProperty] === 'object') {
-            for (const searchablePropertyElement of item[searchableProperty]) {
-              nestedIsMatch.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value))
-            }
-          }
-        }
-        isMatch.push(nestedIsMatch.includes(true))
+    if (typeof item[searchableProperty] === 'object') {
+      for (const searchablePropertyElement of item[searchableProperty]) {
+        votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
       }
     }
-    return !isMatch.includes(false)
-  })
-  filteredItems.value = matches
-  orderBy();
-  storeFilters()
+  }
+
+  return votes.includes(true);
 }
+
+// Main filter function
+const filterResults = () => {
+  updateSelectedFilterOptions();
+  filteredItems.value = applyFilters();
+  orderBy();
+  storeFilters();
+}
+
 
 const storeFilters = () => {
   for (const setting in props.data.settings) {
@@ -174,10 +203,11 @@ const storeOrderBy = () => {
       :settings="data.settings"
       :exclude-filters="excludeFilters"
       :main-filter="mainFilter"
+      :date-filter="dateFilter"
       v-model:search-query="searchQuery"
       v-model:order-by-value="selectedOrderByOption"
       v-model:filter-options="selectedFilterOptions"
-      v-model:main-filter-value="mainFilterValue"
+      v-model:main-filter-value="selectedMainFilterOption"
       @search="filterResults"
       @reset="resetFilters"
       @order="orderBy"

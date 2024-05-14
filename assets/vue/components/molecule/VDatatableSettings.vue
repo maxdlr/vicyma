@@ -2,20 +2,20 @@
 import VSearchInput from "../atom/VSearchInput.vue";
 import Button from "../atom/Button.vue";
 import Dropdown from "../atom/Dropdown.vue";
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 
 const props = defineProps({
   settings: {type: Object, required: true},
   excludeFilters: {type: Array},
-  mainFilter: {type: String, default: null}
+  mainFilter: {type: String, default: null},
+  dateFilter: {type: String, default: null, required: false}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
 const selectedMainFilter = defineModel('mainFilterValue', {type: Object})
-const orderByValue = defineModel('orderByValue', {
-  type: Object, required: true
-})
+const orderByValue = defineModel('orderByValue', {type: Object, required: true})
+const dateFilter = defineModel('dateFilterValue', {type: Object, required: false})
 const activeMainFilter = computed(() => {
   return props.mainFilter ? props.settings[props.mainFilter] : null
 })
@@ -66,6 +66,27 @@ const handleMainFilter = (value) => {
   }
   emit('filter')
 }
+
+onMounted(() => {
+  getDateOptions()
+})
+
+const getDateOptions = () => {
+  const now = new Date();
+  const startYear = new Date()
+  startYear.setFullYear(now.getFullYear() - 1)
+
+  return [
+    {
+      name: 'Last 12 months',
+      value: {
+        start: startYear,
+        end: now
+      }
+    }
+  ]
+}
+
 </script>
 
 <template>
@@ -94,8 +115,15 @@ const handleMainFilter = (value) => {
         @has-selection="emit('order')"
     />
 
-    <!--    todo: implement optional date filter-->
-    <!--    todo: get extreme dates from active items as suggested min and max and find a way to propose before, after or within given dates-->
+    <div v-if="dateFilter">
+      <Dropdown
+          :options="getDateOptions()"
+          property-of="name"
+          label="DateTest"
+          v-model:selected-option="dateFilter"
+          @has-selection="emit('filter')"
+      />
+    </div>
 
     <div v-for="(filter, index) in activeFilters" :key="index">
       <slot name="filters" :filter="filter">
