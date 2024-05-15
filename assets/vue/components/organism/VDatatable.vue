@@ -1,5 +1,5 @@
 <script setup>
-import {onBeforeMount, onMounted, ref, watch} from "vue";
+import {onBeforeMount, ref, watch} from "vue";
 import VDatatableResults from "../molecule/VDatatableResults.vue";
 import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
@@ -30,17 +30,12 @@ const isOrderReversed = ref(false)
 onBeforeMount(() => {
   clearEmptyLocaleStorage()
   setDefaultOrderBy()
-})
-
-onMounted(() => {
-  isLoading.value = true;
   setDefaultFilters();
 
   selectedMainFilterOption.value = {
-    name: props.mainFilter ? props.data.settings[props.mainFilter].name : null,
-    value: props.mainFilter ? selectedFilterOptions.value[props.data.settings[props.mainFilter].name] : null
+    name: props.mainFilter ? props.data.settings[props.mainFilter].codeName : null,
+    value: props.mainFilter ? selectedFilterOptions.value[props.data.settings[props.mainFilter].codeName] : null
   }
-  isLoading.value = false;
 })
 
 const setDefaultOrderBy = () => {
@@ -66,13 +61,14 @@ const setDefaultOrderBy = () => {
 
 const setDefaultFilters = () => {
   for (const filter in props.data.settings) {
-    const storedFilterKey = `datatable/${props.title}/filterState/${props.data.settings[filter].name}`;
 
+    const storedFilterKey = `datatable/${props.title}/filterState/${props.data.settings[filter].codeName}`;
     if (localStorage.getItem(storedFilterKey)) {
-      selectedFilterOptions.value[props.data.settings[filter].name] = localStorage.getItem(storedFilterKey)
+
+      selectedFilterOptions.value[props.data.settings[filter].codeName] = localStorage.getItem(storedFilterKey)
       localStorage.removeItem(storedFilterKey)
     } else {
-      selectedFilterOptions.value[props.data.settings[filter].name] = props.data.settings[filter].default;
+      selectedFilterOptions.value[props.data.settings[filter].codeName] = props.data.settings[filter].default;
     }
   }
   filterResults();
@@ -80,7 +76,7 @@ const setDefaultFilters = () => {
 
 const resetFilters = () => {
   for (const filter in props.data.settings) {
-    selectedFilterOptions.value[props.data.settings[filter].name] = '';
+    selectedFilterOptions.value[props.data.settings[filter].codeName] = '';
   }
   selectedMainFilterOption.value.value = ''
   searchQuery.value = '';
@@ -105,14 +101,13 @@ watch(isOrderReversed, (value) => {
 // Function to update selected filter options
 const updateSelectedFilterOptions = () => {
   if (props.mainFilter) {
-    selectedFilterOptions.value[selectedMainFilterOption.value.name] = selectedMainFilterOption.value.value.toString();
+    selectedFilterOptions.value[selectedMainFilterOption.value.codeName] = selectedMainFilterOption.value.value.toString();
   }
-  // if (props.dateFilter) {
-  //   selectedFilterOptions.value[props.dateFilter] = selectedDateFilterOption.value.value;
-  // }
-}
 
-// console.log(selectedFilterOptions.value)
+  if (props.dateFilter) {
+    selectedFilterOptions.value[props.dateFilter] = selectedDateFilterOption.value.value ? selectedDateFilterOption.value.value : '';
+  }
+}
 
 // Function to filter items based on selected filter options
 const applyFilters = () => {
@@ -122,9 +117,9 @@ const applyFilters = () => {
 // Function to check if an item matches the filter criteria
 const isItemMatch = (item) => {
   let votes = [];
-
   for (const key in props.data.settings) {
-    const selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].name];
+
+    let selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].codeName];
 
     if (selectedFilterValue !== '' && item[key] !== null) {
       votes.push(checkFilterCondition(item[key], selectedFilterValue));
@@ -142,10 +137,18 @@ const isItemMatch = (item) => {
 const checkFilterCondition = (itemValue, selectedFilterValue) => {
   if (typeof itemValue === 'boolean') {
     return itemValue.toString().length === selectedFilterValue.toString().length;
-  }
 
+  }
   if (typeof itemValue === 'object' && !isEmpty(itemValue)) {
     return itemValue.includes(selectedFilterValue);
+  }
+
+  if (typeof selectedFilterValue === 'object') {
+
+    if (selectedFilterValue[Object.keys(selectedFilterValue)[0]] instanceof Date) {
+      console.log(new Date(itemValue) > selectedFilterValue.start)
+      console.log(new Date(itemValue), selectedFilterValue, typeof selectedFilterValue)
+    }
   }
 
   return itemValue.toString() === selectedFilterValue.toString();
@@ -181,8 +184,8 @@ const filterResults = () => {
 
 const storeFilters = () => {
   for (const setting in props.data.settings) {
-    const itemKey = `datatable/${props.title}/filterState/${props.data.settings[setting].name}`;
-    const itemValue = selectedFilterOptions.value[props.data.settings[setting].name];
+    const itemKey = `datatable/${props.title}/filterState/${props.data.settings[setting].codeName}`;
+    const itemValue = selectedFilterOptions.value[props.data.settings[setting].codeName];
     ["", ' ', '{}'].includes(itemValue) ? localStorage.removeItem(itemKey) : localStorage.setItem(itemKey, itemValue);
   }
 }
@@ -199,15 +202,17 @@ const storeOrderBy = () => {
     <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
     <Button label="Create new" icon-class-end="plus-circle-fill" @click.prevent="goTo(newItemLink)" v-if="newItemLink"/>
   </div>
+
   <VDatatableSettings
       :settings="data.settings"
       :exclude-filters="excludeFilters"
       :main-filter="mainFilter"
       :date-filter="dateFilter"
       v-model:search-query="searchQuery"
-      v-model:order-by-value="selectedOrderByOption"
+      v-model:order-by-option="selectedOrderByOption"
       v-model:filter-options="selectedFilterOptions"
-      v-model:main-filter-value="selectedMainFilterOption"
+      v-model:main-filter-option="selectedMainFilterOption"
+      v-model:date-filter-option="selectedDateFilterOption"
       @search="filterResults"
       @reset="resetFilters"
       @order="orderBy"

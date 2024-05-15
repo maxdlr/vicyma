@@ -4,7 +4,7 @@ import Button from "../../../components/atom/Button.vue";
 import {getPropertyValue} from "../../../composable/formatter/object";
 import {goTo} from "../../../composable/action/redirect";
 
-defineProps({
+const props = defineProps({
   data: {type: Object, required: true},
   title: {type: String},
 });

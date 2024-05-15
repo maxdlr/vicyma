@@ -35,7 +35,7 @@ class VueDataFormatter
     public function regroup(string $property): static
     {
         self::$vueObject = array_unique(
-            array_map(fn(array $object) => $object[$property], self::$vueObject)
+            array_map(fn(array $object) => $object[$property], self::$vueObject), 3
         );
         sort(self::$vueObject);
         return new static;
@@ -68,7 +68,7 @@ class VueDataFormatter
                     $value instanceof Message => $value = $value->getSubject(),
                     $value instanceof Reservation => $value = $value->getReservationNumber(),
                     $value instanceof Bed => $value = $value->getWidth() . ' - ' . $value->getHeight(),
-                    $value instanceof DateTimeInterface => $value = $value->format('d-m-Y'),
+//                    $value instanceof DateTimeInterface => $value = $value->format('d-m-Y'),
                     $value instanceof User => $value = $value->getFirstname() . ' ' . $value->getLastname(),
                     $value instanceof ReservationStatus => $value = $value->getName(),
                     $value instanceof Address => $value = $value->getCity() . ' - ' . $value->getCountry(),

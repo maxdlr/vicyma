@@ -145,21 +145,12 @@ class AdminReservationController extends AbstractController
     public function getData(): array
     {
         $allReservations = $this->reservationRepository->findAll();
+        $arrivalDates = VueDataFormatter::makeVueObjectOf($allReservations, ['arrivalDate'])->regroup('arrivalDate')->get();
+        $statuses = VueDataFormatter::makeVueObjectOf($this->reservationStatusRepository->findAll(), ['name'])->regroup('name')->get();
+        $clients = VueDataFormatter::makeVueObjectOf($allReservations, ['user'])->regroup('user')->get();
+        $lodgings = VueDataFormatter::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
 
-        $statuses = VueDataFormatter::makeVueObjectOf(
-            $this->reservationStatusRepository->findAll(), ['name']
-        )->regroup('name')->get();
-
-        $clients = VueDataFormatter::makeVueObjectOf(
-            $allReservations, ['user']
-        )->regroup('user')->get();
-
-        $lodgings = VueDataFormatter::makeVueObjectOf(
-            $this->lodgingRepository->findAll(), ['name']
-        )->regroup('name')->get();
-
-        $reservations = VueDataFormatter::makeVueObjectOf(
-            $allReservations,
+        $reservations = VueDataFormatter::makeVueObjectOf($allReservations,
             [
                 'id',
                 'reservationNumber',
@@ -179,7 +170,8 @@ class AdminReservationController extends AbstractController
                     'settings' => [
                         'reservationStatus' => ['name' => 'status', 'default' => 'PENDING', 'values' => $statuses, 'codeName' => 'reservationStatus'],
                         'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
-                        'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings']
+                        'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings'],
+                        'arrivalDate' => ['name' => 'check in date', 'default' => '', 'values' => $arrivalDates, 'codeName' => 'arrivalDate'],
                     ],
                     'items' => $reservations
                 ]

@@ -13,9 +13,9 @@ const props = defineProps({
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
-const selectedMainFilter = defineModel('mainFilterValue', {type: Object})
-const orderByValue = defineModel('orderByValue', {type: Object, required: true})
-const dateFilter = defineModel('dateFilterValue', {type: Object, required: false})
+const selectedMainFilterOption = defineModel('mainFilterOption', {type: Object})
+const selectedOrderByOption = defineModel('orderByOption', {type: Object, required: true})
+const selectedDateFilterOption = defineModel('dateFilterOption', {type: Object, required: false})
 const activeMainFilter = computed(() => {
   return props.mainFilter ? props.settings[props.mainFilter] : null
 })
@@ -36,15 +36,19 @@ const activeFilters = computed(() => {
     delete activeFilters[props.mainFilter];
   }
 
+  if (props.dateFilter) {
+    delete activeFilters[props.dateFilter]
+  }
+
   return activeFilters;
 });
 const isFiltered = computed(() => {
-  const vote = [];
+  const votes = [];
   for (const filter in props.settings) {
-    vote.push(selectedFilterOptions.value[props.settings[filter].name] !== '');
+    votes.push(selectedFilterOptions.value[props.settings[filter].codeName] !== '');
   }
-  vote.push(searchQuery.value !== '')
-  return vote.includes(true)
+  votes.push(searchQuery.value !== '')
+  return votes.includes(true)
 })
 
 const emit = defineEmits(['search', 'filter', 'reset', 'order'])
@@ -60,8 +64,8 @@ const orderByOptions = computed(() => {
 })
 
 const handleMainFilter = (value) => {
-  selectedMainFilter.value = {
-    name: activeMainFilter.value.name,
+  selectedMainFilterOption.value = {
+    name: activeMainFilter.value.codeName,
     value: value
   }
   emit('filter')
@@ -94,7 +98,7 @@ const getDateOptions = () => {
       v-if="mainFilter"
       :filter="activeMainFilter"
       @selected-value="handleMainFilter"
-      v-model:active-main-filter="selectedMainFilter.value"
+      v-model:active-main-filter="selectedMainFilterOption.value"
       class="py-5"
   />
 
@@ -106,12 +110,13 @@ const getDateOptions = () => {
         <Button label="Reset" @click.prevent="emit('reset')" class="mx-1"/>
       </div>
     </div>
+
     <Dropdown
         :no-empty="true"
         :options="orderByOptions"
         property-of="name"
         label="Order"
-        v-model:selected-option="orderByValue"
+        v-model:selected-option="selectedOrderByOption"
         @has-selection="emit('order')"
     />
 
@@ -120,7 +125,7 @@ const getDateOptions = () => {
           :options="getDateOptions()"
           property-of="name"
           label="DateTest"
-          v-model:selected-option="dateFilter"
+          v-model:selected-option="selectedDateFilterOption"
           @has-selection="emit('filter')"
       />
     </div>
@@ -130,7 +135,7 @@ const getDateOptions = () => {
         <Dropdown
             :label="filter['name']"
             :options="filter['values']"
-            v-model:selected-option="selectedFilterOptions[filter['name']]"
+            v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             @has-selection="emit('filter')"
         />
       </slot>
