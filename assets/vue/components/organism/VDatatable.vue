@@ -13,7 +13,7 @@ const props = defineProps({
   title: {type: String},
   mainFilter: {type: String, default: null},
   excludeFilters: {type: Array},
-  dateFilter: {type: String, default: null, required: false},
+  dateFilter: {type: Object, default: null, required: false},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
   newItemLink: {type: String, default: null, required: false}
@@ -22,7 +22,7 @@ const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const selectedOrderByOption = ref({});
 const selectedDateFilterOption = ref({});
-const selectedMainFilterOption = ref({name: '', value: ''});
+const selectedMainFilterOption = ref({codeName: '', value: ''});
 const searchQuery = ref('')
 const isLoading = ref(false)
 const isOrderReversed = ref(false)
@@ -33,7 +33,7 @@ onBeforeMount(() => {
   setDefaultFilters();
 
   selectedMainFilterOption.value = {
-    name: props.mainFilter ? props.data.settings[props.mainFilter].codeName : null,
+    codeName: props.mainFilter ? props.data.settings[props.mainFilter].codeName : null,
     value: props.mainFilter ? selectedFilterOptions.value[props.data.settings[props.mainFilter].codeName] : null
   }
 })
@@ -60,17 +60,17 @@ const setDefaultOrderBy = () => {
 }
 
 const setDefaultFilters = () => {
+  console.log(localStorage)
   for (const filter in props.data.settings) {
-
     const storedFilterKey = `datatable/${props.title}/filterState/${props.data.settings[filter].codeName}`;
     if (localStorage.getItem(storedFilterKey)) {
-
       selectedFilterOptions.value[props.data.settings[filter].codeName] = localStorage.getItem(storedFilterKey)
       localStorage.removeItem(storedFilterKey)
     } else {
       selectedFilterOptions.value[props.data.settings[filter].codeName] = props.data.settings[filter].default;
     }
   }
+  selectedDateFilterOption.value = ''
   filterResults();
 }
 
@@ -79,6 +79,7 @@ const resetFilters = () => {
     selectedFilterOptions.value[props.data.settings[filter].codeName] = '';
   }
   selectedMainFilterOption.value.value = ''
+  selectedDateFilterOption.value = ''
   searchQuery.value = '';
   filterResults()
 }
@@ -98,24 +99,22 @@ watch(isOrderReversed, (value) => {
   value ? reverseOrder() : orderBy();
 })
 
-// Function to update selected filter options
 const updateSelectedFilterOptions = () => {
   if (props.mainFilter) {
     selectedFilterOptions.value[selectedMainFilterOption.value.codeName] = selectedMainFilterOption.value.value.toString();
   }
 
   if (props.dateFilter) {
-    selectedFilterOptions.value[props.dateFilter] = selectedDateFilterOption.value.value ? selectedDateFilterOption.value.value : '';
+    selectedFilterOptions.value[props.dateFilter.codeName] = selectedDateFilterOption.value.value ? selectedDateFilterOption.value.value : '';
   }
 }
 
-// Function to filter items based on selected filter options
 const applyFilters = () => {
   return props.data.items.filter((item) => isItemMatch(item));
 }
 
-// Function to check if an item matches the filter criteria
 const isItemMatch = (item) => {
+
   let votes = [];
   for (const key in props.data.settings) {
 
@@ -133,7 +132,6 @@ const isItemMatch = (item) => {
   return !votes.includes(false);
 }
 
-// Function to check filter condition
 const checkFilterCondition = (itemValue, selectedFilterValue) => {
   if (typeof itemValue === 'boolean') {
     return itemValue.toString().length === selectedFilterValue.toString().length;
@@ -144,17 +142,14 @@ const checkFilterCondition = (itemValue, selectedFilterValue) => {
   }
 
   if (typeof selectedFilterValue === 'object') {
-
-    if (selectedFilterValue[Object.keys(selectedFilterValue)[0]] instanceof Date) {
-      console.log(new Date(itemValue) > selectedFilterValue.start)
-      console.log(new Date(itemValue), selectedFilterValue, typeof selectedFilterValue)
+    if (new Date(itemValue)) {
+      const date = new Date(itemValue)
+      return date.getTime() > selectedFilterValue.start.getTime() && date < selectedFilterValue.end.getTime()
     }
   }
-
   return itemValue.toString() === selectedFilterValue.toString();
 }
 
-// Function to check if item matches search query
 const checkSearchQuery = (item) => {
   let votes = [];
 
@@ -173,14 +168,12 @@ const checkSearchQuery = (item) => {
   return votes.includes(true);
 }
 
-// Main filter function
 const filterResults = () => {
   updateSelectedFilterOptions();
   filteredItems.value = applyFilters();
   orderBy();
   storeFilters();
 }
-
 
 const storeFilters = () => {
   for (const setting in props.data.settings) {

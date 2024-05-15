@@ -21,6 +21,7 @@ const url = (id) => `${baseUrl}/${id}`;
       :searchable-properties="['user', 'rate', 'comment', 'lodging']"
       :exclude-from-row-properties="['id']"
       main-filter="rate"
+      :date-filter="{label: 'member since', codeName: 'createdOn'}"
   >
     <template #buttons="{item}">
       <Button

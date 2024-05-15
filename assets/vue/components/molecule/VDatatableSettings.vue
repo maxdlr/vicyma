@@ -4,18 +4,19 @@ import Button from "../atom/Button.vue";
 import Dropdown from "../atom/Dropdown.vue";
 import {computed, onMounted} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
+import {getDateOptions} from "../../composable/formatter/date";
 
 const props = defineProps({
   settings: {type: Object, required: true},
   excludeFilters: {type: Array},
   mainFilter: {type: String, default: null},
-  dateFilter: {type: String, default: null, required: false}
+  dateFilter: {type: Object, default: null, required: false}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
 const selectedMainFilterOption = defineModel('mainFilterOption', {type: Object})
 const selectedOrderByOption = defineModel('orderByOption', {type: Object, required: true})
-const selectedDateFilterOption = defineModel('dateFilterOption', {type: Object, required: false})
+const selectedDateFilterOption = defineModel('dateFilterOption', {type: [Object, String], required: false})
 const activeMainFilter = computed(() => {
   return props.mainFilter ? props.settings[props.mainFilter] : null
 })
@@ -37,7 +38,7 @@ const activeFilters = computed(() => {
   }
 
   if (props.dateFilter) {
-    delete activeFilters[props.dateFilter]
+    delete activeFilters[props.dateFilter.codeName]
   }
 
   return activeFilters;
@@ -65,30 +66,10 @@ const orderByOptions = computed(() => {
 
 const handleMainFilter = (value) => {
   selectedMainFilterOption.value = {
-    name: activeMainFilter.value.codeName,
+    codeName: activeMainFilter.value.codeName,
     value: value
   }
   emit('filter')
-}
-
-onMounted(() => {
-  getDateOptions()
-})
-
-const getDateOptions = () => {
-  const now = new Date();
-  const startYear = new Date()
-  startYear.setFullYear(now.getFullYear() - 1)
-
-  return [
-    {
-      name: 'Last 12 months',
-      value: {
-        start: startYear,
-        end: now
-      }
-    }
-  ]
 }
 
 </script>
@@ -102,7 +83,7 @@ const getDateOptions = () => {
       class="py-5"
   />
 
-  <div :class="`row row-cols-${Object.keys(activeFilters).length + 3}`"
+  <div :class="`row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`"
        class="justify-content-center align-items-center py-4">
     <div class="d-flex justify-content-center align-items-center">
       <h5 class="d-inline my-0 mx-2 p-0 text-center">Filters</h5>
@@ -124,7 +105,7 @@ const getDateOptions = () => {
       <Dropdown
           :options="getDateOptions()"
           property-of="name"
-          label="DateTest"
+          :label="dateFilter.label"
           v-model:selected-option="selectedDateFilterOption"
           @has-selection="emit('filter')"
       />

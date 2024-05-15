@@ -10,7 +10,6 @@ const props = defineProps({
   items: {type: Object, required: true}
 })
 
-console.log(props.items)
 </script>
 
 <template>

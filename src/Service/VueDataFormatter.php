@@ -68,7 +68,7 @@ class VueDataFormatter
                     $value instanceof Message => $value = $value->getSubject(),
                     $value instanceof Reservation => $value = $value->getReservationNumber(),
                     $value instanceof Bed => $value = $value->getWidth() . ' - ' . $value->getHeight(),
-//                    $value instanceof DateTimeInterface => $value = $value->format('d-m-Y'),
+                    $value instanceof DateTimeInterface => $value = $value->format('Y-m-d'),
                     $value instanceof User => $value = $value->getFirstname() . ' ' . $value->getLastname(),
                     $value instanceof ReservationStatus => $value = $value->getName(),
                     $value instanceof Address => $value = $value->getCity() . ' - ' . $value->getCountry(),
