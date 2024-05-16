@@ -11,31 +11,31 @@ class Navigation extends AbstractController
         return [
             'home' =>
                 [
-                    'name' => 'site',
+                    'label' => 'site',
                     'value' => $this->generateUrl('app_home'),
                     'iconClass' => 'house-fill'
                 ],
             'dashboard' =>
                 [
-                    'name' => 'dashboard',
+                    'label' => 'dashboard',
                     'value' => $this->generateUrl('app_admin_dashboard'),
                     'iconClass' => 'house-gear-fill'
                 ],
             'Management' =>
                 [
-                    'name' => 'management',
+                    'label' => 'management',
                     'value' => $this->generateUrl('app_admin_management'),
                     'iconClass' => 'gear-fill'
                 ],
             'business' =>
                 [
-                    'name' => 'business',
+                    'label' => 'business',
                     'value' => $this->generateUrl('app_admin_business'),
                     'iconClass' => 'briefcase-fill'
                 ],
             'conversations' =>
                 [
-                    'name' => 'conversations',
+                    'label' => 'conversations',
                     'value' => $this->generateUrl('app_admin_conversations'),
                     'iconClass' => 'chat-dots-fill'
                 ]

@@ -1,9 +1,15 @@
 <script setup>
 import VNavItem from "../../components/atom/VNavItem.vue";
+import {computed, ref} from "vue";
 
 const props = defineProps({
   navigation: {type: Object, required: true}
 })
+
+const isThisHere = (link) => {
+  return window.location.href.includes(link)
+}
+
 </script>
 
 <template>
@@ -11,9 +17,10 @@ const props = defineProps({
     <li v-for="(link, index) in navigation" :key="index" class="nav-item">
       <div class="py-1">
         <VNavItem
-            :name="link.name"
+            :label="link.label"
             :value="link.value"
             :icon-class="link.iconClass"
+            :color-class="isThisHere(link.value) ? 'primary' : 'outline-primary'"
         />
       </div>
     </li>
