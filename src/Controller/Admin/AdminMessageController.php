@@ -69,17 +69,10 @@ class AdminMessageController extends AbstractController
     public function getData(): array
     {
         $allMessages = $this->messageRepository->findAll();
-
-        $users = VueDataFormatter::makeVueObjectOf(
-            $allMessages, ['user']
-        )->regroup('user')->get();
-
-        $subjects = VueDataFormatter::makeVueObjectOf(
-            $allMessages, ['subject']
-        )->regroup('subject')->get();
-
-        $messages = VueDataFormatter::makeVueObjectOf(
-            $this->messageRepository->findAll(),
+        $users = VueDataFormatter::makeVueObjectOf($allMessages, ['user'])->regroup('user')->get();
+        $subjects = VueDataFormatter::makeVueObjectOf($allMessages, ['subject'])->regroup('subject')->get();
+        $receptionDate = VueDataFormatter::makeVueObjectOf($allMessages, ['createdOn'])->regroup('createdOn')->get();
+        $messages = VueDataFormatter::makeVueObjectOf($allMessages,
             [
                 'id',
                 'user',
@@ -98,6 +91,7 @@ class AdminMessageController extends AbstractController
                     'settings' => [
                         'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
                         'subject' => ['name' => 'subjects', 'default' => '', 'values' => $subjects, 'codeName' => 'subject'],
+                        'createdOn' => ['name' => 'reception date', 'default' => '', 'values' => $receptionDate, 'codeName' => 'createdOn']
                     ],
                     'items' => $messages
                 ]

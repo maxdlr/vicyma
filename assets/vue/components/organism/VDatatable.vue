@@ -20,7 +20,7 @@ const props = defineProps({
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
-const selectedOrderByOption = ref({});
+const selectedOrderByOption = ref({label: '', codeName: ''});
 const selectedDateFilterOption = ref({});
 const selectedMainFilterOption = ref({codeName: '', value: ''});
 const searchQuery = ref('')
@@ -52,15 +52,12 @@ const setDefaultOrderBy = () => {
       break;
     }
 
-    selectedOrderByOption.value = {
-      'name': defaultOrderBy.name,
-      'codeName': defaultOrderBy.codeName
-    }
+    selectedOrderByOption.value.label = defaultOrderBy.name;
+    selectedOrderByOption.value.codeName = defaultOrderBy.codeName
   }
 }
 
 const setDefaultFilters = () => {
-  console.log(localStorage)
   for (const filter in props.data.settings) {
     const storedFilterKey = `datatable/${props.title}/filterState/${props.data.settings[filter].codeName}`;
     if (localStorage.getItem(storedFilterKey)) {
@@ -114,10 +111,9 @@ const applyFilters = () => {
 }
 
 const isItemMatch = (item) => {
-
   let votes = [];
-  for (const key in props.data.settings) {
 
+  for (const key in props.data.settings) {
     let selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].codeName];
 
     if (selectedFilterValue !== '' && item[key] !== null) {

@@ -58,7 +58,10 @@ const orderByOptions = computed(() => {
   let options = [];
   for (const filterName in props.settings) {
     if (props.settings[filterName].codeName !== props.mainFilter) {
-      options.push({'name': props.settings[filterName].name, 'codeName': props.settings[filterName].codeName})
+      options.push({
+        label: props.settings[filterName].name,
+        codeName: props.settings[filterName].codeName
+      })
     }
   }
   return options
@@ -95,7 +98,7 @@ const handleMainFilter = (value) => {
     <Dropdown
         :no-empty="true"
         :options="orderByOptions"
-        property-of="name"
+        property-of="label"
         label="Order"
         v-model:selected-option="selectedOrderByOption"
         @has-selection="emit('order')"

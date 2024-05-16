@@ -22,8 +22,9 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
       :data="data"
       :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"
       :exclude-filters="['firstname', 'lastname']"
-      :exclude-from-row-properties="['id', 'isDeleted']"
+      :exclude-from-row-properties="['id', 'isDeleted', 'createdOn']"
       :new-item-link="`${baseUrl}/new`"
+      :date-filter="{label: 'member since', codeName: 'createdOn'}"
   >
     <template #buttons="{item}">
       <Button

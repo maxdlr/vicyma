@@ -82,21 +82,11 @@ class AdminReviewController extends AbstractController
     public function getData(): array
     {
         $allReviews = $this->reviewRepository->findAll();
-
-        $users = VueDataFormatter::makeVueObjectOf(
-            $allReviews, ['user']
-        )->regroup('user')->get();
-
-        $rates = VueDataFormatter::makeVueObjectOf(
-            $allReviews, ['rate']
-        )->regroup('rate')->get();
-
-        $lodgings = VueDataFormatter::makeVueObjectOf(
-            $this->lodgingRepository->findAll(), ['name']
-        )->regroup('name')->get();
-
-        $reviews = VueDataFormatter::makeVueObjectOf(
-            $this->reviewRepository->findAll(),
+        $users = VueDataFormatter::makeVueObjectOf($allReviews, ['user'])->regroup('user')->get();
+        $rates = VueDataFormatter::makeVueObjectOf($allReviews, ['rate'])->regroup('rate')->get();
+        $lodgings = VueDataFormatter::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
+        $publicationDates = VueDataFormatter::makeVueObjectOf($allReviews, ['createdOn'])->regroup('createdOn')->get();
+        $reviews = VueDataFormatter::makeVueObjectOf($this->reviewRepository->findAll(),
             [
                 'id',
                 'rate',
@@ -115,6 +105,7 @@ class AdminReviewController extends AbstractController
                         'rate' => ['name' => 'rates', 'default' => '', 'values' => $rates, 'codeName' => 'rate'],
                         'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
                         'lodging' => ['name' => 'lodging', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodging'],
+                        'createdOn' => ['name' => 'publication date', 'default' => '', 'values' => $publicationDates, 'codeName' => 'createdOn'],
                     ],
                     'items' => $reviews
                 ]

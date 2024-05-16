@@ -19,6 +19,7 @@ const url = (id) => `${baseUrl}/${id}`;
       :data="data"
       :searchable-properties="['user', 'subject', 'content', 'lodging', 'reservation']"
       :exclude-from-row-properties="['id']"
+      :date-filter="{label: 'reception date', codeName: 'createdOn'}"
   >
     <template #buttons="{item}">
       <Button

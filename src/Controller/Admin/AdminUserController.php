@@ -87,21 +87,11 @@ class AdminUserController extends AbstractController
     public function getData(): array
     {
         $allUsers = $this->userRepository->findAll();
-
-        $firstnames = VueDataFormatter::makeVueObjectOf(
-            $allUsers, ['firstname']
-        )->regroup('firstname')->get();
-
-        $lastnames = VueDataFormatter::makeVueObjectOf(
-            $allUsers, ['lastname']
-        )->regroup('lastname')->get();
-
-        $isDeleted = VueDataFormatter::makeVueObjectOf(
-            $allUsers, ['isDeleted']
-        )->regroup('isDeleted')->get();
-
-        $users = VueDataFormatter::makeVueObjectOf(
-            $allUsers,
+        $firstnames = VueDataFormatter::makeVueObjectOf($allUsers, ['firstname'])->regroup('firstname')->get();
+        $lastnames = VueDataFormatter::makeVueObjectOf($allUsers, ['lastname'])->regroup('lastname')->get();
+        $isDeleted = VueDataFormatter::makeVueObjectOf($allUsers, ['isDeleted'])->regroup('isDeleted')->get();
+        $creationDate = VueDataFormatter::makeVueObjectOf($allUsers, ['createdOn'])->regroup('createdOn')->get();
+        $users = VueDataFormatter::makeVueObjectOf($allUsers,
             [
                 'id',
                 'firstname',
@@ -109,7 +99,8 @@ class AdminUserController extends AbstractController
                 'email',
                 'phoneNumber',
                 'reservations',
-                'isDeleted'
+                'isDeleted',
+                'createdOn'
             ])->get();
 
         return [
@@ -120,7 +111,8 @@ class AdminUserController extends AbstractController
                     'settings' => [
                         'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
                         'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
-                        'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted']
+                        'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted'],
+                        'createdOn' => ['name' => 'member since', 'default' => '', 'values' => $creationDate, 'codeName' => 'createdOn'],
                     ],
                     'items' => $users
                 ]
