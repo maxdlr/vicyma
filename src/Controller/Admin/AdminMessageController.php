@@ -99,8 +99,8 @@ class AdminMessageController extends AbstractController
 
         if ($messageForm === true) return $this->redirectTo('referer', $request);
 
-        return $this->render('admin/message/admin-message-reply.html.twig', [
-            'messageForm' => $messageForm,
+        return $this->render('admin/message/admin-conversation.html.twig', [
+            'messageForm' => $messageForm->createView(),
             'conversation' => $pastMessages,
             'userMessage' => $userMessage
         ]);

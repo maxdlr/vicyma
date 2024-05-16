@@ -7,7 +7,7 @@
 
 {% block body %}
 
-    <div {{ vue_component('atom/VChatTitle', {
+    <div {{ vue_component('atom/VConversationTitle', {
         correspondant: {
             fullName: userMessage.user.fullName,
             id: userMessage.user.id
@@ -24,17 +24,20 @@
 
     <div class="px-5 my-5">
         {% for pastMessage in conversation %}
-            <div {{ vue_component('atom/VChatBubble', {
+            <div {{ vue_component('atom/VConversationBubble', {
                 userId: pastMessage.user is null ? pastMessage.admin.id : pastMessage.user.id,
                 username: pastMessage.user is null ? pastMessage.admin.fullname : pastMessage.user.fullname,
-                date: pastMessage.createdOn|date("d/m/Y H:i"),
+                datetime: {
+                    date: pastMessage.createdOn|date("d/m/Y"),
+                    time: pastMessage.createdOn|date("H:i"),
+                },
                 content: pastMessage.content,
                 isAdmin: pastMessage.admin is not null
             }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
         {% endfor %}
     </div>
 
-    <div class="sticky-bottom">
+    <div class="sticky-bottom pb-4">
         {{ include('_components/Organism/form/_admin_form_message.html.twig', {
             reply: true,
             reference: 'Réponse à ' ~ userMessage.user.firstname ~ ' ' ~ userMessage.user.lastname

@@ -6,8 +6,8 @@ const props = defineProps({
   navigation: {type: Object, required: true}
 })
 
-const isThisHere = (link) => {
-  return window.location.href.includes(link)
+const isCurrentLocation = (link) => {
+  return window.location.pathname === link
 }
 
 </script>
@@ -20,7 +20,7 @@ const isThisHere = (link) => {
             :label="link.label"
             :value="link.value"
             :icon-class="link.iconClass"
-            :color-class="isThisHere(link.value) ? 'primary' : 'outline-primary'"
+            :color-class="isCurrentLocation(link.value) ? 'primary' : 'outline-primary'"
         />
       </div>
     </li>
