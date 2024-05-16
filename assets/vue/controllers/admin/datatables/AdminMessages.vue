@@ -26,7 +26,7 @@ const url = (id) => `${baseUrl}/${id}`;
           label="Détails..."
           class="my-1"
           color-class="secondary"
-          @click.prevent="goTo(`${url(item.id)}/show`)"
+          @click.prevent="goTo(`${url(item.id)}/reply`)"
           icon-class-end="box-arrow-up-right"
       />
       <Button

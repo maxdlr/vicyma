@@ -150,6 +150,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    public function getFullName(bool $noWhiteSpace = false): string
+    {
+        if ($noWhiteSpace === true) {
+            $fullName = $this->getFirstname() . '-' . $this->getLastname();
+            str_replace(' ', '', $fullName);
+            return $fullName;
+        }
+
+        return $this->getFirstname() . ' ' . $this->getLastname();
+    }
+
     public function getFirstname(): ?string
     {
         return $this->firstname;

@@ -1,0 +1,9 @@
+{% set form = messageForm %}
+
+{{ include('_components/Molecule/form/_standalone_form.html.twig', {
+    fields: [
+        include('_components/Atom/form/_text_area-field.html.twig', {formRow: messageForm.content, label: 'Message', placeholder: 'Votre message'}),
+    ],
+    replyRoute: 'app_admin_message_reply',
+    replyConfirmMsg: 'Tu veux vraiment envoyer ta réponse ?'
+}) }}

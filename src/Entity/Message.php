@@ -29,8 +29,12 @@ class Message
     private ?Reservation $reservation = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn]
     private ?User $user = null;
+
+    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
+    #[ORM\JoinColumn]
+    private ?User $admin = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?DateTimeInterface $createdOn = null;
@@ -38,9 +42,16 @@ class Message
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
 
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'messages')]
+    private ?Conversation $conversation = null;
+
+    #[ORM\Column]
+    private ?bool $isReadByAdmin = null;
+
     public function __construct()
     {
         $this->createdOn = new \DateTime();
+        $this->isReadByAdmin = false;
     }
 
     public function getId(): ?int
@@ -108,6 +119,18 @@ class Message
         return $this;
     }
 
+    public function getAdmin(): ?User
+    {
+        return $this->admin;
+    }
+
+    public function setAdmin(?User $admin): static
+    {
+        $this->admin = $admin;
+
+        return $this;
+    }
+
     public function setUpdatedOn(?DateTimeInterface $updatedOn): static
     {
         $this->updatedOn = $updatedOn;
@@ -122,5 +145,29 @@ class Message
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): static
+    {
+        $this->conversation = $conversation;
+
+        return $this;
+    }
+
+    public function getIsReadByAdmin(): ?bool
+    {
+        return $this->isReadByAdmin;
+    }
+
+    public function setIsReadByAdmin(bool $isReadByAdmin): static
+    {
+        $this->isReadByAdmin = $isReadByAdmin;
+
+        return $this;
     }
 }

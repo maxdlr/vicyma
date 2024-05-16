@@ -1,10 +1,11 @@
 {% set object = form.vars.value %}
 {% set buttons = [
-    archive is defined ? include('_components/Atom/_button.html.twig', {routeName: archiveRoute, confirmMsg: archiveConfirmMsg, colorClass: 'warning', label: 'Archiver', icon: 'floppy-fill'}) : '',
-    confirm is defined ? include('_components/Atom/_button.html.twig', {routeName: confirmRoute, confirmMsg: confirmConfirmMsg,colorClass: 'success', label: 'Confirmer', icon: 'check-all'}) : '',
-    save is defined ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Enregistrer', icon: 'floppy-fill'}) : '',
+    archive is defined ? include('_components/Atom/_button.html.twig', {routeName: archiveRoute, confirmMsg: archiveConfirmMsg, colorClass: 'warning', label: 'Archive', icon: 'floppy-fill'}) : '',
+    confirm is defined ? include('_components/Atom/_button.html.twig', {routeName: confirmRoute, confirmMsg: confirmConfirmMsg,colorClass: 'success', label: 'Confirm', icon: 'check-all'}) : '',
+    save is defined ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Save', icon: 'floppy-fill'}) : '',
+    reply is defined ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Reply', icon: 'send-fill'}) : '',
 ] %}
-{% set deleteButton = delete is defined ? include('_components/Atom/_deleteButton.html.twig', {label: 'Supprimer', icon: 'trash-fill', colorClass: 'danger', confirmMsg: deleteConfirmMsg}) : '' %}
+{% set deleteButton = delete is defined ? include('_components/Atom/_deleteButton.html.twig', {label: 'Delete', icon: 'trash-fill', colorClass: 'danger', confirmMsg: deleteConfirmMsg}) : '' %}
 
 <section class="row">
     <div class="row sticky-top pt-3 pb-5 bg-light rounded-3 bg-opacity-75">

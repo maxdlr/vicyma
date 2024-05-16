@@ -1,0 +1,14 @@
+{% extends 'admin-base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    Tableau de bord
+{% endblock %}
+
+{% block body %}
+    {{ dump(userMessage) }}
+    {{ include('_components/Organism/form/_admin_form_message.html.twig', {
+        reply: true,
+        reference: 'Réponse à ' ~ userMessage.user.firstname ~ ' ' ~ userMessage.user.lastname
+    }) }}
+{% endblock %}

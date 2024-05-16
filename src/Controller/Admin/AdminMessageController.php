@@ -2,11 +2,16 @@
 
 namespace App\Controller\Admin;
 
+use App\Crud\AdminMessageCrud;
 use App\Crud\MessageCrud;
 use App\Crud\Manager\AfterCrudTrait;
+use App\Entity\Conversation;
 use App\Entity\Message;
+use App\Enum\RoleEnum;
 use App\Repository\MessageRepository;
 use App\Service\VueDataFormatter;
+use App\ValueObject\ConversationId;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -23,7 +28,8 @@ class AdminMessageController extends AbstractController
     public function __construct(
         private readonly MessageRepository      $messageRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly MessageCrud            $messageCrud
+        private readonly MessageCrud            $messageCrud,
+        private readonly AdminMessageCrud       $adminMessageCrud
     )
     {
     }
@@ -37,13 +43,59 @@ class AdminMessageController extends AbstractController
         Request $request
     ): Response
     {
-        $messageForm = $this->messageCrud->save($request, $message);
+        $admin = $this->getUser();
+        if (assert(in_array(RoleEnum::ROLE_ADMIN->value, $admin->getRoles()))) {
+            $message->setIsReadByAdmin(true);
+            $this->entityManager->persist($message);
+            $this->entityManager->flush();
+        }
 
-        if ($messageForm === true) return $this->redirectTo('referer', $request);
-
-        return $this->render('admin/show/message-details.html.twig', [
-            'messageForm' => $messageForm,
+        return $this->render('admin/message/message-details.html.twig', [
             'message' => $message
+        ]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(path: '/{id}/reply', name: 'reply', methods: ['GET', 'POST'])]
+    public function reply(
+        Message $userMessage,
+        Request $request
+    ): Response
+    {
+        $admin = $this->getUser();
+        if (!$admin) {
+            return $this->redirectTo('app_login', $request);
+        }
+        $responseMessage = new Message();
+        $messageForm = $this->adminMessageCrud->save(
+            $request,
+            $responseMessage,
+            ['admin' => $admin],
+            function () use ($userMessage, $responseMessage) {
+                $userMessage->setIsReadByAdmin(true);
+
+                if ($userMessage->getConversation() === null) {
+                    $conversation = new Conversation();
+                } else {
+                    $conversation = $userMessage->getConversation();
+                    $conversation->setUpdatedOn(new DateTime());
+                }
+
+                $responseMessage->setSubject('Response to ' . $userMessage->getUser()->getFullName() . ' - ' . $userMessage->getCreatedOn()->format('d/m/y'));
+                $conversation
+                    ->addMessage($userMessage)
+                    ->addMessage($responseMessage)
+                    ->setConversationId(ConversationId::new($userMessage));
+            }
+        );
+
+        if ($messageForm === true) return $this->redirectTo('app_admin_business', $request, 'conversations');
+
+        return $this->render('admin/message/admin-message-reply.html.twig', [
+            'messageForm' => $messageForm,
+            'userMessage' => $userMessage
         ]);
     }
 
@@ -68,7 +120,7 @@ class AdminMessageController extends AbstractController
      */
     public function getData(): array
     {
-        $allMessages = $this->messageRepository->findAll();
+        $allMessages = $this->messageRepository->findBy(['admin' => null]);
         $users = VueDataFormatter::makeVueObjectOf($allMessages, ['user'])->regroup('user')->get();
         $subjects = VueDataFormatter::makeVueObjectOf($allMessages, ['subject'])->regroup('subject')->get();
         $receptionDate = VueDataFormatter::makeVueObjectOf($allMessages, ['createdOn'])->regroup('createdOn')->get();
