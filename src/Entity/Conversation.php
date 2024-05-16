@@ -32,6 +32,10 @@ class Conversation
     #[ORM\Column(length: 100)]
     private ?string $conversationId = null;
 
+    #[ORM\ManyToOne(inversedBy: 'conversations')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $client = null;
+
     public function __construct()
     {
         $this->createdOn = new \DateTime();
@@ -98,6 +102,18 @@ class Conversation
     public function setConversationId(string $conversationId): static
     {
         $this->conversationId = $conversationId;
+
+        return $this;
+    }
+
+    public function getClient(): ?User
+    {
+        return $this->client;
+    }
+
+    public function setClient(?User $client): static
+    {
+        $this->client = $client;
 
         return $this;
     }

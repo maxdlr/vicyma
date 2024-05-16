@@ -39,8 +39,7 @@ class AdminMessageController extends AbstractController
      */
     #[Route(path: '/{id}/show', name: 'show', methods: ['GET', 'POST'])]
     public function show(
-        Message $message,
-        Request $request
+        Message $message
     ): Response
     {
         $admin = $this->getUser();
@@ -64,10 +63,16 @@ class AdminMessageController extends AbstractController
         Request $request
     ): Response
     {
+        $pastMessages = $userMessage->getConversation()?->getMessages();
+        if ($pastMessages === null) {
+            $pastMessages = [$userMessage];
+        }
+
         $admin = $this->getUser();
         if (!$admin) {
             return $this->redirectTo('app_login', $request);
         }
+
         $responseMessage = new Message();
         $messageForm = $this->adminMessageCrud->save(
             $request,
@@ -85,16 +90,18 @@ class AdminMessageController extends AbstractController
 
                 $responseMessage->setSubject('Response to ' . $userMessage->getUser()->getFullName() . ' - ' . $userMessage->getCreatedOn()->format('d/m/y'));
                 $conversation
+                    ->setClient($userMessage->getUser())
                     ->addMessage($userMessage)
                     ->addMessage($responseMessage)
                     ->setConversationId(ConversationId::new($userMessage));
             }
         );
 
-        if ($messageForm === true) return $this->redirectTo('app_admin_business', $request, 'conversations');
+        if ($messageForm === true) return $this->redirectTo('referer', $request);
 
         return $this->render('admin/message/admin-message-reply.html.twig', [
             'messageForm' => $messageForm,
+            'conversation' => $pastMessages,
             'userMessage' => $userMessage
         ]);
     }

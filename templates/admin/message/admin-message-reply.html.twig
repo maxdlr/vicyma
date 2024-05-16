@@ -6,9 +6,38 @@
 {% endblock %}
 
 {% block body %}
-    {{ dump(userMessage) }}
-    {{ include('_components/Organism/form/_admin_form_message.html.twig', {
-        reply: true,
-        reference: 'Réponse à ' ~ userMessage.user.firstname ~ ' ' ~ userMessage.user.lastname
-    }) }}
+
+    <div {{ vue_component('atom/VChatTitle', {
+        correspondant: {
+            fullName: userMessage.user.fullName,
+            id: userMessage.user.id
+        },
+        lodging: userMessage.lodging is not null ? {
+            name: userMessage.lodging.name,
+            id: userMessage.lodging.id
+        } : null,
+        reservation: userMessage.reservation is not null ? {
+            reservationNumber: userMessage.reservation.reservationNumber,
+            id: userMessage.reservation.id
+        } : null
+    }) }}></div>
+
+    <div class="px-5 my-5">
+        {% for pastMessage in conversation %}
+            <div {{ vue_component('atom/VChatBubble', {
+                userId: pastMessage.user is null ? pastMessage.admin.id : pastMessage.user.id,
+                username: pastMessage.user is null ? pastMessage.admin.fullname : pastMessage.user.fullname,
+                date: pastMessage.createdOn|date("d/m/Y H:i"),
+                content: pastMessage.content,
+                isAdmin: pastMessage.admin is not null
+            }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="sticky-bottom">
+        {{ include('_components/Organism/form/_admin_form_message.html.twig', {
+            reply: true,
+            reference: 'Réponse à ' ~ userMessage.user.firstname ~ ' ' ~ userMessage.user.lastname
+        }) }}
+    </div>
 {% endblock %}

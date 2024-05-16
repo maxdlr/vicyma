@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Address;
 use App\Entity\Bed;
+use App\Entity\Conversation;
 use App\Entity\Lodging;
 use App\Entity\Message;
 use App\Entity\Reservation;
@@ -66,6 +67,7 @@ class VueDataFormatter
                 match (true) {
                     $value instanceof Lodging => $value = $value->getName(),
                     $value instanceof Message => $value = $value->getSubject(),
+                    $value instanceof Conversation => $value = $value->getConversationId(),
                     $value instanceof Reservation => $value = $value->getReservationNumber(),
                     $value instanceof Bed => $value = $value->getWidth() . ' - ' . $value->getHeight(),
                     $value instanceof DateTimeInterface => $value = $value->format('Y-m-d'),
@@ -75,6 +77,7 @@ class VueDataFormatter
                     $value instanceof Collection => $value = array_map(function ($object) {
                         match (true) {
                             $object instanceof Message => $collectionProperty = 'subject',
+                            $object instanceof Conversation => $collectionProperty = 'conversationId',
                             $object instanceof Bed => $collectionProperty = 'width',
                             $object instanceof Review => $collectionProperty = 'rate',
                             $object instanceof Reservation => $collectionProperty = 'reservationNumber',

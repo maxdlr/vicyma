@@ -18,14 +18,23 @@ const url = (id) => `${baseUrl}/${id}`;
       :title="title"
       :data="data"
       :searchable-properties="['user', 'subject', 'content', 'lodging', 'reservation']"
-      :exclude-from-row-properties="['id']"
+      :exclude-from-row-properties="['id', 'content']"
       :date-filter="{label: 'reception date', codeName: 'createdOn'}"
   >
+    <template #titleButtons>
+      <Button
+          label="See conversations"
+          class="my-1"
+          color-class="outline-primary"
+          @click.prevent="goTo('/admin/conversations')"
+          icon-class-end="box-arrow-up-right"
+      />
+    </template>
     <template #buttons="{item}">
       <Button
-          label="Détails..."
+          label="Reply"
           class="my-1"
-          color-class="secondary"
+          color-class="primary"
           @click.prevent="goTo(`${url(item.id)}/reply`)"
           icon-class-end="box-arrow-up-right"
       />

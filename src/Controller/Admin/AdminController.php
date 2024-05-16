@@ -11,11 +11,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly AdminUserController        $adminUserController,
-        private readonly AdminReservationController $adminReservationController,
-        private readonly AdminMessageController     $adminMessageController,
-        private readonly AdminReviewController      $adminReviewController,
-        private readonly AdminLodgingController     $adminLodgingController,
+        private readonly AdminUserController         $adminUserController,
+        private readonly AdminReservationController  $adminReservationController,
+        private readonly AdminMessageController      $adminMessageController,
+        private readonly AdminReviewController       $adminReviewController,
+        private readonly AdminLodgingController      $adminLodgingController,
+        private readonly AdminConversationController $adminConversationController
     )
     {
     }
@@ -63,6 +64,17 @@ class AdminController extends AbstractController
                 [
                     'lodgings' => $this->adminLodgingController->getData(),
                 ]
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Route(path: '/conversations', name: 'conversations', methods: ['GET', 'POST'])]
+    public function conversations(): Response
+    {
+        return $this->render('admin/dashboard/conversations.html.twig', [
+            'conversations' => $this->adminConversationController->getData()
         ]);
     }
 }

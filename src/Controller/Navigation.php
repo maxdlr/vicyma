@@ -32,6 +32,12 @@ class Navigation extends AbstractController
                     'name' => 'business',
                     'value' => $this->generateUrl('app_admin_business'),
                     'iconClass' => 'briefcase-fill'
+                ],
+            'conversations' =>
+                [
+                    'name' => 'conversations',
+                    'value' => $this->generateUrl('app_admin_conversations'),
+                    'iconClass' => 'chat-dots-fill'
                 ]
         ];
     }

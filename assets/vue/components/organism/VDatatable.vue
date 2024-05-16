@@ -189,7 +189,14 @@ const storeOrderBy = () => {
 <template>
   <div class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2">
     <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
-    <Button label="Create new" icon-class-end="plus-circle-fill" @click.prevent="goTo(newItemLink)" v-if="newItemLink"/>
+    <div>
+      <Button
+          label="Create new"
+          icon-class-end="plus-circle-fill"
+          @click.prevent="goTo(newItemLink)"
+          v-if="newItemLink"/>
+      <slot name="titleButtons"/>
+    </div>
   </div>
 
   <VDatatableSettings
