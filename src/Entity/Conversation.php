@@ -34,7 +34,7 @@ class Conversation
 
     #[ORM\ManyToOne(inversedBy: 'conversations')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $client = null;
+    private ?User $user = null;
 
     public function __construct()
     {
@@ -106,14 +106,14 @@ class Conversation
         return $this;
     }
 
-    public function getClient(): ?User
+    public function getUser(): ?User
     {
-        return $this->client;
+        return $this->user;
     }
 
-    public function setClient(?User $client): static
+    public function setUser(?User $user): static
     {
-        $this->client = $client;
+        $this->user = $user;
 
         return $this;
     }

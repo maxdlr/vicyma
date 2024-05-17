@@ -131,10 +131,20 @@ const isItemMatch = (item) => {
 const checkFilterCondition = (itemValue, selectedFilterValue) => {
   if (typeof itemValue === 'boolean') {
     return itemValue.toString().length === selectedFilterValue.toString().length;
-
   }
   if (typeof itemValue === 'object' && !isEmpty(itemValue)) {
-    return itemValue.includes(selectedFilterValue);
+
+    if (Array.isArray(itemValue)) {
+      let votes = [];
+      for (const itemValueElement of itemValue) {
+        const arrayValueToCheck = itemValueElement[Object.keys(itemValueElement)[1]];
+        votes.push(arrayValueToCheck.includes(selectedFilterValue));
+      }
+      return votes.includes(true)
+    } else {
+      const valueToCheck = itemValue[Object.keys(itemValue)[1]]
+      return valueToCheck.includes(selectedFilterValue);
+    }
   }
 
   if (typeof selectedFilterValue === 'object') {
@@ -155,12 +165,25 @@ const checkSearchQuery = (item) => {
     }
 
     if (typeof item[searchableProperty] === 'object') {
-      for (const searchablePropertyElement of item[searchableProperty]) {
-        if (typeof searchablePropertyElement === 'object') {
-          const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
-          votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
-        } else {
-          votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
+
+      if (Array.isArray(item[searchableProperty])) {
+        for (const searchablePropertyElement of item[searchableProperty]) {
+          if (typeof searchablePropertyElement === 'object') {
+            const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
+            votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
+          } else {
+            console.log(searchablePropertyElement)
+            votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
+          }
+        }
+      } else {
+        for (const searchablePropertyElement in item[searchableProperty]) {
+          if (typeof searchablePropertyElement === 'object') {
+            const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
+            votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
+          } else {
+            votes.push(item[searchableProperty]['value'].toLowerCase().includes(searchQuery.value.toLowerCase()));
+          }
         }
       }
     }

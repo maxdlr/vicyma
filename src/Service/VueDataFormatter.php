@@ -89,7 +89,7 @@ class VueDataFormatter
             $value instanceof Reservation => ['id' => $value->getId(), 'value' => $value->getReservationNumber()],
             $value instanceof Bed => ['id' => $value->getId(), 'value' => $value->getWidth() . ' - ' . $value->getHeight()],
             $value instanceof DateTimeInterface => $value->format('Y-m-d'),
-            $value instanceof User => ['id' => $value->getId(), 'value' => $value->getFirstname() . ' ' . $value->getLastname()],
+            $value instanceof User => ['id' => $value->getId(), 'value' => $value->getFullName()],
             $value instanceof ReservationStatus => $value->getName(),
             $value instanceof Address => ['id' => $value->getId(), 'value' => $value->getCity() . ' - ' . $value->getCountry()],
             $value instanceof Collection => self::formatCollection($value),

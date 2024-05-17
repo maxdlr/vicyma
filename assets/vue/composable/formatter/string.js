@@ -1,4 +1,8 @@
 export const toTitle = (string) => {
+    if (typeof string !== 'string') {
+        return string;
+    }
+
     return string.charAt(0).toUpperCase() + string.substring(1);
 };
 
@@ -17,11 +21,12 @@ export const truncate = (string, numberOfChars, suffix) => {
 export const implode = (array) => {
     let string = '';
 
+
     for (let i = 0; i < array.length; i++) {
         if (i === array.length - 1 && array.length > 1) {
             string += ' and '
         }
-        string += array[i];
+        string += array[i][Object.keys(array[i])[1]];
         if (i < array.length - 2) {
             string += ', ';
         }

@@ -10,6 +10,11 @@ export const isEmpty = (obj) => {
     return true;
 }
 export const getPropertyValue = (object, property) => {
+
+    if (typeof object !== 'object') {
+        return object;
+    }
+
     const o = objectPick(object, [property], true);
     return Object.values(o)[0];
 };

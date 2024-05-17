@@ -90,7 +90,7 @@ class AdminMessageController extends AbstractController
 
                 $responseMessage->setSubject('Response to ' . $userMessage->getUser()->getFullName() . ' - ' . $userMessage->getCreatedOn()->format('d/m/y'));
                 $conversation
-                    ->setClient($userMessage->getUser())
+                    ->setUser($userMessage->getUser())
                     ->addMessage($userMessage)
                     ->addMessage($responseMessage)
                     ->setConversationId(ConversationId::new($userMessage));

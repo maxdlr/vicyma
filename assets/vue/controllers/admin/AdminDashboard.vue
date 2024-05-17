@@ -21,7 +21,7 @@ const reviewBaseUrl = '/admin/review';
     >
       <template #notification="{item}">
             <span>
-        {{ item.user }} wants to book {{ implode(item.lodgings) }} from {{ item.arrivalDate }} to {{
+        {{ item.user.value }} wants to book {{ implode(item.lodgings) }} from {{ item.arrivalDate }} to {{
                 item.departureDate
               }}
             </span>
@@ -37,7 +37,7 @@ const reviewBaseUrl = '/admin/review';
     >
       <template #notification="{item}">
         <span>
-        {{ item.user }} left a review of {{ item.rate }} stars !
+        {{ item.user.value }} left a review of {{ item.rate }} stars !
         </span>
         <small class="d-block">{{ truncate(item.comment, 30, '...') }}</small>
       </template>

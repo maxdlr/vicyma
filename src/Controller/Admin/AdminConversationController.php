@@ -66,7 +66,7 @@ class AdminConversationController extends AbstractController
             [
                 'id',
                 'conversationId',
-                'client',
+                'user',
                 'createdOn'
             ])->get();
 

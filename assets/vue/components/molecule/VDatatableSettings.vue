@@ -2,7 +2,7 @@
 import VSearchInput from "../atom/VSearchInput.vue";
 import Button from "../atom/Button.vue";
 import Dropdown from "../atom/Dropdown.vue";
-import {computed, onMounted} from "vue";
+import {computed} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
 
@@ -99,6 +99,7 @@ const handleMainFilter = (value) => {
         :no-empty="true"
         :options="orderByOptions"
         property-of="label"
+        :return-raw-object="true"
         label="Order"
         v-model:selected-option="selectedOrderByOption"
         @has-selection="emit('order')"
@@ -108,6 +109,7 @@ const handleMainFilter = (value) => {
       <Dropdown
           :options="getDateOptions()"
           property-of="name"
+          :return-raw-object="true"
           :label="dateFilter.label"
           v-model:selected-option="selectedDateFilterOption"
           @has-selection="emit('filter')"
@@ -119,6 +121,7 @@ const handleMainFilter = (value) => {
         <Dropdown
             :label="filter['name']"
             :options="filter['values']"
+            property-of="value"
             v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             @has-selection="emit('filter')"
         />

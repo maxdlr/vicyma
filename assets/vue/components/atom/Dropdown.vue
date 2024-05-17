@@ -12,6 +12,7 @@ const props = defineProps({
   options: {type: Array, required: true},
   noEmpty: {type: Boolean, default: false, required: false},
   propertyOf: {type: String, required: false},
+  returnRawObject: {type: Boolean, default: false, required: false},
 
   mainColorClass: {
     type: String,
@@ -53,7 +54,8 @@ onUnmounted(() => {
         @change="emit('hasSelection')"
     >
       <option value="" v-if="!noEmpty">All</option>
-      <option v-for="(option, index) in options" :value="option" :key="index">
+      <option v-for="(option, index) in options"
+              :value="propertyOf && !returnRawObject ? getPropertyValue(option, propertyOf) : option" :key="index">
         {{ propertyOf ? toTitle(getPropertyValue(option, propertyOf)) : option }}
       </option>
     </select>
