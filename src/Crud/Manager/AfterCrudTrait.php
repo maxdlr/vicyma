@@ -38,6 +38,7 @@ trait AfterCrudTrait
 
         $routeName = $this->generateUrl($routeName, $routeParams);
 
+
         return new RedirectResponse($routeName, 302);
     }
 }

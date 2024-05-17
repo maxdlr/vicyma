@@ -2,15 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\BedRepository;
+use App\Repository\BedTypeRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: BedRepository::class)]
-class Bed
+#[ORM\Entity(repositoryClass: BedTypeRepository::class)]
+class BedType
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -70,7 +70,7 @@ class Bed
         return $this;
     }
 
-    public function isIsExtra(): ?bool
+    public function getIsExtra(): ?bool
     {
         return $this->isExtra;
     }

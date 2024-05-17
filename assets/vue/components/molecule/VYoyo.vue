@@ -57,17 +57,17 @@ onUpdated(() => {
 
 <template>
   <div class="position-relative d-inline py-2">
-    <Button
-        :label="label"
-        @mouseover="openYoyo"
-        @click.prevent="toggleOpen"
-        :icon-class-end="isOpen ? 'caret-up-fill' : 'caret-down-fill'"
-        class="d-inline"
-    />
+    <!--    <Button-->
+    <!--        :label="label"-->
+    <!--        @mouseover="openYoyo"-->
+    <!--        @click.prevent="toggleOpen"-->
+    <!--        :icon-class-end="isOpen ? 'caret-up-fill' : 'caret-down-fill'"-->
+    <!--        class="d-inline"-->
+    <!--    />-->
     <Transition :name="direction.includes('up') ? SLIDE_UP : SLIDE_DOWN">
       <div
           v-if="isOpen"
-          class="d-flex position-absolute p-2 pt-0"
+          class="d-flex position-absolute p-2 pt-0 z-1030"
           @mouseover="openYoyo"
           :class="[
               column ? 'flex-column' : '',
@@ -89,4 +89,8 @@ onUpdated(() => {
 <style scoped lang="scss">
 @import "../../../../assets/styles/animation/slide-down.scss";
 @import "../../../../assets/styles/animation/slide-up.scss";
+
+.z-1030 {
+  z-index: 1030;
+}
 </style>

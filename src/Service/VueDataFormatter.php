@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Address;
-use App\Entity\Bed;
+use App\Entity\BedType;
 use App\Entity\Conversation;
 use App\Entity\Lodging;
 use App\Entity\Message;
@@ -87,7 +87,7 @@ class VueDataFormatter
             $value instanceof Message => ['id' => $value->getId(), 'value' => $value->getSubject()],
             $value instanceof Conversation => ['id' => $value->getId(), 'value' => $value->getConversationId()],
             $value instanceof Reservation => ['id' => $value->getId(), 'value' => $value->getReservationNumber()],
-            $value instanceof Bed => ['id' => $value->getId(), 'value' => $value->getWidth() . ' - ' . $value->getHeight()],
+            $value instanceof BedType => ['id' => $value->getId(), 'value' => $value->getWidth() . ' - ' . $value->getHeight()],
             $value instanceof DateTimeInterface => $value->format('Y-m-d'),
             $value instanceof User => ['id' => $value->getId(), 'value' => $value->getFullName()],
             $value instanceof ReservationStatus => $value->getName(),
@@ -113,7 +113,7 @@ class VueDataFormatter
         return match (true) {
             $object instanceof Message => ['id', 'subject'],
             $object instanceof Conversation => ['id', 'conversationId'],
-            $object instanceof Bed => ['id', 'width'],
+            $object instanceof BedType => ['id', 'width', 'height'],
             $object instanceof Review => ['id', 'rate'],
             $object instanceof Reservation => ['id', 'reservationNumber'],
             $object instanceof Lodging => ['id', 'name'],

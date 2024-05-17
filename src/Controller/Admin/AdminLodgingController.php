@@ -99,6 +99,8 @@ class AdminLodgingController extends AbstractController
                 'floor',
                 'priceByNight',
                 'reviews',
+                'reservations',
+                'beds'
             ]
         )->get();
 

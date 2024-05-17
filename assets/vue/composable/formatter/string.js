@@ -7,7 +7,7 @@ export const toTitle = (string) => {
 };
 
 export const singularize = (string) => {
-    if (string.charAt(string.length - 1) === 's') {
+    if (string.charAt(string.length - 1) === 's' && string.charAt(string.length - 2) !== 's') {
         return string.substring(0, string.length - 1)
     } else {
         return string;

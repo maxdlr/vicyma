@@ -29,7 +29,7 @@ class Message
     private ?Reservation $reservation = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
-    #[ORM\JoinColumn]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $user = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]

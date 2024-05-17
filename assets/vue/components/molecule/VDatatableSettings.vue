@@ -96,6 +96,7 @@ const handleMainFilter = (value) => {
     </div>
 
     <Dropdown
+        v-if="settings[0]"
         :no-empty="true"
         :options="orderByOptions"
         property-of="label"

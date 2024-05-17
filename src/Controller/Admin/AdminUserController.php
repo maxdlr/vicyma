@@ -73,10 +73,14 @@ class AdminUserController extends AbstractController
         Request $request
     ): Response
     {
-        $user->setIsDeleted(true);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        return $this->redirectTo('referer', $request, 'users');
+        return $this->adminUserCrud->delete($request, $user, 'app_admin_business', doBeforeDelete: function ($object) use ($user) {
+            assert($object instanceof User);
+            $user->setIsDeleted(true);
+            return ['save', 'exit'];
+        });
+//        $this->entityManager->persist($user);
+//        $this->entityManager->flush();
+//        return $this->redirectTo('referer', $request, 'users');
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -100,9 +104,10 @@ class AdminUserController extends AbstractController
                 'phoneNumber',
                 'reservations',
                 'isDeleted',
+                'address',
                 'createdOn'
             ])->get();
-        
+
         return [
             'name' => 'clients',
             'component' => 'AdminUsers',

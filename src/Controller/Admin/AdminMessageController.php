@@ -115,9 +115,7 @@ class AdminMessageController extends AbstractController
         Request $request
     ): Response
     {
-        $this->entityManager->remove($message);
-        $this->entityManager->flush();
-        return $this->redirectTo('referer', $request, 'messages');
+        return $this->messageCrud->delete($request, $message, 'app_admin_business', anchor: 'messages');
     }
 
     // ---------------------------------------------------------------------------------------------------

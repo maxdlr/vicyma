@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Bed;
+use App\Entity\BedType;
 use App\Entity\Lodging;
 use App\Form\FormUtils\FormTypeUtils;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -70,8 +70,8 @@ class LodgingType extends AbstractType
                 'scale' => 2,
             ])
             ->add('beds', EntityType::class, [
-                'class' => Bed::class,
-                'choice_label' => function (Bed $bed) {
+                'class' => BedType::class,
+                'choice_label' => function (BedType $bed) {
                     return 'l - ' . $bed->getWidth() . ' X h - ' . $bed->getHeight();
                 },
                 'multiple' => true,

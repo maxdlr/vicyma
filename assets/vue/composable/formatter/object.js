@@ -10,8 +10,7 @@ export const isEmpty = (obj) => {
     return true;
 }
 export const getPropertyValue = (object, property) => {
-
-    if (typeof object !== 'object') {
+    if (typeof object !== 'object' || !object) {
         return object;
     }
 

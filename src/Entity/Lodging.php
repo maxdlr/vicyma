@@ -68,7 +68,7 @@ class Lodging
     #[ORM\Column]
     private ?float $priceByNight = null;
 
-    #[ORM\ManyToMany(targetEntity: Bed::class, inversedBy: 'lodgings', fetch: 'EAGER')]
+    #[ORM\ManyToMany(targetEntity: BedType::class, inversedBy: 'lodgings', fetch: 'EAGER')]
     private Collection $beds;
 
     #[ORM\ManyToMany(targetEntity: Media::class, mappedBy: 'lodgings', fetch: 'EAGER')]
@@ -312,14 +312,14 @@ class Lodging
     }
 
     /**
-     * @return Collection<int, Bed>
+     * @return Collection<int, BedType>
      */
     public function getBeds(): Collection
     {
         return $this->beds;
     }
 
-    public function addBed(Bed $bed): static
+    public function addBed(BedType $bed): static
     {
         if (!$this->beds->contains($bed)) {
             $this->beds->add($bed);
@@ -328,7 +328,7 @@ class Lodging
         return $this;
     }
 
-    public function removeBed(Bed $bed): static
+    public function removeBed(BedType $bed): static
     {
         $this->beds->removeElement($bed);
 

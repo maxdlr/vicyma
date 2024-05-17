@@ -49,12 +49,13 @@ class DeleteManager extends AbstractController
         object   $object,
         string   $redirectRoute,
         array    $redirectParams,
+        string   $anchor = '',
         callable $doBeforeDelete = null
     ): Response
     {
-        if ($redirectRoute !== 'referer') {
-            $redirectRoute = $this->generateUrl($redirectRoute, $redirectParams);
-        }
+//        if ($redirectRoute !== 'referer') {
+//            $redirectRoute = $this->generateUrl($redirectRoute, $redirectParams);
+//        }
 
         if ($this->isCsrfTokenValid('delete' . $object->getId(), $request->getPayload()->get('_token'))) {
             if ($doBeforeDelete !== null) {
@@ -75,6 +76,6 @@ class DeleteManager extends AbstractController
             $this->entityManager->flush();
         }
 
-        return $this->redirectTo($redirectRoute, $request);
+        return $this->redirectTo($redirectRoute, $request, $anchor);
     }
 }

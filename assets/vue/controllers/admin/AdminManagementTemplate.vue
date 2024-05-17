@@ -2,6 +2,7 @@
 import {onBeforeMount, onUnmounted, ref} from "vue";
 import {toTitle} from "../../composable/formatter/string";
 import AdminLodgings from "./datatables/AdminLodgings.vue";
+import AdminBeds from "./datatables/AdminBeds.vue";
 
 const props = defineProps({
   datatables: {type: Object, required: true}
@@ -21,6 +22,7 @@ const currentTab = ref('lodgings');
 
 const tabs = {
   lodgings: AdminLodgings,
+  beds: AdminBeds
 }
 
 onUnmounted(() => {

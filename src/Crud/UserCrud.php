@@ -83,12 +83,7 @@ class UserCrud extends AbstractCrud
             $object,
             $redirectRoute,
             $redirectParams,
-            function ($object, $redirectRoute, $redirectParams) use ($doBeforeDelete) {
-                assert($object instanceof User);
-                $doBeforeDelete($object, $redirectRoute, $redirectParams);
-                $this->softDelete($object);
-                return ['save', 'exit'];
-            }
+            $doBeforeDelete
         );
     }
 

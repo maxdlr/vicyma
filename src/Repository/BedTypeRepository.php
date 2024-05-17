@@ -2,27 +2,27 @@
 
 namespace App\Repository;
 
-use App\Entity\Bed;
+use App\Entity\BedType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Bed>
+ * @extends ServiceEntityRepository<BedType>
  *
- * @method Bed|null find($id, $lockMode = null, $lockVersion = null)
- * @method Bed|null findOneBy(array $criteria, array $orderBy = null)
- * @method Bed[]    findAll()
- * @method Bed[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method BedType|null find($id, $lockMode = null, $lockVersion = null)
+ * @method BedType|null findOneBy(array $criteria, array $orderBy = null)
+ * @method BedType[]    findAll()
+ * @method BedType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class BedRepository extends ServiceEntityRepository
+class BedTypeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Bed::class);
+        parent::__construct($registry, BedType::class);
     }
 
     //    /**
-    //     * @return Bed[] Returns an array of Bed objects
+    //     * @return BedTypeType[] Returns an array of BedTypeType objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -36,7 +36,7 @@ class BedRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Bed
+    //    public function findOneBySomeField($value): ?BedTypeType
     //    {
     //        return $this->createQueryBuilder('b')
     //            ->andWhere('b.exampleField = :val')

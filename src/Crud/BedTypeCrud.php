@@ -4,15 +4,15 @@ namespace App\Crud;
 
 use App\Crud\Manager\AbstractCrud;
 use App\Crud\Manager\CrudSetting;
-use App\Entity\Bed;
-use App\Form\BedType;
+use App\Entity\BedType;
+use App\Form\BedTypeType;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[CrudSetting(entity: Bed::class, formType: BedType::class)]
-class BedCrud extends AbstractCrud
+#[CrudSetting(entity: BedType::class, formType: BedTypeType::class)]
+class BedTypeCrud extends AbstractCrud
 {
     /**
      * Takes the $request and deletes the bed object from the database.
@@ -37,8 +37,8 @@ class BedCrud extends AbstractCrud
      *
      */
     #[Route('bed/{id}', name: 'app_bed_delete', methods: ['POST'])]
-    public function delete(Request $request, Bed $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
+    public function delete(Request $request, BedType $object, string $redirectRoute = 'referer', array $redirectParams = [], string $anchor = '', ?callable $doBeforeDelete = null): Response
     {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $doBeforeDelete);
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $anchor, $doBeforeDelete);
     }
 }

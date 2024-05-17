@@ -41,20 +41,17 @@ const isOrderReversed = defineModel('isOrderReversed', {type: Boolean, required:
 
   <div v-for="(item) in items" :key="item.id" v-else>
 
-    <div class="my-2 border border-2 rounded-4 border-primary p-3">
-      <slot name="row" :item="item">
-        <VDatatableRow
-            :item="item"
-            :exclude-properties="excludeFromRowProperties"
-            class="col"
-        >
-          <template #buttons>
-            <slot name="buttons" :item="item"/>
-          </template>
-        </VDatatableRow>
-      </slot>
+    <slot name="row" :item="item">
+      <VDatatableRow
+          :item="item"
+          :exclude-properties="excludeFromRowProperties"
+      >
+        <template #buttons>
+          <slot name="buttons" :item="item"/>
+        </template>
+      </VDatatableRow>
+    </slot>
 
-    </div>
   </div>
 </template>
 

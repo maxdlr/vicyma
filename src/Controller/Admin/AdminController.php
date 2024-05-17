@@ -16,6 +16,7 @@ class AdminController extends AbstractController
         private readonly AdminMessageController      $adminMessageController,
         private readonly AdminReviewController       $adminReviewController,
         private readonly AdminLodgingController      $adminLodgingController,
+        private readonly AdminBedTypeController      $adminBedController,
         private readonly AdminConversationController $adminConversationController
     )
     {
@@ -63,6 +64,7 @@ class AdminController extends AbstractController
             'datatables' =>
                 [
                     'lodgings' => $this->adminLodgingController->getData(),
+                    'beds' => $this->adminBedController->getData(),
                 ]
         ]);
     }

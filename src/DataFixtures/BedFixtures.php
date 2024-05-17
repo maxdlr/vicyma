@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Bed;
+use App\Entity\BedType;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
@@ -18,8 +18,8 @@ class BedFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
-        for ($i = 0; $i < AppFixtures::BED_COUNT; $i++) {
-            $bed = new Bed();
+        for ($i = 0; $i < AppFixtures::BED_TYPE_COUNT; $i++) {
+            $bed = new BedType();
 
             $bed
                 ->setHeight($faker->randomElement([190, 180, 200]))

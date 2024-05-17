@@ -12,6 +12,7 @@ defineProps({
 <template>
   <button
       class="btn text-nowrap"
+      role="button"
       :class="[
       `btn-${colorClass}`,
       !size ? '' : `btn-${size}`,
