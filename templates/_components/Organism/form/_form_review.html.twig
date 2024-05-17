@@ -4,5 +4,6 @@
         include('_components/Atom/form/_select-field.html.twig', {formRow: reviewForm.rate, label: 'Note'}),
         include('_components/Atom/form/_text_area-field.html.twig', {formRow: reviewForm.comment, label: 'Commentaire', placeholder: 'Bel emplacement...'}),
     ],
-    deleteRoute: 'app_review_delete'
+    deleteRoute: 'app_review_delete',
+    deleteConfirmMsg: 'Tu veux vraiment supprimer cette recommendation ?'
 }) }}

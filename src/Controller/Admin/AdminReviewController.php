@@ -44,7 +44,7 @@ class AdminReviewController extends AbstractController
 
         if ($reviewForm === true) return $this->redirectTo('referer', $request);
 
-        return $this->render('admin/show/review-details.html.twig', [
+        return $this->render('admin/review/review-details.html.twig', [
             'reviewForm' => $reviewForm,
             'review' => $review
         ]);

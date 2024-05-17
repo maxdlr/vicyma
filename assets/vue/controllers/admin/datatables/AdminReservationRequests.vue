@@ -25,6 +25,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
       :data="data"
       main-filter="reservationStatus"
       :exclude-from-row-properties="['id', 'reservationStatus']"
+      :exclude-order-bys="['lodgings']"
       :searchable-properties="['user', 'lodgings', 'reservationNumber']"
       :new-item-link="`${baseUrl}/new`"
       :date-filter="{label: 'check in date', codeName: 'arrivalDate'}"
@@ -32,7 +33,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
     <template #buttons="{item}">
       <Button
           label="Détails..."
-          color-class="secondary"
+          color-class="primary"
           class="my-1"
           icon-class-end="box-arrow-up-right"
           @click.prevent="goTo(`${url(item.id)}/show`)"/>
@@ -49,7 +50,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
       <Button v-if="canBePaid(item)"
               label="Set as paid"
               class="my-1"
-              color-class="success"
+              color-class="outline-success"
               icon-class-end="cash-coin"
               @click.prevent="goTo(
                         `${url(item.id)}/paid`,

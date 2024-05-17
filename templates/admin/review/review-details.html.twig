@@ -9,6 +9,6 @@
     {{ include('_components/Organism/form/_form_review.html.twig', {
         save: true,
         delete: true,
-        reference: 'Message de ' ~ user.firstname ~ ' ' ~ user.lastname
+        reference: 'Message de ' ~ review.user.fullName
     }) }}
 {% endblock %}

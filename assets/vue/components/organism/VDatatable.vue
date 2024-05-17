@@ -13,6 +13,7 @@ const props = defineProps({
   title: {type: String},
   mainFilter: {type: String, default: null},
   excludeFilters: {type: Array},
+  excludeOrderBys: {type: Array},
   dateFilter: {type: Object, default: null, required: false},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
@@ -230,6 +231,7 @@ const storeOrderBy = () => {
   <VDatatableSettings
       :settings="data.settings"
       :exclude-filters="excludeFilters"
+      :exclude-order-bys="excludeOrderBys"
       :main-filter="mainFilter"
       :date-filter="dateFilter"
       v-model:search-query="searchQuery"

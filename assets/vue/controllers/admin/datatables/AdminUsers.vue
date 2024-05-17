@@ -29,7 +29,7 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
     <template #buttons="{item}">
       <Button
           label="Détails..."
-          color-class="secondary"
+          color-class="primary"
           class="my-1"
           @click.prevent="goTo(`${url(item.id)}/show`)"
           icon-class-end="box-arrow-up-right"

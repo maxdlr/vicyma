@@ -1,3 +1,5 @@
+import {getPropertyValue} from "./object";
+
 export const toTitle = (string) => {
     if (typeof string !== 'string') {
         return string;
@@ -18,15 +20,15 @@ export const truncate = (string, numberOfChars, suffix) => {
     return string.substr(0, numberOfChars) + suffix
 }
 
-export const implode = (array) => {
+export const implode = (array, property) => {
     let string = '';
-
 
     for (let i = 0; i < array.length; i++) {
         if (i === array.length - 1 && array.length > 1) {
             string += ' and '
         }
-        string += array[i][Object.keys(array[i])[1]];
+
+        string += getPropertyValue(array[i], property);
         if (i < array.length - 2) {
             string += ', ';
         }

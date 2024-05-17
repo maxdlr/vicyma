@@ -41,24 +41,25 @@ const valueDisplayClass = 'fs-5 fw-bold'
     <!-- boolean ----------------------------------------------------------------------------------------------------------- -->
 
     <div v-else-if="typeof value === 'boolean'" class="text-center">
-      <span class="badge fs-6 rounded-pill" :class="value ? 'text-bg-success' : 'text-bg-secondary'">{{
-          value.toString()
-        }}</span>
+      <span class="badge fs-6 rounded-pill" :class="value ? 'text-bg-success' : 'text-bg-secondary'">
+        {{ value.toString() }}
+      </span>
     </div>
 
     <!-- string ----------------------------------------------------------------------------------------------------------- -->
 
     <div v-else-if="typeof value === 'string'" :class="templateClass.property">
       <span v-if="name !== 'email'" :class="valueDisplayClass">
-      {{ value.length > 30 ? toTitle(truncate(value, 30, '...')) : toTitle(value) }}
-        </span>
+        {{ value.length > 30 ? toTitle(truncate(value, 70, '...')) : toTitle(value) }}
+      </span>
       <span v-else>{{ value }}</span>
     </div>
 
     <!-- number ----------------------------------------------------------------------------------------------------------- -->
 
     <div v-else-if="typeof value === 'number'" :class="templateClass.property">
-      <span :class="valueDisplayClass">{{ value }}</span>
+      <span v-if="name.toLowerCase().includes('price')" :class="valueDisplayClass">{{ value }} FCFA</span>
+      <span v-else :class="valueDisplayClass">{{ value }}</span>
     </div>
 
     <!-- collection ----------------------------------------------------------------------------------------------------------- -->
@@ -90,9 +91,9 @@ const valueDisplayClass = 'fs-5 fw-bold'
       </div>
 
       <div v-else>
-
         <Button
-            :icon-class-end="isCollapseOpen ? 'caret-up-fill' : 'caret-down-fill'"
+            :icon-class-start="isCollapseOpen ? 'caret-up-fill' : 'caret-down-fill'"
+            :label="value.length"
             data-bs-toggle="collapse"
             :data-bs-target="`#collection-collapse-${randomSlug}`"
             :aria-expanded="false"

@@ -32,14 +32,14 @@ const url = (id) => `${baseUrl}/${id}`;
     </template>
     <template #buttons="{item}">
       <Button
-          label="Reply"
+          label="Open conversation"
           class="my-1"
           color-class="primary"
           @click.prevent="goTo(`${url(item.id)}/reply`)"
           icon-class-end="box-arrow-up-right"
       />
       <Button
-          label="Delete"
+          label="Delete this message"
           color-class="danger"
           class="my-1"
           icon-class-end="trash"

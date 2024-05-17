@@ -15,8 +15,8 @@ const selectMainFilterValue = (value) => {
 </script>
 
 <template>
-  <div class="border border-primary border-1 position-relative px-5 pt-5 pb-3 rounded-4 ">
-    <span class="position-absolute top-0 start-0 ms-3 mt-3 badge badge bg-success">{{
+  <div class="border border-primary border-1 position-relative px-5 pt-5 pb-3 rounded-pill">
+    <span class="position-absolute top-0 start-0 ms-5 mt-3 badge badge bg-success rounded-pill">{{
         toTitle(filter.name)
       }}</span>
     <div :class="`row row-cols-${filter.values.length + 1}`">

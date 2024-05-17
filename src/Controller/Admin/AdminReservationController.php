@@ -160,6 +160,7 @@ class AdminReservationController extends AbstractController
                 'arrivalDate',
                 'departureDate',
                 'price',
+                'createdOn'
             ])->get();
 
         return [

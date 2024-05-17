@@ -5,11 +5,13 @@ import Dropdown from "../atom/Dropdown.vue";
 import {computed} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
+import {SLIDE_LEFT, SLIDE_RIGHT} from "../../constant/animation";
 
 const props = defineProps({
   settings: {type: Object, required: true},
-  excludeFilters: {type: Array},
-  mainFilter: {type: String, default: null},
+  excludeFilters: {type: Array, default: [], required: false},
+  excludeOrderBys: {type: Array, default: [], required: false},
+  mainFilter: {type: String, default: null, required: false},
   dateFilter: {type: Object, default: null, required: false}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
@@ -57,7 +59,7 @@ const emit = defineEmits(['search', 'filter', 'reset', 'order'])
 const orderByOptions = computed(() => {
   let options = [];
   for (const filterName in props.settings) {
-    if (props.settings[filterName].codeName !== props.mainFilter) {
+    if (props.settings[filterName].codeName !== props.mainFilter && !props.excludeOrderBys.includes(props.settings[filterName].codeName)) {
       options.push({
         label: props.settings[filterName].name,
         codeName: props.settings[filterName].codeName
@@ -89,14 +91,16 @@ const handleMainFilter = (value) => {
   <div :class="`row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`"
        class="justify-content-center align-items-center py-4">
     <div class="d-flex justify-content-center align-items-center">
-      <h5 class="d-inline my-0 mx-2 p-0 text-center">Filters</h5>
-      <div v-if="isFiltered">
-        <Button label="Reset" @click.prevent="emit('reset')" class="mx-1"/>
-      </div>
+      <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
+      <i class="bi bi-arrow-right-short"></i>
+      <Transition :name="SLIDE_RIGHT">
+        <div v-if="isFiltered">
+          <Button label="Reset" color-class="secondary" @click.prevent="emit('reset')" class="mx-1"/>
+        </div>
+      </Transition>
     </div>
-
     <Dropdown
-        v-if="settings[0]"
+        v-if="settings.hasOwnProperty(Object.keys(settings)[0])"
         :no-empty="true"
         :options="orderByOptions"
         property-of="label"
@@ -132,6 +136,8 @@ const handleMainFilter = (value) => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@import "../../../styles/animation/slide-left";
+@import "../../../styles/animation/slide-right";
 
 </style>

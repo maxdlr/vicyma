@@ -25,6 +25,7 @@ const props = defineProps({
     }
   },
   column: {type: Boolean, default: true, required: false},
+  actionButton: {type: Boolean, default: false}
 })
 
 const isOpen = defineModel('isOpen', {type: Boolean, default: false, required: false})
@@ -56,18 +57,19 @@ onUpdated(() => {
 </script>
 
 <template>
-  <div class="position-relative d-inline py-2">
-    <!--    <Button-->
-    <!--        :label="label"-->
-    <!--        @mouseover="openYoyo"-->
-    <!--        @click.prevent="toggleOpen"-->
-    <!--        :icon-class-end="isOpen ? 'caret-up-fill' : 'caret-down-fill'"-->
-    <!--        class="d-inline"-->
-    <!--    />-->
+  <div class="position-relative d-inline">
+    <Button
+        v-if="actionButton"
+        :label="label"
+        @mouseover="openYoyo"
+        @click.prevent="toggleOpen"
+        :icon-class-end="isOpen ? 'caret-up-fill' : 'caret-down-fill'"
+        class="d-inline"
+    />
     <Transition :name="direction.includes('up') ? SLIDE_UP : SLIDE_DOWN">
       <div
           v-if="isOpen"
-          class="d-flex position-absolute p-2 pt-0 z-1030"
+          class="d-flex position-absolute px-2 pt-0 z-1030 my-3 mx-0"
           @mouseover="openYoyo"
           :class="[
               column ? 'flex-column' : '',

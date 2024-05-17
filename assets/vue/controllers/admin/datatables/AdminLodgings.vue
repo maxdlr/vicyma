@@ -20,13 +20,14 @@ const url = (id) => `${baseUrl}/${id}`;
       :searchable-properties="['name']"
       :exclude-from-row-properties="['id']"
       :exclude-filters="['name', 'priceByNight', 'reviews']"
+      :exclude-order-bys="['reviews']"
       :new-item-link="`${baseUrl}/new`"
   >
     <template #buttons="{item}">
       <Button
-          label="Détails..."
+          label="Edit"
           class="my-1"
-          color-class="secondary"
+          color-class="warning"
           @click.prevent="goTo(`${url(item.id)}/show`)"
           icon-class-end="box-arrow-up-right"
       />

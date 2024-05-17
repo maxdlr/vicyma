@@ -34,7 +34,7 @@ const url = (id) => `${baseUrl}/${id}`;
       <Button
           label="Open"
           class="my-1"
-          color-class="secondary"
+          color-class="primary"
           @click.prevent="goTo(`${url(item.id)}/show`)"
           icon-class-end="box-arrow-up-right"
       />

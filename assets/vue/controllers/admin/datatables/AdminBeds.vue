@@ -23,9 +23,9 @@ const url = (id) => `${baseUrl}/${id}`;
   >
     <template #buttons="{item}">
       <Button
-          label="Détails..."
+          label="Edit"
           class="my-1"
-          color-class="secondary"
+          color-class="warning"
           @click.prevent="goTo(`${url(item.id)}/show`)"
           icon-class-end="box-arrow-up-right"
       />
