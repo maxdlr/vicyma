@@ -156,7 +156,12 @@ const checkSearchQuery = (item) => {
 
     if (typeof item[searchableProperty] === 'object') {
       for (const searchablePropertyElement of item[searchableProperty]) {
-        votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
+        if (typeof searchablePropertyElement === 'object') {
+          const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
+          votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
+        } else {
+          votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
+        }
       }
     }
   }

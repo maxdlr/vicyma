@@ -102,7 +102,7 @@ class AdminUserController extends AbstractController
                 'isDeleted',
                 'createdOn'
             ])->get();
-
+        
         return [
             'name' => 'clients',
             'component' => 'AdminUsers',

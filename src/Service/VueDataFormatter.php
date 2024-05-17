@@ -27,7 +27,7 @@ class VueDataFormatter
     {
         self::$vueObject = array_map(function (object $object) use ($entities, $properties) {
             assert(get_class($object) === get_class($entities[0]));
-            return VueDataFormatter::makeVueObject($object, $properties);
+            return self::makeVueObject($object, $properties);
         }, $entities);
 
         return new static;
@@ -36,7 +36,7 @@ class VueDataFormatter
     public function regroup(string $property): static
     {
         self::$vueObject = array_unique(
-            array_map(fn(array $object) => $object[$property], self::$vueObject), 3
+            array_map(fn(array $object) => $object[$property], self::$vueObject), SORT_REGULAR
         );
         sort(self::$vueObject);
         return new static;
@@ -52,49 +52,80 @@ class VueDataFormatter
      */
     private static function makeVueObject(object $object, array $properties): array
     {
-
         $vueObject = [];
         $objectFqcn = get_class($object);
         $allProperties = ClassBrowser::findAllProperties($objectFqcn);
 
         foreach ($allProperties as $property) {
             if (in_array($property->getName(), $properties)) {
-                $getter = ClassBrowser::findGetter($objectFqcn, $property->getName());
-                assert($getter instanceof ReflectionMethod);
-                $getterName = $getter->getName();
-
-                $value = $object->$getterName();
-                match (true) {
-                    $value instanceof Lodging => $value = $value->getName(),
-                    $value instanceof Message => $value = $value->getSubject(),
-                    $value instanceof Conversation => $value = $value->getConversationId(),
-                    $value instanceof Reservation => $value = $value->getReservationNumber(),
-                    $value instanceof Bed => $value = $value->getWidth() . ' - ' . $value->getHeight(),
-                    $value instanceof DateTimeInterface => $value = $value->format('Y-m-d'),
-                    $value instanceof User => $value = $value->getFirstname() . ' ' . $value->getLastname(),
-                    $value instanceof ReservationStatus => $value = $value->getName(),
-                    $value instanceof Address => $value = $value->getCity() . ' - ' . $value->getCountry(),
-                    $value instanceof Collection => $value = array_map(function ($object) {
-                        match (true) {
-                            $object instanceof Message => $collectionProperty = 'subject',
-                            $object instanceof Conversation => $collectionProperty = 'conversationId',
-                            $object instanceof Bed => $collectionProperty = 'width',
-                            $object instanceof Review => $collectionProperty = 'rate',
-                            $object instanceof Reservation => $collectionProperty = 'reservationNumber',
-                            $object instanceof Lodging => $collectionProperty = 'name',
-                            default => $collectionProperty = null
-                        };
-                        return self::makeVueObject($object, [$collectionProperty])[$collectionProperty];
-                    }, $value->toArray()),
-                    default => $value
-                };
-                $vueObject[$property->getName()] = $value;
+                $getter = self::findGetterMethod($objectFqcn, $property->getName());
+                $value = $object->{$getter->getName()}();
+                $vueObject[$property->getName()] = self::formatValue($value);
             }
         }
 
+        return self::sortVueObject($vueObject, $properties);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private static function findGetterMethod(string $objectFqcn, string $propertyName): ReflectionMethod
+    {
+        $getter = ClassBrowser::findGetter($objectFqcn, $propertyName);
+        assert($getter instanceof ReflectionMethod);
+        return $getter;
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private static function formatValue(mixed $value): mixed
+    {
+        return match (true) {
+            $value instanceof Lodging => ['id' => $value->getId(), 'value' => $value->getName()],
+            $value instanceof Message => ['id' => $value->getId(), 'value' => $value->getSubject()],
+            $value instanceof Conversation => ['id' => $value->getId(), 'value' => $value->getConversationId()],
+            $value instanceof Reservation => ['id' => $value->getId(), 'value' => $value->getReservationNumber()],
+            $value instanceof Bed => ['id' => $value->getId(), 'value' => $value->getWidth() . ' - ' . $value->getHeight()],
+            $value instanceof DateTimeInterface => $value->format('Y-m-d'),
+            $value instanceof User => ['id' => $value->getId(), 'value' => $value->getFirstname() . ' ' . $value->getLastname()],
+            $value instanceof ReservationStatus => $value->getName(),
+            $value instanceof Address => ['id' => $value->getId(), 'value' => $value->getCity() . ' - ' . $value->getCountry()],
+            $value instanceof Collection => self::formatCollection($value),
+            default => $value
+        };
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private static function formatCollection(Collection $collection): array
+    {
+        return array_map(function ($object) {
+            $collectionProperty = self::getCollectionProperty($object);
+            return self::makeVueObject($object, $collectionProperty);
+        }, $collection->toArray());
+    }
+
+    private static function getCollectionProperty(object $object): ?array
+    {
+        return match (true) {
+            $object instanceof Message => ['id', 'subject'],
+            $object instanceof Conversation => ['id', 'conversationId'],
+            $object instanceof Bed => ['id', 'width'],
+            $object instanceof Review => ['id', 'rate'],
+            $object instanceof Reservation => ['id', 'reservationNumber'],
+            $object instanceof Lodging => ['id', 'name'],
+            default => null
+        };
+    }
+
+    private static function sortVueObject(array $vueObject, array $properties): array
+    {
         $sortedVueObject = [];
         foreach ($properties as $property) {
-            $sortedVueObject += [$property => $vueObject[$property]];
+            $sortedVueObject[$property] = $vueObject[$property];
         }
         return $sortedVueObject;
     }
