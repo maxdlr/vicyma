@@ -2,6 +2,7 @@
 import VDatatable from "../../../components/organism/VDatatable.vue";
 import Button from "../../../components/atom/Button.vue";
 import {goTo} from "../../../composable/action/redirect";
+import {toTitle} from "../../../composable/formatter/string";
 
 defineProps({
   data: {type: Object, required: true},
@@ -38,7 +39,7 @@ const url = (id) => `${baseUrl}/${id}`;
           icon-class-end="trash"
           @click.prevent="goTo(
                         `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer l'appartement ${item.name} ?`
+                        `Salut Maman, tu veux vraiment supprimer l'appartement ${toTitle(item.name)} ?`
                         )"
       />
     </template>

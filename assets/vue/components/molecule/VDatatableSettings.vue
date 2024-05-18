@@ -77,6 +77,10 @@ const handleMainFilter = (value) => {
   emit('filter')
 }
 
+const isFilters = computed(() => {
+  return Object.keys(activeFilters.value).length !== 0
+})
+
 </script>
 
 <template>
@@ -90,7 +94,7 @@ const handleMainFilter = (value) => {
 
   <div :class="`row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`"
        class="justify-content-center align-items-center py-4">
-    <div class="d-flex justify-content-center align-items-center">
+    <div class="d-flex justify-content-center align-items-center" v-if="isFilters">
       <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
       <i class="bi bi-arrow-right-short"></i>
       <Transition :name="SLIDE_RIGHT">
@@ -99,16 +103,18 @@ const handleMainFilter = (value) => {
         </div>
       </Transition>
     </div>
-    <Dropdown
-        v-if="settings.hasOwnProperty(Object.keys(settings)[0])"
-        :no-empty="true"
-        :options="orderByOptions"
-        property-of="label"
-        :return-raw-object="true"
-        label="Order"
-        v-model:selected-option="selectedOrderByOption"
-        @has-selection="emit('order')"
-    />
+    <div v-if="isFilters">
+      <Dropdown
+          v-if="settings.hasOwnProperty(Object.keys(settings)[0])"
+          :no-empty="true"
+          :options="orderByOptions"
+          property-of="label"
+          :return-raw-object="true"
+          label="Order"
+          v-model:selected-option="selectedOrderByOption"
+          @has-selection="emit('order')"
+      />
+    </div>
 
     <div v-if="dateFilter">
       <Dropdown
@@ -121,7 +127,7 @@ const handleMainFilter = (value) => {
       />
     </div>
 
-    <div v-for="(filter, index) in activeFilters" :key="index">
+    <div v-for="(filter, index) in activeFilters" :key="index" v-if="isFilters">
       <slot name="filters" :filter="filter">
         <Dropdown
             :label="filter['name']"

@@ -2,7 +2,7 @@
 import {isEmpty} from "../../composable/formatter/object";
 import {singularize, toTitle, truncate} from "../../composable/formatter/string"
 import {getReviewAverage} from "../../composable/formatter/number";
-import {rand} from "@vueuse/core";
+import {rand, useToNumber} from "@vueuse/core";
 import {Collapse} from 'bootstrap';
 import Button from "./Button.vue";
 import {ref} from "vue";
@@ -32,7 +32,7 @@ const valueDisplayClass = 'fs-5 fw-bold'
     <!-- empty ----------------------------------------------------------------------------------------------------------- -->
 
     <div
-        v-if="(isEmpty(value) || value.length === 0) && typeof value !== 'number' && typeof value !== 'boolean'"
+        v-if="(isEmpty(value) || value.length === 0) && !['number', 'boolean'].includes(typeof value)"
         :class="templateClass.property">
       <span class="fst-italic opacity-50">--- empty ---</span>
     </div>
@@ -42,7 +42,8 @@ const valueDisplayClass = 'fs-5 fw-bold'
 
     <div v-else-if="typeof value === 'boolean'" class="text-center">
       <span class="badge fs-6 rounded-pill" :class="value ? 'text-bg-success' : 'text-bg-secondary'">
-        {{ value.toString() }}
+        <span v-if="!value">Not </span>
+          {{ name.replace('is', '') }}
       </span>
     </div>
 
@@ -70,7 +71,7 @@ const valueDisplayClass = 'fs-5 fw-bold'
       </div>
 
       <div v-else-if="typeof value[Object.keys(value)[1]] === 'string'">
-        <div :class="templateClass.property" v-if="typeof value[Object.keys(value)[1]] === 'string'">
+        <div :class="templateClass.property">
           <a :href="`/admin/${singularize(name)}/${value[Object.keys(value)[0]]}/show`"
              class="icon-link icon-link-hover text-primary" :class="valueDisplayClass">
             {{ toTitle(value[Object.keys(value)[1]]) }}
@@ -81,7 +82,7 @@ const valueDisplayClass = 'fs-5 fw-bold'
 
       <div v-else-if="value.length < 2">
         <div :class="templateClass.propertyListItem"
-             v-if="typeof value[0][Object.keys(value[0])[1]] === 'string' || typeof value[0][Object.keys(value[0])[1]] === 'number'">
+             v-if="['string', 'number'].includes(typeof value[0][Object.keys(value[0])[1]])">
           <a :href="`/admin/${singularize(name)}/${value[0][Object.keys(value[0])[0]]}/show`"
              class="icon-link icon-link-hover text-primary" :class="valueDisplayClass">
             {{ toTitle(value[0][Object.keys(value[0])[1]]) }}
@@ -107,7 +108,7 @@ const valueDisplayClass = 'fs-5 fw-bold'
         <div class="collapse" :id="`collection-collapse-${randomSlug}`">
           <div v-for="item in value" :key="value">
             <div :class="templateClass.propertyListItem"
-                 v-if="typeof item[Object.keys(item)[1]] === 'string' || typeof value[0][Object.keys(value[0])[1]] === 'number'">
+                 v-if="['string', 'number'].includes(typeof item[Object.keys(item)[1]])">
               <a :href="`/admin/${singularize(name)}/${item[Object.keys(item)[0]]}/show`"
                  class="icon-link icon-link-hover text-primary" :class="valueDisplayClass">
                 <span>{{ toTitle(item[Object.keys(item)[1]]) }}</span>

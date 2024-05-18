@@ -22,7 +22,7 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
       :data="data"
       :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"
       :exclude-filters="['firstname', 'lastname']"
-      :exclude-from-row-properties="['id', 'isDeleted', 'createdOn']"
+      :exclude-from-row-properties="['id', 'isDeleted', 'createdOn', 'roles']"
       :new-item-link="`${baseUrl}/new`"
       :date-filter="{label: 'member since', codeName: 'createdOn'}"
   >
@@ -42,7 +42,7 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
           icon-class-end="trash"
           @click.prevent="goTo(
                         `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer ${item.firstname} ${item.lastname} ?`
+                        `Salut Maman, tu veux vraiment supprimer le compte de ${item.firstname} ${item.lastname} ?`
                         )"
       />
     </template>

@@ -138,8 +138,12 @@ const checkFilterCondition = (itemValue, selectedFilterValue) => {
     if (Array.isArray(itemValue)) {
       let votes = [];
       for (const itemValueElement of itemValue) {
-        const arrayValueToCheck = itemValueElement[Object.keys(itemValueElement)[1]];
-        votes.push(arrayValueToCheck.includes(selectedFilterValue));
+        if (Array.isArray(itemValueElement)) {
+          const arrayValueToCheck = itemValueElement[Object.keys(itemValueElement)[1]];
+          votes.push(arrayValueToCheck.includes(selectedFilterValue));
+        } else {
+          votes.push(itemValueElement.includes(selectedFilterValue))
+        }
       }
       return votes.includes(true)
     } else {

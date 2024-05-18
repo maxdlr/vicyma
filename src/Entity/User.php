@@ -69,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Conversation>
      */
-    #[ORM\OneToMany(targetEntity: Conversation::class, mappedBy: 'client')]
+    #[ORM\OneToMany(targetEntity: Conversation::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $conversations;
 
 

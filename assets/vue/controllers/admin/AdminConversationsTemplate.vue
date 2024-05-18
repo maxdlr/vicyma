@@ -42,7 +42,7 @@ const url = (id) => `${baseUrl}/${id}`;
           label="Delete"
           class="my-1"
           color-class="danger"
-          @click.prevent="goTo(`${url(item.id)}/delete`, 'Tous les messages de cette conversation seront supprimés, t\'es sure ?')"
+          @click.prevent="goTo(`${url(item.id)}/delete`, `Tous les messages de cette conversation seront supprimés, ${item.user.value} n\'y aura plus accès non plus, t'es sure ?`)"
           icon-class-end="trash-fill"
       />
     </template>

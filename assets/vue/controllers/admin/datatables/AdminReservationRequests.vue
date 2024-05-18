@@ -44,7 +44,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
               icon-class-end="check-all"
               @click.prevent="goTo(
                         `${url(item.id)}/confirm`,
-                        `Salut Maman, tu veux vraiment confirmer la reservation de ${item.user} ?`
+                        `Salut Maman, tu veux vraiment confirmer la reservation de ${item.user.value} ?`
                         )"
       />
       <Button v-if="canBePaid(item)"
@@ -54,7 +54,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
               icon-class-end="cash-coin"
               @click.prevent="goTo(
                         `${url(item.id)}/paid`,
-                        `Salut Maman, est-ce que ${item.user} à bien payé la réservation ${item.reservationNumber} ?`
+                        `Salut Maman, est-ce que ${item.user.value} à bien payé la réservation ${item.reservationNumber} ?`
                         )"
       />
       <Button v-if="canBeDeleted(item)"
@@ -64,7 +64,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
               icon-class-end="trash"
               @click.prevent="goTo(
                         `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer la reservation de ${item.user} ?`
+                        `Salut Maman, tu veux vraiment supprimer la reservation de ${item.user.value} ?`
                         )"
       />
       <Button
@@ -75,7 +75,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
           icon-class-end="archive"
           @click.prevent="goTo(
                   `${url(item.id)}/archive`,
-                  `Salut Maman, tu veux vraiment archiver la reservation de ${item.user} ?`
+                  `Salut Maman, tu veux vraiment archiver la reservation de ${item.user.value} ?`
               )"
       />
     </template>

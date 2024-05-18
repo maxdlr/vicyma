@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Crud\AdminUserCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\User;
+use App\Enum\RoleEnum;
 use App\Repository\UserRepository;
 use App\Service\VueDataFormatter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -95,6 +96,7 @@ class AdminUserController extends AbstractController
         $lastnames = VueDataFormatter::makeVueObjectOf($allUsers, ['lastname'])->regroup('lastname')->get();
         $isDeleted = VueDataFormatter::makeVueObjectOf($allUsers, ['isDeleted'])->regroup('isDeleted')->get();
         $creationDate = VueDataFormatter::makeVueObjectOf($allUsers, ['createdOn'])->regroup('createdOn')->get();
+        $roles = array_map(fn(RoleEnum $roleEnum) => $roleEnum->value, RoleEnum::cases());
         $users = VueDataFormatter::makeVueObjectOf($allUsers,
             [
                 'id',
@@ -105,11 +107,12 @@ class AdminUserController extends AbstractController
                 'reservations',
                 'isDeleted',
                 'address',
-                'createdOn'
+                'createdOn',
+                'roles'
             ])->get();
 
         return [
-            'name' => 'clients',
+            'name' => 'users',
             'component' => 'AdminUsers',
             'data' =>
                 [
@@ -117,6 +120,7 @@ class AdminUserController extends AbstractController
                         'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
                         'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
                         'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted'],
+                        'roles' => ['name' => 'role', 'default' => 'ROLE_USER', 'values' => $roles, 'codeName' => 'roles'],
                         'createdOn' => ['name' => 'member since', 'default' => '', 'values' => $creationDate, 'codeName' => 'createdOn'],
                     ],
                     'items' => $users

@@ -10,6 +10,7 @@ const reservationBaseUrl = '/admin/reservation';
 const reviewBaseUrl = '/admin/review';
 const userBaseUrl = '/admin/user'
 const lodgingBaseUrl = '/admin/lodging'
+
 </script>
 
 <template>

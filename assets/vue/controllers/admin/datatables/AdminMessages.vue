@@ -45,7 +45,7 @@ const url = (id) => `${baseUrl}/${id}`;
           icon-class-end="trash"
           @click.prevent="goTo(
                         `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer le message de ${item.user} ?`
+                        `Salut Maman, tu veux vraiment supprimer le message de ${item.user.value} ?`
                         )"
       />
     </template>

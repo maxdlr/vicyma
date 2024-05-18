@@ -1,5 +1,13 @@
 {% set form = reservationForm %}
 
+<div class="badge fs-5 rounded-pill {{ reservation.reservationStatus.name is same as 'DELETED' ? 'bg-danger-subtle' :
+reservation.reservationStatus.name is same as 'CONFIRMED' ? 'bg-success-subtle' :
+reservation.reservationStatus.name is same as 'ARCHIVED' ? 'bg-warning-subtle' :
+reservation.reservationStatus.name is same as 'PENDING' ? 'bg-primary' :
+reservation.reservationStatus.name is same as 'PAID' ? 'bg-success' : '' }}">
+    <span>{{ reservation.reservationStatus.name }}</span>
+</div>
+
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
         include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.user, label: 'Client', placeholder: 'Chercher un client'}),
@@ -16,4 +24,6 @@
     archiveConfirmMsg: 'Voulez-vous vraiment archiver ?',
     confirmRoute: 'app_admin_reservation_confirm',
     confirmConfirmMsg: 'Voulez-vous vraiment confirmer ?',
+    setAsPaidRoute: 'app_admin_reservation_paid',
+    setAsPaidConfirmMsg: 'Confirmez tu que la reservation est payée ?'
 }) }}
