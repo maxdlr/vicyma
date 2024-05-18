@@ -1,0 +1,13 @@
+@use 'animation' as *;
+
+.slide-right-enter-active {
+  transition: transform $duration $timing;
+}
+
+.slide-right-enter-from {
+  transform: translateX(-$distance);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+}

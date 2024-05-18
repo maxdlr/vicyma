@@ -1,7 +1,5 @@
 <script setup>
-import {useStringFormatter} from "../../composable/formatter/string";
-
-const {toTitle} = useStringFormatter();
+import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({
   title: {type: String, required: true},
@@ -11,7 +9,7 @@ const props = defineProps({
 
 <template>
   <div>
-    <h1>{{ toTitle(title) }}</h1>
+    <h1 class="fs-3 text-primary">{{ toTitle(title) }}</h1>
     <p v-if="description">{{ description }}</p>
   </div>
 </template>

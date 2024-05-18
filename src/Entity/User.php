@@ -44,13 +44,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
     private ?string $phoneNumber = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user', fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user', cascade: ['detach'], fetch: 'EAGER')]
     private Collection $messages;
 
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', cascade: ['detach'], fetch: 'EAGER')]
     private Collection $reservations;
 
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user', fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user', cascade: ['detach'], fetch: 'EAGER')]
     private Collection $reviews;
 
     #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER')]
@@ -66,6 +66,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
 
+    /**
+     * @var Collection<int, Conversation>
+     */
+    #[ORM\OneToMany(targetEntity: Conversation::class, mappedBy: 'user', cascade: ['remove'])]
+    private Collection $conversations;
+
 
     public function __construct()
     {
@@ -73,6 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reservations = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->createdOn = new \DateTime();
+        $this->conversations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,6 +155,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function getFullName(bool $noWhiteSpace = false): string
+    {
+        if ($noWhiteSpace === true) {
+            $fullName = $this->getFirstname() . '-' . $this->getLastname();
+            str_replace(' ', '', $fullName);
+            return $fullName;
+        }
+
+        return $this->getFirstname() . ' ' . $this->getLastname();
     }
 
     public function getFirstname(): ?string
@@ -314,5 +332,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    /**
+     * @return Collection<int, Conversation>
+     */
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+
+    public function addConversation(Conversation $conversation): static
+    {
+        if (!$this->conversations->contains($conversation)) {
+            $this->conversations->add($conversation);
+            $conversation->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversation(Conversation $conversation): static
+    {
+        if ($this->conversations->removeElement($conversation)) {
+            // set the owning side to null (unless already changed)
+            if ($conversation->getClient() === $this) {
+                $conversation->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Crud\AdminUserCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\User;
+use App\Enum\RoleEnum;
 use App\Repository\UserRepository;
 use App\Service\VueDataFormatter;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +32,23 @@ class AdminUserController extends AbstractController
     /**
      * @throws Exception
      */
+    #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $user = new User();
+        $userForm = $this->adminUserCrud->save($request, $user);
+
+        if ($userForm === true) return $this->redirectTo('app_admin_business', $request, 'users');
+
+        return $this->render('admin/user/user-new.html.twig', [
+            'userForm' => $userForm->createView(),
+        ]);
+    }
+
+
+    /**
+     * @throws Exception
+     */
     #[Route(path: '/{id}/show', name: 'show', methods: ['GET', 'POST'])]
     public function show(
         User    $user,
@@ -41,7 +59,7 @@ class AdminUserController extends AbstractController
 
         if ($userForm === true) return $this->redirectTo('referer', $request);
 
-        return $this->render('admin/show/user-details.html.twig', [
+        return $this->render('admin/user/user-details.html.twig', [
             'userForm' => $userForm,
             'user' => $user
         ]);
@@ -56,10 +74,14 @@ class AdminUserController extends AbstractController
         Request $request
     ): Response
     {
-        $user->setIsDeleted(true);
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        return $this->redirectTo('referer', $request);
+        return $this->adminUserCrud->delete($request, $user, 'app_admin_business', doBeforeDelete: function ($object) use ($user) {
+            assert($object instanceof User);
+            $user->setIsDeleted(true);
+            return ['save', 'exit'];
+        });
+//        $this->entityManager->persist($user);
+//        $this->entityManager->flush();
+//        return $this->redirectTo('referer', $request, 'users');
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -67,18 +89,15 @@ class AdminUserController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    public function getUserData(): array
+    public function getData(): array
     {
-        $firstnames = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(), ['firstname']
-        )->regroup('firstname')->get();
-
-        $lastnames = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findAll(), ['lastname']
-        )->regroup('lastname')->get();
-
-        $users = VueDataFormatter::makeVueObjectOf(
-            $this->userRepository->findBy(['isDeleted' => false]),
+        $allUsers = $this->userRepository->findAll();
+        $firstnames = VueDataFormatter::makeVueObjectOf($allUsers, ['firstname'])->regroup('firstname')->get();
+        $lastnames = VueDataFormatter::makeVueObjectOf($allUsers, ['lastname'])->regroup('lastname')->get();
+        $isDeleted = VueDataFormatter::makeVueObjectOf($allUsers, ['isDeleted'])->regroup('isDeleted')->get();
+        $creationDate = VueDataFormatter::makeVueObjectOf($allUsers, ['createdOn'])->regroup('createdOn')->get();
+        $roles = array_map(fn(RoleEnum $roleEnum) => $roleEnum->value, RoleEnum::cases());
+        $users = VueDataFormatter::makeVueObjectOf($allUsers,
             [
                 'id',
                 'firstname',
@@ -86,14 +105,26 @@ class AdminUserController extends AbstractController
                 'email',
                 'phoneNumber',
                 'reservations',
+                'isDeleted',
+                'address',
+                'createdOn',
+                'roles'
             ])->get();
 
         return [
-            'settings' => [
-                'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
-                'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
-            ],
-            'items' => $users
+            'name' => 'users',
+            'component' => 'AdminUsers',
+            'data' =>
+                [
+                    'settings' => [
+                        'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
+                        'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
+                        'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted'],
+                        'roles' => ['name' => 'role', 'default' => 'ROLE_USER', 'values' => $roles, 'codeName' => 'roles'],
+                        'createdOn' => ['name' => 'member since', 'default' => '', 'values' => $creationDate, 'codeName' => 'createdOn'],
+                    ],
+                    'items' => $users
+                ]
         ];
     }
 }

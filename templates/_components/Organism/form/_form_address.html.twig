@@ -10,5 +10,6 @@
         include('_components/Atom/form/_text-field.html.twig', {formRow: addressForm.region, label: 'Région'}),
         include('_components/Atom/form/_select-field.html.twig', {formRow: addressForm.country, label: 'Pays', placeholder: 'Choisissez un pays'})
     ],
-    deleteRoute: 'app_address_delete'
+    deleteRoute: 'app_address_delete',
+    deleteConfirmMsg: 'Tu veux vraiment supprimer cette adresse ?'
 }) }}

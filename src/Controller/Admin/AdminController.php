@@ -2,7 +2,6 @@
 
 namespace App\Controller\Admin;
 
-use App\Repository\UserRepository;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,9 +11,13 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository             $reservationRepository,
-        private readonly AdminUserController        $adminUserController,
-        private readonly AdminReservationController $adminReservationController
+        private readonly AdminUserController         $adminUserController,
+        private readonly AdminReservationController  $adminReservationController,
+        private readonly AdminMessageController      $adminMessageController,
+        private readonly AdminReviewController       $adminReviewController,
+        private readonly AdminLodgingController      $adminLodgingController,
+        private readonly AdminBedTypeController      $adminBedController,
+        private readonly AdminConversationController $adminConversationController
     )
     {
     }
@@ -22,17 +25,58 @@ class AdminController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
+    #[Route(path: '/', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(): Response
     {
-        $reservations = $this->adminReservationController->getReservationRequestData();
-        $users = $this->adminUserController->getUserData();
-
         return $this->render('admin/dashboard/dashboard.html.twig', [
-            'users' => $users['items'],
-            'userFilters' => $users['settings'],
-            'reservations' => $reservations['items'],
-            'reservationFilters' => $reservations['settings'],
+            'notifications' =>
+                [
+                    'reservations' => $this->adminReservationController->getNotification(),
+                    'reviews' => $this->adminReviewController->getNotification()
+                ]
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Route(path: '/business', name: 'business', methods: ['GET', 'POST'])]
+    public function business(): Response
+    {
+        return $this->render('admin/dashboard/business.html.twig', [
+            'datatables' =>
+                [
+                    'reservations' => $this->adminReservationController->getData(),
+                    'users' => $this->adminUserController->getData(),
+                    'messages' => $this->adminMessageController->getData(),
+                    'reviews' => $this->adminReviewController->getData()
+                ]
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Route(path: '/management', name: 'management', methods: ['GET', 'POST'])]
+    public function management(): Response
+    {
+        return $this->render('admin/dashboard/management.html.twig', [
+            'datatables' =>
+                [
+                    'lodgings' => $this->adminLodgingController->getData(),
+                    'beds' => $this->adminBedController->getData(),
+                ]
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Route(path: '/conversations', name: 'conversations', methods: ['GET', 'POST'])]
+    public function conversations(): Response
+    {
+        return $this->render('admin/dashboard/conversations.html.twig', [
+            'conversations' => $this->adminConversationController->getData()
         ]);
     }
 }

@@ -6,8 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    <div {{ vue_component('AdminUsers', {
-        'settings': userFilters,
-        'items': users,
-    }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
+    <div {{ vue_component('admin/AdminDashboard', {
+        notifications: notifications
+    }) }}></div>
 {% endblock %}

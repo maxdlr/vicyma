@@ -6,6 +6,7 @@
         include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.firstname, label: 'Prénom', placeholder: 'Zinedine'}),
         include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.lastname, label: 'Nom', placeholder: 'Zidane'}),
         include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.phoneNumber, label: 'Numéro de téléphone', placeholder: '0123456789'}),
+        include('_components/Atom/form/_text-field.html.twig', {formRow: userForm.password, label: 'Mot de passe'}),
     ],
     deleteRoute: 'app_user_delete',
     deleteConfirmMsg: 'Voulez-vous vraiment supprimer ?',

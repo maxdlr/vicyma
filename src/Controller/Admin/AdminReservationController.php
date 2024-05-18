@@ -44,11 +44,27 @@ class AdminReservationController extends AbstractController
     {
         $reservationForm = $this->reservationCrud->save($request, $reservation);
 
-        if ($reservationForm === true) return $this->redirectTo('referer', $request);
+        if ($reservationForm === true) return $this->redirectTo('referer', $request, 'reservations');
 
-        return $this->render('admin/show/reservation-details.html.twig', [
-            'reservationForm' => $reservationForm,
+        return $this->render('admin/reservation/reservation-details.html.twig', [
+            'reservationForm' => $reservationForm->createView(),
             'reservation' => $reservation
+        ]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(path: '/new', name: 'new', methods: ['GET', 'POST'])]
+    public function new(Request $request): Response
+    {
+        $reservation = new Reservation();
+        $reservationForm = $this->reservationCrud->save($request, $reservation);
+
+        if ($reservationForm === true) return $this->redirectTo('app_admin_business', $request, 'reservations');
+
+        return $this->render('admin/reservation/reservation-new.html.twig', [
+            'reservationForm' => $reservationForm->createView(),
         ]);
     }
 
@@ -62,7 +78,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::CONFIRMED);
-        return $this->redirectTo('referer', $request);
+        return $this->redirectTo('referer', $request, 'reservations');
     }
 
     /**
@@ -75,7 +91,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::DELETED);
-        return $this->redirectTo('referer', $request);
+        return $this->redirectTo('referer', $request, 'reservations');
     }
 
     /**
@@ -88,7 +104,20 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus($reservation, ReservationStatusEnum::ARCHIVED);
-        return $this->redirectTo('referer', $request);
+        return $this->redirectTo('referer', $request, 'reservations');
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route(path: '/{id}/paid', name: 'paid', methods: ['GET'])]
+    public function paid(
+        Reservation $reservation,
+        Request     $request
+    ): Response
+    {
+        $this->editStatus($reservation, ReservationStatusEnum::PAID);
+        return $this->redirectTo('referer', $request, 'reservations');
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -96,22 +125,32 @@ class AdminReservationController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    public function getReservationRequestData(): array
+    public function getNotification(): array
     {
-        $statuses = VueDataFormatter::makeVueObjectOf(
-            $this->reservationStatusRepository->findAll(), ['name']
-        )->regroup('name')->get();
+        $pendingReservations = $this->reservationRepository->findBy(
+            ['reservationStatus' => $this->reservationStatusRepository->findOneBy(
+                ['name' => ReservationStatusEnum::PENDING->value])
+            ]
+        );
 
-        $clients = VueDataFormatter::makeVueObjectOf(
-            $this->reservationRepository->findAll(), ['user']
-        )->regroup('user')->get();
+        return VueDataFormatter::makeVueObjectOf(
+            $pendingReservations,
+            ['id', 'createdOn', 'user', 'lodgings', 'arrivalDate', 'departureDate']
+        )->get();
+    }
 
-        $lodgings = VueDataFormatter::makeVueObjectOf(
-            $this->lodgingRepository->findAll(), ['name']
-        )->regroup('name')->get();
+    /**
+     * @throws ReflectionException
+     */
+    public function getData(): array
+    {
+        $allReservations = $this->reservationRepository->findAll();
+        $arrivalDates = VueDataFormatter::makeVueObjectOf($allReservations, ['arrivalDate'])->regroup('arrivalDate')->get();
+        $statuses = VueDataFormatter::makeVueObjectOf($this->reservationStatusRepository->findAll(), ['name'])->regroup('name')->get();
+        $clients = VueDataFormatter::makeVueObjectOf($allReservations, ['user'])->regroup('user')->get();
+        $lodgings = VueDataFormatter::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
 
-        $reservations = VueDataFormatter::makeVueObjectOf(
-            $this->reservationRepository->findAll(),
+        $reservations = VueDataFormatter::makeVueObjectOf($allReservations,
             [
                 'id',
                 'reservationNumber',
@@ -121,15 +160,22 @@ class AdminReservationController extends AbstractController
                 'arrivalDate',
                 'departureDate',
                 'price',
+                'createdOn'
             ])->get();
 
         return [
-            'settings' => [
-                'reservationStatus' => ['name' => 'status', 'default' => '', 'values' => $statuses, 'codeName' => 'reservationStatus'],
-                'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
-                'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings']
-            ],
-            'items' => $reservations
+            'name' => 'reservations',
+            'component' => 'AdminReservationRequests',
+            'data' =>
+                [
+                    'settings' => [
+                        'reservationStatus' => ['name' => 'status', 'default' => 'PENDING', 'values' => $statuses, 'codeName' => 'reservationStatus'],
+                        'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
+                        'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings'],
+                        'arrivalDate' => ['name' => 'check in date', 'default' => '', 'values' => $arrivalDates, 'codeName' => 'arrivalDate'],
+                    ],
+                    'items' => $reservations
+                ]
         ];
     }
 

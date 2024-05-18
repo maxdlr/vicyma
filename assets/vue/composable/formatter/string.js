@@ -1,63 +1,38 @@
 import {getPropertyValue} from "./object";
 
-export const useStringFormatter = () => {
-    const toTitle = (string) => {
-        return string.charAt(0).toUpperCase() + string.substring(1);
-    };
+export const toTitle = (string) => {
+    if (typeof string !== 'string') {
+        return string;
+    }
 
-    const getCurrency = () => {
-        return "€";
-    };
+    return string.charAt(0).toUpperCase() + string.substring(1);
+};
 
-    const getPriceTypeLabel = (isExcludingTax) => {
-        return isExcludingTax ? "HT" : "TTC";
-    };
+export const singularize = (string) => {
+    if (string.charAt(string.length - 1) === 's' && string.charAt(string.length - 2) !== 's') {
+        return string.substring(0, string.length - 1)
+    } else {
+        return string;
+    }
+}
 
-    const isString = (string) => {
-        return typeof string === "string";
-    };
+export const truncate = (string, numberOfChars, suffix) => {
+    return string.substr(0, numberOfChars) + suffix
+}
 
-    const filterByStringProperty = (
-        arrayOfObjects,
-        filterBy,
-        sortOrderBy,
-        query = "",
-        maxMatchesCount
-    ) => {
-        const re = RegExp(`.*${query.toLowerCase().split("").join(".*")}.*`);
+export const implode = (array, property) => {
+    let string = '';
 
-        let filteredMatches = [];
-        let filteredShownMatchCount = 0;
-        let filteredTotalMatchCount = 0;
-
-        for (const object of arrayOfObjects) {
-            const filterByProperty = getPropertyValue(object, filterBy);
-
-            if (filterByProperty.toLowerCase().match(re) || query === "") {
-                filteredTotalMatchCount++;
-                if (filteredShownMatchCount < maxMatchesCount) {
-                    filteredMatches.push(object);
-                    filteredShownMatchCount++;
-                }
-            }
+    for (let i = 0; i < array.length; i++) {
+        if (i === array.length - 1 && array.length > 1) {
+            string += ' and '
         }
 
-        filteredMatches.sort((a, b) => {
-            return ("" + a[sortOrderBy]).localeCompare(b[sortOrderBy]);
-        });
+        string += getPropertyValue(array[i], property);
+        if (i < array.length - 2) {
+            string += ', ';
+        }
+    }
 
-        return {
-            filteredMatches,
-            filteredShownMatchCount,
-            filteredTotalMatchCount,
-        };
-    };
-
-    return {
-        toTitle,
-        getCurrency,
-        getPriceTypeLabel,
-        filterByStringProperty,
-        isString,
-    };
-};
+    return string;
+}

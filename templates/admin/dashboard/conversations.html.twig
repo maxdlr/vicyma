@@ -1,0 +1,12 @@
+{% extends 'admin-base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    Business
+{% endblock %}
+
+{% block body %}
+    <div {{ vue_component('admin/AdminConversationsTemplate', {
+        conversations: conversations
+    }) }}></div>
+{% endblock %}

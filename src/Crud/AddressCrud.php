@@ -53,7 +53,7 @@ class AddressCrud extends AbstractCrud
      *
      */
     #[Route('address/{id}', name: 'app_address_delete', methods: ['POST'])]
-    public function delete(Request $request, Address $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
+    public function delete(Request $request, Address $object, string $redirectRoute = 'app_home', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
     {
         return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $doBeforeDelete);
     }

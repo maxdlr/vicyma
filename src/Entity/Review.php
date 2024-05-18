@@ -22,10 +22,11 @@ class Review
     private ?string $comment = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Lodging $lodging = null;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reviews')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -33,6 +34,9 @@ class Review
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
+
+    #[ORM\Column(length: 20)]
+    private ?string $status = null;
 
     public function __construct()
     {
@@ -106,5 +110,17 @@ class Review
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
     }
 }

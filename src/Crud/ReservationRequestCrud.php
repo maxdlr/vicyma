@@ -97,9 +97,9 @@ class ReservationRequestCrud extends AbstractCrud
      *
      */
     #[Route('/reservation/{id}/delete', name: 'app_reservation_delete', methods: ['GET', 'POST'])]
-    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = []): Response
+    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = [], string $anchor = ''): Response
     {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, function ($object) {
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $anchor, function ($object) {
             assert($object instanceof Reservation);
             $object->setReservationStatus($this->reservationStatusRepository->findOneByName(ReservationStatusEnum::DELETED->value));
             return ['save', 'exit'];

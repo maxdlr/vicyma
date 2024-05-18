@@ -44,6 +44,7 @@ class MessageCrud extends AbstractCrud
      * It inherits $object, $redirectRoute and $redirectParams.
      * @param callable|null $doBeforeDelete
      * @throws Exception
+     * @throws \Exception
      *
      * @example fn($object, $redirectRoute, $redirectParams) => {}
      * If it returns void, it executes and delete() continues.
@@ -53,8 +54,8 @@ class MessageCrud extends AbstractCrud
      *
      */
     #[Route('message/{id}', name: 'app_message_delete', methods: ['POST'])]
-    public function delete(Request $request, Message $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
+    public function delete(Request $request, Message $object, string $redirectRoute = 'referer', array $redirectParams = [], string $anchor = '', ?callable $doBeforeDelete = null): Response
     {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $doBeforeDelete);
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $anchor, $doBeforeDelete);
     }
 }

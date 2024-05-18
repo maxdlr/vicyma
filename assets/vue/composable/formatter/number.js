@@ -1,30 +1,15 @@
-export const useNumberFormatter = () => {
-  const filterByNumberProperty = (
-    arrayOfObjects,
-    sortOrderBy,
-    maxMatchesCount
-  ) => {
-    let filteredMatches = [];
-    let filteredShownMatchCount = 0;
-    let filteredTotalMatchCount = 0;
+export const getReviewAverage = (arrayOfNumbers) => {
+    const arrayOfRates = arrayOfNumbers.map((rate) => {
+        return rate.rate
+    })
 
-    for (const object of arrayOfObjects) {
-      filteredTotalMatchCount++;
-      if (filteredShownMatchCount < maxMatchesCount) {
-        filteredMatches.push(object);
-        filteredShownMatchCount++;
-      }
 
-      filteredMatches.sort((a, b) => {
-        return a[sortOrderBy] - b[sortOrderBy];
-      });
+    let average = 0;
+    for (const key in arrayOfRates) {
+        average += arrayOfRates[key]
     }
 
-    return {
-      filteredMatches,
-      filteredShownMatchCount,
-      filteredTotalMatchCount,
-    };
-  };
-  return { filterByNumberProperty };
+    average = (average / arrayOfRates.length).toFixed(1)
+
+    return isNaN(average) ? null : average
 };

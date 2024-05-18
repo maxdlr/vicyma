@@ -47,7 +47,7 @@ class Reservation
     private Collection $messages;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reservations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

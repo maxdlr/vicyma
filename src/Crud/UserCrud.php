@@ -76,19 +76,15 @@ class UserCrud extends AbstractCrud
      *
      */
     #[Route('user/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
+    public function delete(Request $request, User $object, string $redirectRoute = 'app_admin_business', array $redirectParams = [], string $anchor = 'users', ?callable $doBeforeDelete = null): Response
     {
         return $this->deleteManager->delete(
             $request,
             $object,
             $redirectRoute,
             $redirectParams,
-            function ($object, $redirectRoute, $redirectParams) use ($doBeforeDelete) {
-                assert($object instanceof User);
-                $doBeforeDelete($object, $redirectRoute, $redirectParams);
-                $this->softDelete($object);
-                return ['save', 'exit'];
-            }
+            $anchor,
+            doBeforeDelete: $doBeforeDelete
         );
     }
 
