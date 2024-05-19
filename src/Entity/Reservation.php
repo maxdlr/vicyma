@@ -43,7 +43,7 @@ class Reservation
     #[ORM\JoinColumn(nullable: true)]
     private ?ReservationStatus $reservationStatus = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation', fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation')]
     private Collection $messages;
 
     #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reservations')]

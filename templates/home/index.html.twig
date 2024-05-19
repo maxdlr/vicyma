@@ -2,6 +2,8 @@
 
 {% block body %}
 
-    <h1>Hello World</h1>
+    <div {{ vue_component('HomePage', {
+        user: user
+    }) }}></div>
 
 {% endblock %}
