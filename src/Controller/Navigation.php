@@ -47,6 +47,11 @@ class Navigation extends AbstractController
         ];
     }
 
+    public function getUserNavigation(): array
+    {
+        return [];
+    }
+
     public function getPublicNavigation(): array
     {
         $connectedUser = $this->getUser();
@@ -67,7 +72,7 @@ class Navigation extends AbstractController
             'account' =>
                 [
                     'label' => null,
-                    'value' => $userId !== null ? $this->generateUrl('app_user_dashboard', ['id' => $userId]) : $this->generateUrl('app_login'),
+                    'value' => $userId !== null ? $this->generateUrl('app_user_account_dashboard', ['id' => $userId]) : $this->generateUrl('app_login'),
                     'iconClass' => 'person-circle'
                 ]
         ];

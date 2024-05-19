@@ -39,7 +39,6 @@ class AdminBedTypeController extends AbstractController
     ): Response
     {
         $bedForm = $this->bedTypeCrud->save($request, $bed);
-
         if ($bedForm === true) return $this->redirectTo('app_admin_management', $request, 'beds');
 
         return $this->render('admin/bed/bed-details.html.twig', [

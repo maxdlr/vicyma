@@ -45,7 +45,7 @@ class SecurityController extends AbstractController
 
         return in_array(RoleEnum::ROLE_ADMIN->value, $userRoles) ?
             $this->redirectToRoute('app_admin_dashboard') :
-            $this->redirectToRoute('app_user_dashboard', ['id' => $user->getId()]);
+            $this->redirectToRoute('app_user_account_dashboard', ['id' => $user->getId()]);
     }
 
 

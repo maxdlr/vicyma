@@ -52,10 +52,10 @@ class AdminUserFixtures extends Fixture implements DependentFixtureInterface
             ->setAddress($adminAddress)
             ->setEmail('contact@augustasarlin.com');
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $adminReservation = new Reservation();
-            $arrivalDate = $faker->dateTimeBetween('+ 1 day', '+ 8 days');
-            $departureDate = $faker->dateTimeBetween('+ 9 days', '+ 20 days');
+            $arrivalDate = $faker->dateTimeBetween('- 1 year', '+ 90 days');
+            $departureDate = $faker->dateTimeBetween('- 6 months', '+ 180 days');
             $adminReservation
                 ->setUser($admin)
                 ->setAdultCount($faker->numberBetween(1, 6))

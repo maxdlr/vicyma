@@ -6,5 +6,27 @@
 {% endblock %}
 
 {% block body %}
-    <div {{ vue_component('user/UserDashboard', {user: user}) }}></div>
+    <div class="row">
+        <div class="col-2">
+            <nav {{ vue_component('user/UserNavBar', {
+                'navigation': navigation.getUserNavigation
+            }) }} class="sticky-top"></nav>
+        </div>
+        <div class="col">
+            <div {{ vue_component('user/UserDashboard', {
+                user: user,
+                reservations: reservations
+            }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
+        </div>
+    </div>
+
+    {{ include('_components/Molecule/modal/_modal.html.twig', {
+        id: 'userAccountAddress',
+        headerTitle: 'Edit my address',
+        body: include('_components/Organism/form/_form_address.html.twig', {
+            save: true,
+            delete: true,
+            reference: 'Edit my address'
+        })
+    }) }}
 {% endblock %}
