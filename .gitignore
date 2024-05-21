@@ -11,6 +11,7 @@
 /.idea
 /.idea/
 src/DataFixtures/AdminFixtures.php
+src/DataFixtures/AdminUserFixtures.php
 
 ###> symfony/phpunit-bridge ###
 .phpunit.result.cache
