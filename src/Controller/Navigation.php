@@ -22,7 +22,7 @@ class Navigation extends AbstractController
                 ],
             'dashboard.html.twig' =>
                 [
-                    'label' => 'dashboard.html.twig',
+                    'label' => 'dashboard',
                     'value' => $this->generateUrl('app_admin_dashboard'),
                     'iconClass' => 'house-gear-fill'
                 ],

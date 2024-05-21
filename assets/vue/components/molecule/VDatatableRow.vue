@@ -61,6 +61,10 @@ onBeforeMount(() => {
   if (mainRowItem.value['rate']) {
     delete mainRowItem.value['rate']
   }
+
+  if (mainRowItem.value['reservationStatus']) {
+    delete mainRowItem.value['reservationStatus']
+  }
 })
 </script>
 
@@ -91,9 +95,17 @@ onBeforeMount(() => {
 
         <div v-if="item.reservationNumber" class="d-flex justify-content-center align-items-center"
              :class="hovering ? 'text-secondary-emphasis' : 'text-secondary'">
+          <span class="me-3 badge fs-6 rounded-pill fw-bold"
+                :class="[
+                    ['PENDING'].includes(item.reservationStatus) ? hovering ? 'bg-warning' : 'bg-warning-subtle text-warning' : '',
+                    ['CONFIRMED'].includes(item.reservationStatus) ? hovering ? 'bg-success' : 'bg-success-subtle text-success' : '',
+                ]"
+                v-if="item.reservationStatus && ['PENDING', 'CONFIRMED'].includes(item.reservationStatus)">
+            {{ item.reservationStatus }}
+          </span>
           <span class="fs-5 fw-bold">{{ item.reservationNumber }}</span>
           <div class="d-inline badge ms-3 fs-6 rounded-pill"
-               :class="hovering ? 'bg-success' : 'bg-success-subtle text-success'">
+               :class="hovering ? 'bg-info' : 'bg-info-subtle text-info'">
             <span class="fw-bold" v-if="item.arrivalDate">{{ item.arrivalDate }} </span>
             <i class="bi bi-arrow-right mx-3"></i>
             <span class="fw-bold" v-if="item.departureDate">{{ item.departureDate }} </span>

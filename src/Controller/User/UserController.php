@@ -4,13 +4,17 @@ namespace App\Controller\User;
 
 use App\Crud\AddressCrud;
 use App\Crud\Manager\AfterCrudTrait;
+use App\Entity\Address;
 use App\Entity\User;
 use App\Enum\ReservationStatusEnum;
 use App\Repository\ReservationRepository;
 use App\Repository\UserRepository;
 use App\Service\VueDataFormatter;
+use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,26 +36,35 @@ class UserController extends AbstractController
 
     /**
      * @throws ReflectionException
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
     public function dashboard(Request $request): Response
     {
         $user = $this->getLoggedUser();
-
-        $address = $user?->getAddress();
-        $addressForm = $this->addressCrud->save($request, $address, ['user' => $user]);
-        if ($addressForm === true) return $this->redirectTo('referer', $request);
-
         $userData = $this->getUserDataById($user->getId());
         $reservationsData = $this->getReservationData();
 
+        $addressForm = $this->handleAddress($user, $request);
+        if ($addressForm === true) return $this->redirectTo('referer', $request);
+
         return $this->render('user/dashboard/dashboard.html.twig', [
-            'addressForm' => $addressForm->createView(),
             'user' => $userData,
+            'addressForm' => $addressForm->createView(),
             'reservations' => $reservationsData,
         ]);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * @throws Exception
+     */
+    public function handleAddress(User $user, Request $request): true|FormInterface
+    {
+        $address = $user->getAddress() ?? new Address;
+        return $this->addressCrud->save($request, $address, ['user' => $user]);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -81,7 +94,6 @@ class UserController extends AbstractController
                 'price',
                 'reservationStatus',
                 'lodgings',
-                'messages',
                 'createdOn',
                 'updatedOn'
             ]

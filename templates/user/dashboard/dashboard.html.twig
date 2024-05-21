@@ -25,7 +25,7 @@
         headerTitle: 'Edit my address',
         body: include('_components/Organism/form/_form_address.html.twig', {
             save: true,
-            delete: true,
+            delete: user['address'] is not null,
             reference: 'Edit my address'
         })
     }) }}

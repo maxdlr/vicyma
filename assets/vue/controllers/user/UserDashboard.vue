@@ -11,7 +11,7 @@ const pendingReservations = computed(() => {
   let pendingReservations = []
 
   for (const reservationsKey in props.reservations) {
-    if (props.reservations[reservationsKey].reservationStatus === 'PENDING') {
+    if (['PENDING', 'CONFIRMED'].includes(props.reservations[reservationsKey].reservationStatus)) {
       pendingReservations.push(props.reservations[reservationsKey])
     }
   }
@@ -21,9 +21,9 @@ const pendingReservations = computed(() => {
 </script>
 
 <template>
-
+  <h2>My current reservations</h2>
   <div v-for="(reservation, index) in pendingReservations" :key="index">
-    <VDatatableRow :item="reservation"/>
+    <VDatatableRow :item="reservation" :exclude-properties="['id', 'updatedOn']"/>
   </div>
 </template>
 
