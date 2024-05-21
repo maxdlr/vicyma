@@ -49,7 +49,20 @@ class Navigation extends AbstractController
 
     public function getUserNavigation(): array
     {
-        return [];
+        return [
+            'dashboard' =>
+                [
+                    'label' => 'dashboard',
+                    'value' => $this->generateUrl('app_user_account_dashboard'),
+                    'iconClass' => 'view-list'
+                ],
+            'conversations' =>
+                [
+                    'label' => 'conversations',
+                    'value' => $this->generateUrl('app_user_account_conversations'),
+                    'iconClass' => 'chat-dots-fill'
+                ]
+        ];
     }
 
     public function getPublicNavigation(): array

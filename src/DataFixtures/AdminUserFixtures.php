@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Address;
+use App\Entity\Message;
 use App\Entity\Reservation;
 use App\Entity\User;
 use App\Enum\AddressTypeEnum;
@@ -69,8 +70,32 @@ class AdminUserFixtures extends Fixture implements DependentFixtureInterface
                 ->setReservationStatus($this->getReference('reservationStatus_' . $faker->randomElement(ReservationStatusEnum::cases())->value));
 
             $adminReservation->setReservationNumber($admin, $adminReservation);
+            $this->setReference('augustaReservation_' . $i, $adminReservation);
 
             $manager->persist($adminReservation);
+        }
+
+        for ($i = 0; $i < 4; $i++) {
+            $message = new Message();
+
+            $message
+                ->setSubject($faker->sentence())
+                ->setContent($faker->paragraph())
+                ->setUser($admin)
+                ->setLodging($faker->randomElement(
+                    [
+                        null,
+                        $this->getReference('lodging_' . rand(1, AppFixtures::LODGING_COUNT - 1))
+                    ]
+                ))
+                ->setReservation($faker->randomElement(
+                    [
+                        null,
+                        $this->getReference('augustaReservation_' . rand(1, 20 - 1))
+                    ]
+                ));
+            $this->setReference('message_' . $i, $message);
+            $manager->persist($message);
         }
 
         $manager->persist($adminAddress);

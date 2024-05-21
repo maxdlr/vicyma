@@ -29,4 +29,14 @@
             reference: 'Edit my address'
         })
     }) }}
+
+    {{ include('_components/Molecule/modal/_modal.html.twig', {
+        id: 'accountSettings',
+        headerTitle: 'Edit my information',
+        body: include('_components/Organism/form/_form_user.html.twig', {
+            save: true,
+            delete: false,
+            reference: 'Edit my information'
+        })
+    }) }}
 {% endblock %}

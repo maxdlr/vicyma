@@ -4,9 +4,11 @@ namespace App\Controller\User;
 
 use App\Crud\AddressCrud;
 use App\Crud\Manager\AfterCrudTrait;
+use App\Crud\UserCrud;
 use App\Entity\Address;
 use App\Entity\User;
 use App\Enum\ReservationStatusEnum;
+use App\Enum\RoleEnum;
 use App\Repository\ReservationRepository;
 use App\Repository\UserRepository;
 use App\Service\VueDataFormatter;
@@ -29,7 +31,8 @@ class UserController extends AbstractController
     public function __construct(
         private readonly UserRepository        $userRepository,
         private readonly AddressCrud           $addressCrud,
-        private readonly ReservationRepository $reservationRepository
+        private readonly ReservationRepository $reservationRepository,
+        private readonly UserCrud              $userCrud
     )
     {
     }
@@ -39,12 +42,16 @@ class UserController extends AbstractController
      * @throws Exception
      */
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted(RoleEnum::ROLE_USER->value)]
     public function dashboard(Request $request): Response
     {
         $user = $this->getLoggedUser();
-        $userData = $this->getUserDataById($user->getId());
+
+        $userData = $this->getLoggedUserData();
         $reservationsData = $this->getReservationData();
+
+        $userForm = $this->userCrud->save($request, $user);
+        if ($userForm === true) return $this->redirectTo('referer', $request);
 
         $addressForm = $this->handleAddress($user, $request);
         if ($addressForm === true) return $this->redirectTo('referer', $request);
@@ -52,7 +59,22 @@ class UserController extends AbstractController
         return $this->render('user/dashboard/dashboard.html.twig', [
             'user' => $userData,
             'addressForm' => $addressForm->createView(),
+            'userForm' => $userForm->createView(),
             'reservations' => $reservationsData,
+        ]);
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    #[Route(path: '/conversations', name: 'conversations', methods: ['GET', 'POST'])]
+    #[IsGranted(RoleEnum::ROLE_USER->value)]
+    public function conversations(Request $request): Response
+    {
+        $userData = $this->getLoggedUserData();
+
+        return $this->render('user/conversations.html.twig', [
+            'user' => $userData,
         ]);
     }
 
@@ -63,7 +85,7 @@ class UserController extends AbstractController
      */
     public function handleAddress(User $user, Request $request): true|FormInterface
     {
-        $address = $user->getAddress() ?? new Address;
+        $address = $user->getAddress() ?? new Address();
         return $this->addressCrud->save($request, $address, ['user' => $user]);
     }
 
@@ -127,6 +149,6 @@ class UserController extends AbstractController
 
     private function getEssentialUserPropertyKeys(): array
     {
-        return ['id', 'firstname', 'lastname', 'email', 'phoneNumber', 'address', 'roles', 'reservations'];
+        return ['id', 'firstname', 'lastname', 'email', 'phoneNumber', 'address', 'roles', 'reservations', 'messages'];
     }
 }
