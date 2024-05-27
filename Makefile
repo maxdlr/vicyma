@@ -20,7 +20,6 @@ run: ## Start project
 	@make composer-install && \
 	clear && \
 	make create-local-env && \
-	make fill-local-env && \
 	clear && \
 	make db && \
 	make cache-clear && \
@@ -68,7 +67,7 @@ server-stop: ## Stop server
 create-local-env: ## Create .env.local file
 	@make command-intro-msg msg="Creating env file"
 	@if [ ! -f '.env.local' ]; then \
-		touch .env.local; \
+		touch .env.local && make fill-local-env; \
 	fi
 
 fill-local-env: ## Fill .env.local file with 'root/root'
