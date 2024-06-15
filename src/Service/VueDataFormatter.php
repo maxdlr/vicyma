@@ -15,6 +15,8 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use ReflectionException;
 use ReflectionMethod;
+use function PHPUnit\Framework\stringContains;
+use function Symfony\Component\String\u;
 
 class VueDataFormatter
 {
@@ -53,7 +55,7 @@ class VueDataFormatter
     private static function makeVueObject(object $object, array $properties): array
     {
         $vueObject = [];
-        $objectFqcn = get_class($object);
+        $objectFqcn = u(get_class($object))->trimPrefix('Proxies\\__CG__\\')->toString();
         $allProperties = ClassBrowser::findAllProperties($objectFqcn);
 
         foreach ($allProperties as $property) {
