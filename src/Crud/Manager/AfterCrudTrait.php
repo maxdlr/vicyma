@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 trait AfterCrudTrait
 {
     /**
-     * If $url === 'referer', it redirects to the previous (rerefer) page.
+     * If $url === 'referer', it redirects to the previous (referer) page.
      *
      * @param string $routeName
      * @param Request|null $request

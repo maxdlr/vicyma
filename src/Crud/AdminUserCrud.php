@@ -83,6 +83,7 @@ class AdminUserCrud extends AbstractCrud
             $object,
             $redirectRoute,
             $redirectParams,
+            'users',
             function ($object, $redirectRoute, $redirectParams) use ($doBeforeDelete) {
                 assert($object instanceof User);
                 $doBeforeDelete($object, $redirectRoute, $redirectParams);

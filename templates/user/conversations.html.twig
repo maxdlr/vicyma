@@ -13,8 +13,8 @@
             }) }} class="sticky-top"></nav>
         </div>
         <div class="col">
-            <div {{ vue_component('user/UserConversations', {
-                user: user,
+            <div {{ vue_component('user/UserInbox', {
+                datatables: datatables,
             }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
         </div>
     </div>

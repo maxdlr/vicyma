@@ -29,7 +29,6 @@ class AddressCrud extends AbstractCrud
         });
     }
 
-
     /**
      * Takes the $request and deletes the address object from the database.
      * By default, it just deletes the address object as is and redirects to the referer page.
@@ -53,8 +52,15 @@ class AddressCrud extends AbstractCrud
      *
      */
     #[Route('address/{id}', name: 'app_address_delete', methods: ['POST'])]
-    public function delete(Request $request, Address $object, string $redirectRoute = 'app_home', array $redirectParams = [], $anchor = '', ?callable $doBeforeDelete = null): Response
+    public function delete(Request $request, Address $object, string $redirectRoute = 'referer', array $redirectParams = [], $anchor = '', ?callable $doBeforeDelete = null): Response
     {
+        $referer = $request->headers->get('referer');
+
+        if (str_contains($referer, '/admin/address')) {
+            $redirectRoute = 'app_admin_business';
+            $anchor = 'users';
+        }
+
         return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $anchor, $doBeforeDelete);
     }
 }
