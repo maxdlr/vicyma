@@ -83,6 +83,8 @@ class AdminMessageController extends AbstractController
 
                 if ($userMessage->getConversation() === null) {
                     $conversation = new Conversation();
+                    $conversation->addMessage($userMessage);
+
                 } else {
                     $conversation = $userMessage->getConversation();
                     $conversation->setUpdatedOn(new DateTime());
@@ -91,7 +93,6 @@ class AdminMessageController extends AbstractController
                 $responseMessage->setSubject('Response to ' . $userMessage->getUser()->getFullName() . ' - ' . $userMessage->getCreatedOn()->format('d/m/y'));
                 $conversation
                     ->setUser($userMessage->getUser())
-                    ->addMessage($userMessage)
                     ->addMessage($responseMessage)
                     ->setConversationId(ConversationId::new($userMessage));
             }

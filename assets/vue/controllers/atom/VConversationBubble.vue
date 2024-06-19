@@ -26,7 +26,7 @@ console.log(props.content.toLowerCase().match(urlRegex))
          :class="[isAdmin ? 'start-100 text-secondary' : 'end-100 text-primary']"
       ></i>
 
-      <span class="text-start fs-5">{{ content }}</span>
+      <span class="text-start">{{ content }}</span>
 
     </div>
   </div>

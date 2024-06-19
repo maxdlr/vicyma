@@ -17,7 +17,7 @@ export const singularize = (string) => {
 }
 
 export const truncate = (string, numberOfChars, suffix) => {
-    return string.substr(0, numberOfChars) + suffix
+    return string.length > numberOfChars ? string.substr(0, numberOfChars) + suffix : string
 }
 
 export const implode = (array, property) => {

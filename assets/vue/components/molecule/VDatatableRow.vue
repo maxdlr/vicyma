@@ -2,11 +2,13 @@
 import {onBeforeMount, onMounted, ref} from "vue";
 import VDatatableCell from "../atom/VDatatableCell.vue";
 import VYoyo from "./VYoyo.vue";
-import {singularize, toTitle} from "../../composable/formatter/string";
+import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({
   item: {type: Object, required: true},
-  excludeProperties: {type: Array}
+  excludeProperties: {type: Array},
+  admin: {type: Boolean, default: false, required: false},
+  hideEmpty: {type: Boolean, default: false}
 })
 
 const mainRowItem = ref({})
@@ -20,6 +22,7 @@ onMounted(() => {
 })
 
 onBeforeMount(() => {
+  console.log(props.hideEmpty)
   for (const property in props.item) {
     if (props.excludeProperties) {
       if (!props.excludeProperties.includes(property)) {
@@ -65,6 +68,12 @@ onBeforeMount(() => {
   if (mainRowItem.value['reservationStatus']) {
     delete mainRowItem.value['reservationStatus']
   }
+
+  for (const key in mainRowItem.value) {
+    if (!mainRowItem.value[key] && props.hideEmpty) {
+      delete mainRowItem.value[key]
+    }
+  }
 })
 </script>
 
@@ -84,6 +93,9 @@ onBeforeMount(() => {
   >
     <div class="d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
+
+        <slot name="rowHeader" :item="item" />
+
         <div v-if="item.rate">
           <span class="badge bg-success fw-bold fs-5 rounded-pill me-3">{{ item.rate }}</span>
           <a class="fs-5 fw-bold icon-link icon-link-hover"
@@ -131,6 +143,7 @@ onBeforeMount(() => {
           <VDatatableCell
               :name="index"
               :value="property"
+              :admin="admin"
           />
         </slot>
       </div>

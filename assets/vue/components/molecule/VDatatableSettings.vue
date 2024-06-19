@@ -1,6 +1,6 @@
 <script setup>
 import VSearchInput from "../atom/VSearchInput.vue";
-import Button from "../atom/Button.vue";
+import Button from "../atom/VButton.vue";
 import Dropdown from "../atom/Dropdown.vue";
 import {computed} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
@@ -12,7 +12,8 @@ const props = defineProps({
   excludeFilters: {type: Array, default: [], required: false},
   excludeOrderBys: {type: Array, default: [], required: false},
   mainFilter: {type: String, default: null, required: false},
-  dateFilter: {type: Object, default: null, required: false}
+  dateFilter: {type: Object, default: null, required: false},
+  allowOrderBy: {type: Boolean, default: true, required: false}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
@@ -105,7 +106,7 @@ const isFilters = computed(() => {
     </div>
     <div v-if="isFilters">
       <Dropdown
-          v-if="settings.hasOwnProperty(Object.keys(settings)[0])"
+          v-if="allowOrderBy && orderByOptions[0]"
           :no-empty="true"
           :options="orderByOptions"
           property-of="label"

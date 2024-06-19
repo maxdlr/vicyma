@@ -1,6 +1,6 @@
 <script setup>
 import {goTo} from "../../composable/action/redirect";
-import Button from "../atom/Button.vue";
+import Button from "../atom/VButton.vue";
 import {ref} from "vue";
 
 const props = defineProps({

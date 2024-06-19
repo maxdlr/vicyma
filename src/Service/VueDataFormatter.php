@@ -28,7 +28,6 @@ class VueDataFormatter
     public static function makeVueObjectOf(array $entities, array $properties): static
     {
         self::$vueObject = array_map(function (object $object) use ($entities, $properties) {
-            assert(get_class($object) === get_class($entities[0]));
             return self::makeVueObject($object, $properties);
         }, $entities);
 

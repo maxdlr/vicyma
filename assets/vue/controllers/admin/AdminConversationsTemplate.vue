@@ -1,7 +1,7 @@
 <script setup>
 import VDatatable from "../../components/organism/VDatatable.vue";
 import {goTo} from "../../composable/action/redirect";
-import Button from "../../components/atom/Button.vue";
+import Button from "../../components/atom/VButton.vue";
 
 const props = defineProps({
   conversations: {type: Object, required: true}
@@ -14,11 +14,11 @@ const url = (id) => `${baseUrl}/${id}`;
 </script>
 
 <template>
-  <VDatatable
+  <VDatatable admin
       title="Conversations"
       :data="conversations.data"
       :searchable-properties="['conversationId', 'client']"
-      :exclude-from-row-properties="['id', 'conversationId']"
+      :exclude-from-row-properties="['id']"
       :date-filter="{label: 'creation date', codeName: 'createdOn'}"
   >
     <template #titleButtons>

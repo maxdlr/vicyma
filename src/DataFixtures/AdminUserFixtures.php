@@ -26,6 +26,33 @@ class AdminUserFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
+        $userAddress = new Address();
+        $userAddress
+            ->setLine1('4 avenue Salvador Allende')
+            ->setLine2(null)
+            ->setZipcode('69100')
+            ->setCity('Villeurbanne')
+            ->setRegion('Rhone')
+            ->setType(AddressTypeEnum::PERSONAL->value)
+            ->setCountry('France');
+
+        $user = new User();
+
+        $plaintextPassword = 'password';
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            $plaintextPassword
+        );
+
+        $user
+            ->setFirstname('Augusta')
+            ->setLastname('Sarlin')
+            ->setPhoneNumber('0614743706')
+            ->setRoles([RoleEnum::ROLE_USER])
+            ->setPassword($hashedPassword)
+            ->setAddress($userAddress)
+            ->setEmail('contact@augustasarlin.com');
+
         $adminAddress = new Address();
         $adminAddress
             ->setLine1('4 avenue Salvador Allende')
@@ -45,20 +72,20 @@ class AdminUserFixtures extends Fixture implements DependentFixtureInterface
         );
 
         $admin
-            ->setFirstname('Augusta')
-            ->setLastname('Sarlin')
+            ->setFirstname('Maxime')
+            ->setLastname('dlr')
             ->setPhoneNumber('0614743706')
-            ->setRoles([RoleEnum::ROLE_USER])
+            ->setRoles([RoleEnum::ROLE_ADMIN])
             ->setPassword($hashedPassword)
             ->setAddress($adminAddress)
-            ->setEmail('contact@augustasarlin.com');
+            ->setEmail('contact@maxdlr.com');
 
         for ($i = 0; $i < 20; $i++) {
-            $adminReservation = new Reservation();
+            $userReservation = new Reservation();
             $arrivalDate = $faker->dateTimeBetween('- 1 year', '+ 90 days');
             $departureDate = $faker->dateTimeBetween('- 6 months', '+ 180 days');
-            $adminReservation
-                ->setUser($admin)
+            $userReservation
+                ->setUser($user)
                 ->setAdultCount($faker->numberBetween(1, 6))
                 ->setChildCount($faker->numberBetween(0, 4))
                 ->setPrice($faker->randomFloat(2, 200, 10000))
@@ -69,10 +96,10 @@ class AdminUserFixtures extends Fixture implements DependentFixtureInterface
                 ->addLodging($this->getReference('lodging_' . rand(0, AppFixtures::LODGING_COUNT - 1)))
                 ->setReservationStatus($this->getReference('reservationStatus_' . $faker->randomElement(ReservationStatusEnum::cases())->value));
 
-            $adminReservation->setReservationNumber($admin, $adminReservation);
-            $this->setReference('augustaReservation_' . $i, $adminReservation);
+            $userReservation->setReservationNumber($user, $userReservation);
+            $this->setReference('augustaReservation_' . $i, $userReservation);
 
-            $manager->persist($adminReservation);
+            $manager->persist($userReservation);
         }
 
         for ($i = 0; $i < 4; $i++) {
@@ -81,7 +108,7 @@ class AdminUserFixtures extends Fixture implements DependentFixtureInterface
             $message
                 ->setSubject($faker->sentence())
                 ->setContent($faker->paragraph())
-                ->setUser($admin)
+                ->setUser($user)
                 ->setLodging($faker->randomElement(
                     [
                         null,
@@ -99,6 +126,7 @@ class AdminUserFixtures extends Fixture implements DependentFixtureInterface
         }
 
         $manager->persist($adminAddress);
+        $manager->persist($user);
         $manager->persist($admin);
 
         $manager->flush();

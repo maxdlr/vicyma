@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ConversationRepository;
 use App\ValueObject\ConversationId;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -38,7 +39,7 @@ class Conversation
 
     public function __construct()
     {
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
         $this->messages = new ArrayCollection();
     }
 

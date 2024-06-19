@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
     private ?string $phoneNumber = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user', cascade: ['detach'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user', cascade: ['detach'])]
     private Collection $messages;
 
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', cascade: ['detach'])]

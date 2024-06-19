@@ -1,14 +1,15 @@
 <script setup>
-import Button from "../atom/Button.vue";
+import Button from "../atom/VButton.vue";
 import {computed} from "vue";
 import VDatatableRow from "./VDatatableRow.vue";
 import LoadingSpinner from "../atom/LoadingSpinner.vue";
-import VYoyo from "./VYoyo.vue";
 
 const props = defineProps({
   items: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
-  isLoading: {type: Boolean}
+  isLoading: {type: Boolean},
+  admin: {type: Boolean, default: false, required: false},
+  hideEmpty: {type: Boolean, default: false}
 })
 
 const resultCount = computed(() => {
@@ -45,7 +46,12 @@ const isOrderReversed = defineModel('isOrderReversed', {type: Boolean, required:
       <VDatatableRow
           :item="item"
           :exclude-properties="excludeFromRowProperties"
+          :admin="admin"
+          :hide-empty="hideEmpty"
       >
+        <template #rowHeader="{item}" v-if="$slots.rowHeader">
+          <slot name="rowHeader" :item="{item}" />
+        </template>
         <template #buttons>
           <slot name="buttons" :item="item"/>
         </template>

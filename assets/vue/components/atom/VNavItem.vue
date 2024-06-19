@@ -1,5 +1,5 @@
 <script setup>
-import Button from "./Button.vue";
+import Button from "./VButton.vue";
 import {goTo} from "../../composable/action/redirect";
 import {toTitle} from "../../composable/formatter/string";
 

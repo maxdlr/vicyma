@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'user-base.html.twig' %}
 
 {% block title %}
     {{ parent() }}
@@ -6,19 +6,10 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-2">
-            <nav {{ vue_component('user/UserNavBar', {
-                'navigation': navigation.getUserNavigation
-            }) }} class="sticky-top"></nav>
-        </div>
-        <div class="col">
             <div {{ vue_component('user/UserDashboard', {
                 user: user,
                 reservations: reservations
             }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
-        </div>
-    </div>
 
     {{ include('_components/Molecule/modal/_modal.html.twig', {
         id: 'userAccountAddress',

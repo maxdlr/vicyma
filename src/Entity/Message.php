@@ -48,10 +48,14 @@ class Message
     #[ORM\Column]
     private ?bool $isReadByAdmin = null;
 
+    #[ORM\Column]
+    private ?bool $isReadByUser = null;
+
     public function __construct()
     {
         $this->createdOn = new \DateTime();
         $this->isReadByAdmin = false;
+        $this->isReadByUser = false;
     }
 
     public function getId(): ?int
@@ -167,6 +171,18 @@ class Message
     public function setIsReadByAdmin(bool $isReadByAdmin): static
     {
         $this->isReadByAdmin = $isReadByAdmin;
+
+        return $this;
+    }
+
+    public function isReadByUser(): ?bool
+    {
+        return $this->isReadByUser;
+    }
+
+    public function setReadByUser(bool $isReadByUser): static
+    {
+        $this->isReadByUser = $isReadByUser;
 
         return $this;
     }

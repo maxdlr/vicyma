@@ -1,6 +1,6 @@
 <script setup>
 import VDatatable from "../../../components/organism/VDatatable.vue";
-import Button from "../../../components/atom/Button.vue";
+import Button from "../../../components/atom/VButton.vue";
 import {goTo} from "../../../composable/action/redirect";
 import {getPropertyValue} from "../../../composable/formatter/object";
 
@@ -17,7 +17,7 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
 </script>
 
 <template>
-  <VDatatable
+  <VDatatable admin
       :title="title"
       :data="data"
       :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"

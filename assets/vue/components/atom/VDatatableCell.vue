@@ -4,12 +4,13 @@ import {singularize, toTitle, truncate} from "../../composable/formatter/string"
 import {getReviewAverage} from "../../composable/formatter/number";
 import {rand, useToNumber} from "@vueuse/core";
 import {Collapse} from 'bootstrap';
-import Button from "./Button.vue";
+import Button from "./VButton.vue";
 import {ref} from "vue";
 
 const props = defineProps({
   name: {type: String},
-  value: {type: [String, Object, Array, Number, Boolean]}
+  value: {type: [String, Object, Array, Number, Boolean]},
+  admin: {type: Boolean, default: false, required: false}
 })
 
 const templateClass = {
@@ -21,7 +22,7 @@ const randomSlug = 'slug' + rand(0, 10000000);
 
 const isCollapseOpen = ref(false)
 
-const valueDisplayClass = 'fs-5 fw-bold'
+const valueDisplayClass = 'fw-bold'
 
 </script>
 
@@ -50,8 +51,8 @@ const valueDisplayClass = 'fs-5 fw-bold'
     <!-- string ----------------------------------------------------------------------------------------------------------- -->
 
     <div v-else-if="typeof value === 'string'" :class="templateClass.property">
-      <span v-if="name !== 'email'" :class="valueDisplayClass">
-        {{ value.length > 30 ? toTitle(truncate(value, 70, '...')) : toTitle(value) }}
+      <span v-if="name !== 'email'" :class="valueDisplayClass" class="text-start">
+        {{ toTitle(truncate(value, 45, '...')) }}
       </span>
       <span v-else>{{ value }}</span>
     </div>
@@ -72,7 +73,11 @@ const valueDisplayClass = 'fs-5 fw-bold'
 
       <div v-else-if="typeof value[Object.keys(value)[1]] === 'string'">
         <div :class="templateClass.property">
-          <a :href="`/admin/${singularize(name)}/${value[Object.keys(value)[0]]}/show`"
+          <a :href="
+          admin ?
+          `/admin/${singularize(name)}/${value[Object.keys(value)[0]]}/show`:
+          `/${singularize(name)}/${value[Object.keys(value)[0]]}/show`
+"
              class="icon-link icon-link-hover text-primary" :class="valueDisplayClass">
             {{ toTitle(value[Object.keys(value)[1]]) }}
             <i class="bi bi-arrow-right-short fs-3"></i>

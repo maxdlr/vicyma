@@ -5,7 +5,7 @@ import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
 import {isEmpty} from "../../composable/formatter/object";
 import {clearEmptyLocaleStorage} from "../../composable/action/localStorage";
-import Button from "../atom/Button.vue";
+import Button from "../atom/VButton.vue";
 import {goTo} from "../../composable/action/redirect";
 
 const props = defineProps({
@@ -17,7 +17,10 @@ const props = defineProps({
   dateFilter: {type: Object, default: null, required: false},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
-  newItemLink: {type: String, default: null, required: false}
+  newItemLink: {type: String, default: null, required: false},
+  admin: {type: Boolean, default: false, required: false},
+  allowOrderBy: {type: Boolean, default: true},
+  hideEmpty: {type: Boolean, default: false}
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
@@ -238,6 +241,7 @@ const storeOrderBy = () => {
       :exclude-order-bys="excludeOrderBys"
       :main-filter="mainFilter"
       :date-filter="dateFilter"
+      :allow-order-by="allowOrderBy"
       v-model:search-query="searchQuery"
       v-model:order-by-option="selectedOrderByOption"
       v-model:filter-options="selectedFilterOptions"
@@ -254,7 +258,12 @@ const storeOrderBy = () => {
       :exclude-from-row-properties="excludeFromRowProperties"
       :is-loading="isLoading"
       v-model:is-order-reversed="isOrderReversed"
+      :admin="admin"
+      :hide-empty="hideEmpty"
   >
+    <template #rowHeader="{item}" v-if="$slots.rowHeader">
+      <slot name="rowHeader" :item="item"/>
+    </template>
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>
     </template>
