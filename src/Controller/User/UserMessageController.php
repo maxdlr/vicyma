@@ -22,10 +22,11 @@ use Symfony\Component\Routing\Attribute\Route;
 class UserMessageController extends AbstractController
 {
     use AfterCrudTrait;
+
     public function __construct(
-        private readonly MessageRepository $messageRepository,
-        private readonly UserController $userController,
-        private readonly MessageCrud $messageCrud,
+        private readonly MessageRepository      $messageRepository,
+        private readonly UserController         $userController,
+        private readonly MessageCrud            $messageCrud,
         private readonly EntityManagerInterface $entityManager,
     )
     {
@@ -45,6 +46,12 @@ class UserMessageController extends AbstractController
             $pastMessages = [$message];
         }
 
+        foreach ($pastMessages as $pastMessage) {
+            if ($pastMessage->getAdmin() !== null) {
+                $pastMessage->setIsReadByUser(true);
+            }
+        }
+
         $newMessage = new Message();
         $newMessage
             ->setSubject($message->getSubject())
@@ -58,20 +65,20 @@ class UserMessageController extends AbstractController
                 'user' => $this->userController->getLoggedUser(),
                 'isReply' => true
             ],
-            function () use ($message, $newMessage) {
+            function () use ($message, $newMessage, $pastMessages) {
 
                 if ($message->getConversation() === null) {
                     $conversation = new Conversation();
                     $conversation
                         ->setUser($message->getUser())
-                        ->addMessage($message)
-                    ;
+                        ->addMessage($message);
                 } else {
                     $conversation = $message->getConversation();
                     $conversation->setUpdatedOn(new DateTime());
                 }
 
                 $newMessage->setSubject('Message of ' . $conversation->getConversationId() . ' - ' . $message->getCreatedOn()->format('d/m/y'));
+
                 $conversation
                     ->addMessage($newMessage)
                     ->setConversationId(ConversationId::new($message));

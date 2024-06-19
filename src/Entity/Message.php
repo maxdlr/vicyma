@@ -175,12 +175,12 @@ class Message
         return $this;
     }
 
-    public function isReadByUser(): ?bool
+    public function getIsReadByUser(): ?bool
     {
         return $this->isReadByUser;
     }
 
-    public function setReadByUser(bool $isReadByUser): static
+    public function setIsReadByUser(bool $isReadByUser): static
     {
         $this->isReadByUser = $isReadByUser;
 
