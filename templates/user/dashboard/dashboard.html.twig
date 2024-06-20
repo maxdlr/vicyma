@@ -6,10 +6,10 @@
 {% endblock %}
 
 {% block body %}
-            <div {{ vue_component('user/UserDashboard', {
-                user: user,
-                reservations: reservations
-            }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
+    <div {{ vue_component('user/UserDashboard', {
+        user: user,
+        reservations: reservations
+    }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
 
     {{ include('_components/Molecule/modal/_modal.html.twig', {
         id: 'userAccountAddress',

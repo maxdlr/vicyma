@@ -1,6 +1,4 @@
 <script setup>
-import {computed} from "vue";
-import VDatatableRow from "../../components/molecule/VDatatableRow.vue";
 import Button from "../../components/atom/VButton.vue";
 import VDatatable from "../../components/organism/VDatatable.vue";
 import {goTo} from "../../composable/action/redirect";
@@ -48,6 +46,13 @@ const url = (id) => `${baseUrl}/${id}`;
           color-class="primary"
           @click.prevent="goTo(`${url(item.id)}/show`)"
           icon-class-end="box-arrow-up-right"
+      />
+      <Button
+          label="Ask a question..."
+          class="my-1 text-white"
+          color-class="info"
+          @click.prevent="goTo(`/user/message/about-reservation/${item.id}/ask`)"
+          icon-class-end="question-circle-fill"
       />
     </template>
   </VDatatable>

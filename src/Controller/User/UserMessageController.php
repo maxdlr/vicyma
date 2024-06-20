@@ -6,7 +6,10 @@ use App\Crud\Manager\AfterCrudTrait;
 use App\Crud\MessageCrud;
 use App\Entity\Conversation;
 use App\Entity\Message;
+use App\Entity\Reservation;
+use App\Entity\User;
 use App\Repository\MessageRepository;
+use App\Repository\UserRepository;
 use App\Service\VueDataFormatter;
 use App\ValueObject\ConversationId;
 use DateTime;
@@ -23,13 +26,17 @@ class UserMessageController extends AbstractController
 {
     use AfterCrudTrait;
 
+    private readonly ?User $user;
+
     public function __construct(
         private readonly MessageRepository      $messageRepository,
-        private readonly UserController         $userController,
         private readonly MessageCrud            $messageCrud,
         private readonly EntityManagerInterface $entityManager,
+        private readonly UserRepository         $userRepository,
+        private readonly UserController         $userController
     )
     {
+        $this->user = $userController->getLoggedUser();
     }
 
     /**
@@ -62,7 +69,7 @@ class UserMessageController extends AbstractController
             $request,
             $newMessage,
             [
-                'user' => $this->userController->getLoggedUser(),
+                'user' => $this->user,
                 'isReply' => true
             ],
             function () use ($message, $newMessage, $pastMessages) {
@@ -95,12 +102,36 @@ class UserMessageController extends AbstractController
     }
 
     /**
+     * @throws Exception
+     */
+    #[Route(path: '/about-reservation/{id}/ask')]
+    public function askAboutReservation(
+        Request     $request,
+        Reservation $reservation
+    ): Response
+    {
+        $message = new Message();
+        $message
+            ->setSubject('Question about ' . $reservation->getReservationNumber())
+            ->setUser($this->user)
+            ->setReservation($reservation);
+        $options = ['lodgings' => $reservation->getLodgings(), 'user' => $this->user];
+        $messageForm = $this->messageCrud->save($request, $message, $options);
+        if ($messageForm === true) return $this->redirectTo('referer', $request);
+
+        return $this->render('user/message/new.html.twig', [
+            "messageForm" => $messageForm->createView(),
+            'reservation' => $reservation
+        ]);
+    }
+
+    /**
      * @throws ReflectionException
      */
     public function getData(): array
     {
         $userMessages = $this->messageRepository->findBy([
-            'user' => $this->userController->getLoggedUser(),
+            'user' => $this->user,
             'conversation' => null
         ]);
         $creationDates = VueDataFormatter::makeVueObjectOf($userMessages, ['createdOn'])->regroup('createdOn')->get();

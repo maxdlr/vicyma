@@ -41,10 +41,11 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($admin);
 
         $this->createAndPersistReservations(20, $user, $manager);
-        $messages = $this->createAndPersistMessages(4, $user, $manager, 'augustaReservation');
+        $this->createAndPersistMessages(4, $user, $manager, 'augustaReservation');
+        $conversationMessages = $this->createAndPersistMessages(4, $user, $manager, 'augustaReservation');
         $this->createAndPersistConversations(
             2,
-            $messages,
+            $conversationMessages,
             $admin,
             $manager,
         );

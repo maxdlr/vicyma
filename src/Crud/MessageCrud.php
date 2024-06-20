@@ -26,7 +26,7 @@ class MessageCrud extends AbstractCrud
 
             $object->setUser($user);
 
-            $doBeforeSave();
+            if ($doBeforeSave !== null) $doBeforeSave();
 
             return true;
         }

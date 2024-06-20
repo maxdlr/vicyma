@@ -4,7 +4,7 @@
     confirm is defined ? include('_components/Atom/_button.html.twig', {routeName: confirmRoute, confirmMsg: confirmConfirmMsg, colorClass: 'success', label: 'Confirm', icon: 'check-all'}) : '',
     setAsPaid is defined ? include('_components/Atom/_button.html.twig', {routeName: setAsPaidRoute, confirmMsg: setAsPaidConfirmMsg, colorClass: 'outline-success', label: 'Set as paid', icon: 'check-all'}) : '',
     save is defined ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Save', icon: 'floppy-fill'}) : '',
-    reply is defined ? include('_components/Atom/_button.html.twig', {type: 'submit', label: 'Reply', icon: 'send-fill'}) : '',
+    reply is defined ? include('_components/Atom/_button.html.twig', {type: 'submit', label: replyLabel|default('Reply'), icon: 'send-fill'}) : '',
 ] %}
 {% set deleteButton = delete ? include('_components/Atom/_deleteButton.html.twig', {label: 'Delete', icon: 'trash-fill', colorClass: 'danger', confirmMsg: deleteConfirmMsg}) : '' %}
 
