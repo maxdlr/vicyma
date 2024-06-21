@@ -22,7 +22,6 @@ onMounted(() => {
 })
 
 onBeforeMount(() => {
-  console.log(props.hideEmpty)
   for (const property in props.item) {
     if (props.excludeProperties) {
       if (!props.excludeProperties.includes(property)) {

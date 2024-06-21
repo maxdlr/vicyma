@@ -56,6 +56,8 @@ class UserMessageController extends AbstractController
         foreach ($pastMessages as $pastMessage) {
             if ($pastMessage->getAdmin() !== null) {
                 $pastMessage->setIsReadByUser(true);
+                $this->entityManager->persist($pastMessage);
+                $this->entityManager->flush();
             }
         }
 
@@ -115,6 +117,9 @@ class UserMessageController extends AbstractController
             ->setSubject('Question about ' . $reservation->getReservationNumber())
             ->setUser($this->user)
             ->setReservation($reservation);
+
+        if (count($reservation->getLodgings()) === 1) $message->setLodging($reservation->getLodgings()[0]);
+
         $options = ['lodgings' => $reservation->getLodgings(), 'user' => $this->user];
         $messageForm = $this->messageCrud->save($request, $message, $options);
         if ($messageForm === true) return $this->redirectTo('referer', $request);

@@ -183,6 +183,7 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
         $conversations = [];
         foreach ($messages as $message) {
             assert($message instanceof Message);
+            $message->setIsReadByAdmin(true);
             $conversation = new Conversation();
             $conversation
                 ->setUser($message->getUser())

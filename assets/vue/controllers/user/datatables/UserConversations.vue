@@ -9,9 +9,6 @@ const props = defineProps({
   title: {type: String},
 })
 
-const baseUrl = '/user/conversation';
-const url = (id) => `${baseUrl}/${id}`;
-
 const unreadMessages = (messageCollection) => {
   return messageCollection.filter(
       (message) => {
@@ -25,12 +22,12 @@ const unreadMessages = (messageCollection) => {
 <template>
   <VDatatable
       :searchable-properties="['messages']"
-      :exclude-from-row-properties="['id', 'messages']"
+      :exclude-from-row-properties="['id', 'messages', 'isArchivedByUser']"
       :data="data"
       :title="title"
   >
     <template #rowHeader="{item}">
-      <span class="badge bg-success fw-bold fs-5 rounded-pill me-3">
+      <span class="badge bg-success fw-bold fs-5 rounded-pill me-3" v-if="unreadMessages(item.item.messages).length > 0">
         {{unreadMessages(item.item.messages).length}} new {{ singularize(unreadMessages(item.item.messages), 'messages') }}
       </span>
     </template>
@@ -39,9 +36,16 @@ const unreadMessages = (messageCollection) => {
           label="Open"
           class="my-1"
           color-class="primary"
-          @click.prevent="goTo(`${url(item.id)}/show`)"
+          @click.prevent="goTo(`/user/message/${item.messages[0].id}/show`)"
           icon-class-end="box-arrow-up-right"
       />
+      <Button
+        label="Archive"
+        class="my-1"
+        color-class="warning"
+        icon-class-end="box-fill"
+        @click.prevent="goTo(`/user/conversation/${item.id}/archive`)"
+        />
     </template>
   </VDatatable>
 </template>
