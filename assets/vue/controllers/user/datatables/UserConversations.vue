@@ -11,6 +11,15 @@ const props = defineProps({
 
 const baseUrl = '/user/conversation';
 const url = (id) => `${baseUrl}/${id}`;
+
+const unreadMessages = (messageCollection) => {
+  return messageCollection.filter(
+      (message) => {
+        return !message.isReadByUser && !message.user
+      }
+  );
+}
+
 </script>
 
 <template>
@@ -22,7 +31,7 @@ const url = (id) => `${baseUrl}/${id}`;
   >
     <template #rowHeader="{item}">
       <span class="badge bg-success fw-bold fs-5 rounded-pill me-3">
-        {{item.item.messages.length - 1}} unread {{ (item.item.messages.length - 1) > 1 ? 'messages' : singularize('messages') }}
+        {{unreadMessages(item.item.messages).length}} new {{ singularize(unreadMessages(item.item.messages), 'messages') }}
       </span>
     </template>
     <template #buttons="{item}">

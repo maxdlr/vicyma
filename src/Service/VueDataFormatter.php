@@ -112,11 +112,11 @@ class VueDataFormatter
     private static function getCollectionProperty(object $object): ?array
     {
         return match (true) {
-            $object instanceof Message => ['id', 'subject'],
+            $object instanceof Message => ['id', 'subject', 'isReadByAdmin', 'isReadByUser', 'admin', 'user'],
             $object instanceof Conversation => ['id', 'conversationId'],
             $object instanceof BedType => ['id', 'width', 'height'],
             $object instanceof Review => ['id', 'rate'],
-            $object instanceof Reservation => ['id', 'reservationNumber'],
+            $object instanceof Reservation => ['id', 'reservationNumber', 'reservationStatus'],
             $object instanceof Lodging => ['id', 'name'],
             default => null
         };

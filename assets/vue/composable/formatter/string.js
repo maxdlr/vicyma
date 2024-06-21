@@ -8,11 +8,16 @@ export const toTitle = (string) => {
     return string.charAt(0).toUpperCase() + string.substring(1);
 };
 
-export const singularize = (string) => {
-    if (string.charAt(string.length - 1) === 's' && string.charAt(string.length - 2) !== 's') {
-        return string.substring(0, string.length - 1)
-    } else {
+export const singularize = (array = null, string) => {
+
+    if (array && array.length > 1) {
         return string;
+    } else {
+        if (string.charAt(string.length - 1) === 's' && string.charAt(string.length - 2) !== 's') {
+            return string.substring(0, string.length - 1)
+        } else {
+            return string;
+        }
     }
 }
 

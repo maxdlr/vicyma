@@ -136,7 +136,16 @@ class UserMessageController extends AbstractController
         ]);
         $creationDates = VueDataFormatter::makeVueObjectOf($userMessages, ['createdOn'])->regroup('createdOn')->get();
         $messages = VueDataFormatter::makeVueObjectOf($userMessages, [
-            'id', 'createdOn', 'subject', 'content', 'lodging', 'reservation', 'conversation'
+            'id',
+            'createdOn',
+            'subject',
+            'content',
+            'lodging',
+            'reservation',
+            'conversation',
+            'isReadByUser',
+            'admin',
+            'user'
         ])->get();
 
         return [
