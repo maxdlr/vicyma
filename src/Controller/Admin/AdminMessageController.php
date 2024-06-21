@@ -19,8 +19,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/message', name: 'app_admin_message_')]
+#[IsGranted(RoleEnum::ROLE_ADMIN->value)]
 class AdminMessageController extends AbstractController
 {
     use AfterCrudTrait;

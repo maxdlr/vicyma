@@ -4,8 +4,10 @@ namespace App\Controller\User;
 
 use App\Crud\AddressCrud;
 use App\Crud\Manager\AfterCrudTrait;
+use App\Crud\MessageCrud;
 use App\Crud\UserCrud;
 use App\Entity\Address;
+use App\Entity\Message;
 use App\Enum\RoleEnum;
 use Exception;
 use ReflectionException;
@@ -27,7 +29,8 @@ class UserDashboardController extends AbstractController
         private readonly UserReservationController $userReservationController,
         private readonly UserController            $userController,
         private readonly UserConversationController $userConversationController,
-        private readonly UserMessageController $userMessageController
+        private readonly UserMessageController $userMessageController,
+        private readonly MessageCrud $messageCrud,
     )
     {
     }
@@ -44,6 +47,9 @@ class UserDashboardController extends AbstractController
         $userData = $this->userController->getData();
         $reservationsData = $this->userReservationController->getData();
 
+        $messageForm = $this->messageCrud->save($request, new Message(), ['user' => $user]);
+        if ($messageForm === true) return $this->redirectTo('referer', $request);
+
         $userForm = $this->userCrud->save($request, $user);
         if ($userForm === true) return $this->redirectTo('referer', $request);
 
@@ -56,20 +62,28 @@ class UserDashboardController extends AbstractController
             'addressForm' => $addressForm->createView(),
             'userForm' => $userForm->createView(),
             'reservations' => $reservationsData,
+            'messageForm' => $messageForm->createView()
         ]);
     }
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     #[Route(path: '/conversations', name: 'conversations', methods: ['GET', 'POST'])]
-    public function conversations(): Response
+    public function conversations(Request $request): Response
     {
-        return $this->render('user/dashboard/conversations.html.twig', [
+        $user = $this->userController->getLoggedUser();
+
+        $messageForm = $this->messageCrud->save($request, new Message(), ['user' => $user]);
+        if ($messageForm === true) return $this->redirectTo('referer', $request);
+
+        return $this->render('user/dashboard/inbox.html.twig', [
             'datatables' => [
                 'conversations' => $this->userConversationController->getData(),
                 'messages' => $this->userMessageController->getData(),
-            ]
+            ],
+            'messageForm' => $messageForm->createView()
         ]);
     }
 }

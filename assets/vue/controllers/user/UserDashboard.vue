@@ -17,9 +17,9 @@ const url = (id) => `${baseUrl}/${id}`;
     <h1>Bonjour {{ user.firstname }} {{ user.lastname }}</h1>
     <div class="d-flex justify-content-center align-items-center">
       <Button label="Address" icon-class-start="geo-alt-fill" data-bs-toggle="modal"
-              data-bs-target="#userAccountAddress"/>
+              data-bs-target="#userAccountAddress" class="mx-2" color-class="outline-secondary"/>
       <Button label="Account settings" icon-class-start="person-fill-gear" data-bs-toggle="modal"
-              data-bs-target="#accountSettings"/>
+              data-bs-target="#accountSettings" class="mx-2" color-class="outline-secondary"/>
     </div>
   </div>
 
@@ -39,6 +39,14 @@ const url = (id) => `${baseUrl}/${id}`;
       :allow-order-by="false"
       hide-empty
   >
+    <template #titleButtons>
+      <Button
+          label="Send us a message"
+          icon-class-start="send-plus-fill"
+          data-bs-toggle="modal"
+          data-bs-target="#userNewMessage"
+      />
+    </template>
     <template #buttons="{item}">
       <Button
           label="Open"

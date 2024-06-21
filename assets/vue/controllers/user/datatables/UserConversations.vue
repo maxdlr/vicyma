@@ -26,8 +26,19 @@ const unreadMessages = (messageCollection) => {
       :data="data"
       :title="title"
   >
+    <template #titleButtons>
+      <Button
+          label="Send us a message"
+          icon-class-start="send-plus-fill"
+          data-bs-toggle="modal"
+          data-bs-target="#userNewMessage"
+      />
+    </template>
     <template #rowHeader="{item}">
-      <span class="badge bg-success fw-bold fs-5 rounded-pill me-3" v-if="unreadMessages(item.item.messages).length > 0">
+      <span
+          class="badge fw-bold fs-5 rounded-pill me-3"
+          :class="unreadMessages(item.item.messages).length > 0 ? 'bg-success' : 'bg-secondary'"
+      >
         {{unreadMessages(item.item.messages).length}} new {{ singularize(unreadMessages(item.item.messages), 'messages') }}
       </span>
     </template>

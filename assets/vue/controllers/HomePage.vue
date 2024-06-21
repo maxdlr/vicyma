@@ -1,9 +1,5 @@
 <script setup>
-const props = defineProps({
-  user: {type: Object, required: false}
-})
-
-console.log(props.user)
+const props = defineProps({})
 </script>
 
 <template>

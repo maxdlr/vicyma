@@ -7,10 +7,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class Navigation extends AbstractController
 {
-    public function __construct(private readonly UserRepository $userRepository)
+    public function __construct(
+        private readonly UserRepository $userRepository
+    )
     {
     }
-
     public function getAdminNavigation(): array
     {
         return [
@@ -50,6 +51,12 @@ class Navigation extends AbstractController
     public function getUserNavigation(): array
     {
         return [
+            'home' =>
+                [
+                    'label' => 'site',
+                    'value' => $this->generateUrl('app_home'),
+                    'iconClass' => 'house-fill'
+                ],
             'dashboard' =>
                 [
                     'label' => 'dashboard',

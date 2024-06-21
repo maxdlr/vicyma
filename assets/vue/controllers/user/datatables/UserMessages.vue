@@ -16,12 +16,20 @@ const url = (id) => `${baseUrl}/${id}`;
 <template>
   <VDatatable
       :searchable-properties="['subject', 'content', 'lodging', 'reservation']"
-      :exclude-from-row-properties="['id', 'conversation']"
+      :exclude-from-row-properties="['id', 'conversation', 'user']"
       :date-filter="{label: 'sent on', codeName: 'createdOn'}"
       :data="data"
       :title="title"
       hide-empty
   >
+    <template #titleButtons>
+      <Button
+          label="Send us a message"
+          icon-class-start="send-plus-fill"
+          data-bs-toggle="modal"
+          data-bs-target="#userNewMessage"
+      />
+    </template>
     <template #buttons="{item}">
       <Button
           label="Open"

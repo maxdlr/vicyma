@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Crud\BedTypeCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\BedType;
+use App\Enum\RoleEnum;
 use App\Repository\BedTypeRepository;
 use App\Repository\ReviewRepository;
 use App\Service\VueDataFormatter;
@@ -14,8 +15,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/bed', name: 'app_admin_bed_')]
+#[IsGranted(RoleEnum::ROLE_ADMIN->value)]
 class AdminBedTypeController extends AbstractController
 {
     use AfterCrudTrait;

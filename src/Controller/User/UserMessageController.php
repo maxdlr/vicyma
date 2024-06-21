@@ -8,6 +8,7 @@ use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Entity\Reservation;
 use App\Entity\User;
+use App\Enum\RoleEnum;
 use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
 use App\Service\VueDataFormatter;
@@ -20,7 +21,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted(RoleEnum::ROLE_USER->value)]
 #[Route(path: '/user/message', name: 'app_user_account_message_')]
 class UserMessageController extends AbstractController
 {

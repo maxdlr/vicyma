@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Crud\LodgingCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\Lodging;
+use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
 use App\Service\VueDataFormatter;
@@ -14,8 +15,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/lodging', name: 'app_admin_lodging_')]
+#[IsGranted(RoleEnum::ROLE_ADMIN->value)]
 class AdminLodgingController extends AbstractController
 {
     use AfterCrudTrait;

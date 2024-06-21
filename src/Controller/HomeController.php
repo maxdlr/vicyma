@@ -10,23 +10,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    public function __construct(
-        private readonly UserController $userController,
-        private readonly UserRepository $userRepository
-    )
-    {
-    }
-
-    /**
-     * @throws \ReflectionException
-     */
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        $user = $this->userController->getData();
-
-        return $this->render('home/index.html.twig', [
-            'user' => $user
-        ]);
+        return $this->render('home/index.html.twig');
     }
 }
