@@ -52,7 +52,7 @@ const url = (id) => `${baseUrl}/${id}`;
           label="Open"
           class="my-1"
           color-class="primary"
-          @click.prevent="goTo(`${url(item.id)}/show`)"
+          @click.prevent="goTo(`/user/reservation/${item.id}/show`)"
           icon-class-end="box-arrow-up-right"
       />
       <Button
