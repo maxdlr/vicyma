@@ -13,11 +13,11 @@ const props = defineProps({
 <template>
   <VDatatable
       :searchable-properties="['subject', 'content', 'lodging', 'reservation']"
-      :exclude-from-row-properties="['id', 'conversation', 'user']"
+      :exclude-from-row-properties="['id', 'conversation', 'user', 'isReadByUser', 'admin']"
       :date-filter="{label: 'sent on', codeName: 'createdOn'}"
       :data="data"
       :title="title"
-      hide-empty
+      :hide-empty
   >
     <template #titleButtons>
       <Button

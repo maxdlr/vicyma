@@ -20,7 +20,7 @@ const props = defineProps({
   newItemLink: {type: String, default: null, required: false},
   admin: {type: Boolean, default: false, required: false},
   hideOrderBy: {type: Boolean},
-  hideEmpty: {type: Boolean, default: false},
+  hideEmpty: {type: Boolean},
   maxCellCountInRow: {type: Number}
 });
 const filteredItems = ref([])
@@ -223,7 +223,6 @@ const storeOrderBy = () => {
   const orderByAsString = selectedOrderByOption.value
   localStorage.setItem(`datatable/${props.title}/orderByState`, JSON.stringify(orderByAsString))
 }
-
 </script>
 
 <template>

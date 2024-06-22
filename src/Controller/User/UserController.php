@@ -8,6 +8,8 @@ use App\Repository\UserRepository;
 use App\Service\VueDataFormatter;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class UserController extends AbstractController
 {
@@ -22,7 +24,6 @@ class UserController extends AbstractController
     public function getLoggedUser(): ?User
     {
         $connectedUser = $this->getUser() ?? null;
-        if ($connectedUser === null) return $this->redirectTo('app_login');
         return $this->userRepository->findOneBy(['email' => $connectedUser->getUserIdentifier()]);
     }
 
@@ -33,11 +34,12 @@ class UserController extends AbstractController
     {
         $user = $this->getLoggedUser();
 
-        return $user !== null ?
-            VueDataFormatter::makeVueObjectOf(
-                [$user],
-                $this->getEssentialUserPropertyKeys()
-            )->get()[0] : null;
+        if ($user === null) throw new AuthenticationCredentialsNotFoundException('No logged user found, cannot get data');
+
+        return VueDataFormatter::makeVueObjectOf(
+            [$user],
+            $this->getEssentialUserPropertyKeys()
+        )->get()[0];
     }
 
     private function getEssentialUserPropertyKeys(): array

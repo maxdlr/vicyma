@@ -9,7 +9,7 @@ const props = defineProps({
   excludeFromRowProperties: {type: Array},
   isLoading: {type: Boolean},
   admin: {type: Boolean, default: false, required: false},
-  hideEmpty: {type: Boolean, default: false},
+  hideEmpty: {type: Boolean},
   maxCellCountInRow: {type: Number, default: 4, required: false}
 })
 
