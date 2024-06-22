@@ -32,7 +32,7 @@ const props = defineProps({
           label="Open"
           class="my-1"
           color-class="primary"
-          @click.prevent="goTo(`${url(item.id)}/show`)"
+          @click.prevent="goTo(`/user/message/${item.id}/show`)"
           icon-class-end="box-arrow-up-right"
       />
     </template>
