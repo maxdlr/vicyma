@@ -22,6 +22,7 @@ class UserController extends AbstractController
     public function getLoggedUser(): ?User
     {
         $connectedUser = $this->getUser() ?? null;
+        if ($connectedUser === null) return $this->redirectTo('app_login');
         return $this->userRepository->findOneBy(['email' => $connectedUser->getUserIdentifier()]);
     }
 
