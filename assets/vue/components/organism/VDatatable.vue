@@ -20,7 +20,8 @@ const props = defineProps({
   newItemLink: {type: String, default: null, required: false},
   admin: {type: Boolean, default: false, required: false},
   allowOrderBy: {type: Boolean, default: true},
-  hideEmpty: {type: Boolean, default: false}
+  hideEmpty: {type: Boolean, default: false},
+  maxCellCountInRow: {type: Number}
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
@@ -87,7 +88,11 @@ const resetFilters = () => {
 
 const orderBy = () => {
   filteredItems.value.sort((a, b) => {
-    return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
+    if (typeof a[selectedOrderByOption.value.codeName] === 'object') {
+      return ("" + a[selectedOrderByOption.value.codeName].value).localeCompare(b[selectedOrderByOption.value.codeName].value);
+    } else {
+      return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
+    }
   });
   storeOrderBy()
 }
@@ -180,7 +185,6 @@ const checkSearchQuery = (item) => {
             const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
             votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
           } else {
-            console.log(searchablePropertyElement)
             votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
           }
         }
@@ -260,6 +264,7 @@ const storeOrderBy = () => {
       v-model:is-order-reversed="isOrderReversed"
       :admin="admin"
       :hide-empty="hideEmpty"
+      :max-cell-count-in-row="maxCellCountInRow"
   >
     <template #rowHeader="{item}" v-if="$slots.rowHeader">
       <slot name="rowHeader" :item="item"/>

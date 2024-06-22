@@ -8,6 +8,7 @@
 {% block body %}
     {{ include('_components/Organism/form/_form_reservation.html.twig', {
         save: true,
+        delete: false,
         reference: 'New reservation'
     }) }}
 {% endblock %}

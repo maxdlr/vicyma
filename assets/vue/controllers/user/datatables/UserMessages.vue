@@ -39,6 +39,5 @@ const url = (id) => `${baseUrl}/${id}`;
           icon-class-end="box-arrow-up-right"
       />
     </template>
-    <template #titleButtons></template>
   </VDatatable>
 </template>

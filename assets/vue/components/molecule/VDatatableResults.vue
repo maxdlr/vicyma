@@ -9,7 +9,8 @@ const props = defineProps({
   excludeFromRowProperties: {type: Array},
   isLoading: {type: Boolean},
   admin: {type: Boolean, default: false, required: false},
-  hideEmpty: {type: Boolean, default: false}
+  hideEmpty: {type: Boolean, default: false},
+  maxCellCountInRow: {type: Number, default: 4, required: false}
 })
 
 const resultCount = computed(() => {
@@ -48,9 +49,10 @@ const isOrderReversed = defineModel('isOrderReversed', {type: Boolean, required:
           :exclude-properties="excludeFromRowProperties"
           :admin="admin"
           :hide-empty="hideEmpty"
+          :max-cell-count-in-row="maxCellCountInRow"
       >
         <template #rowHeader="{item}" v-if="$slots.rowHeader">
-          <slot name="rowHeader" :item="{item}" />
+          <slot name="rowHeader" :item="{item}"/>
         </template>
         <template #buttons>
           <slot name="buttons" :item="item"/>

@@ -8,7 +8,8 @@ const props = defineProps({
   item: {type: Object, required: true},
   excludeProperties: {type: Array},
   admin: {type: Boolean, default: false, required: false},
-  hideEmpty: {type: Boolean, default: false}
+  hideEmpty: {type: Boolean, default: false},
+  maxCellCountInRow: {type: Number}
 })
 
 const mainRowItem = ref({})
@@ -69,7 +70,13 @@ onBeforeMount(() => {
   }
 
   for (const key in mainRowItem.value) {
-    if (!mainRowItem.value[key] && props.hideEmpty) {
+    if ((
+        !mainRowItem.value[key] ||
+        (
+            typeof mainRowItem.value[key] === 'object' &&
+            Object.keys(mainRowItem.value[key]).length === 0
+        )
+    ) && props.hideEmpty) {
       delete mainRowItem.value[key]
     }
   }
@@ -93,7 +100,7 @@ onBeforeMount(() => {
     <div class="d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
 
-        <slot name="rowHeader" :item="item" />
+        <slot name="rowHeader" :item="item"/>
 
         <div v-if="item.rate">
           <span class="badge bg-success fw-bold fs-5 rounded-pill me-3">{{ item.rate }}</span>
@@ -134,7 +141,7 @@ onBeforeMount(() => {
       </div>
     </div>
     <div class="row"
-         :class="`row-cols-${cellCount > 4 ? Math.round(cellCount / 2) : cellCount}`"
+         :class="`row-cols-${cellCount > maxCellCountInRow ? Math.round(cellCount / 2) : cellCount}`"
          ref="datatableRow"
     >
       <div v-for="(property, index) in mainRowItem" :key="index" class="p-2">

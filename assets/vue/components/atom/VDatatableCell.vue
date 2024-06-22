@@ -35,9 +35,16 @@ const valueDisplayClass = 'fw-bold'
     <div
         v-if="(isEmpty(value) || value.length === 0) && !['number', 'boolean'].includes(typeof value)"
         :class="templateClass.property">
-      <span class="fst-italic opacity-50">--- empty ---</span>
+      <!-- todo: do something with this button...-->
+      <Button
+          icon-class-end="plus-circle-fill"
+          color-class="secondary"
+          class="d-block mx-auto"
+          round-class="pill"
+          label="Add"
+          size="sm"
+      />
     </div>
-
 
     <!-- boolean ----------------------------------------------------------------------------------------------------------- -->
 

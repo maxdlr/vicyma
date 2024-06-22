@@ -68,6 +68,7 @@ class AdminController extends AbstractController
                 [
                     'lodgings' => $this->adminLodgingController->getData(),
                     'beds' => $this->adminBedController->getData(),
+                    'users' => $this->adminUserController->getData(RoleEnum::ROLE_ADMIN),
                 ]
         ]);
     }

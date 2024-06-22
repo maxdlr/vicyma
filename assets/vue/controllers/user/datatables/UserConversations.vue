@@ -39,7 +39,9 @@ const unreadMessages = (messageCollection) => {
           class="badge fw-bold fs-5 rounded-pill me-3"
           :class="unreadMessages(item.item.messages).length > 0 ? 'bg-success' : 'bg-secondary'"
       >
-        {{unreadMessages(item.item.messages).length}} new {{ singularize(unreadMessages(item.item.messages), 'messages') }}
+        {{ unreadMessages(item.item.messages).length }} new {{
+          singularize('messages', unreadMessages(item.item.messages))
+        }}
       </span>
     </template>
     <template #buttons="{item}">
@@ -51,12 +53,12 @@ const unreadMessages = (messageCollection) => {
           icon-class-end="box-arrow-up-right"
       />
       <Button
-        label="Archive"
-        class="my-1"
-        color-class="warning"
-        icon-class-end="box-fill"
-        @click.prevent="goTo(`/user/conversation/${item.id}/archive`)"
-        />
+          label="Archive"
+          class="my-1"
+          color-class="warning"
+          icon-class-end="box-fill"
+          @click.prevent="goTo(`/user/conversation/${item.id}/archive`)"
+      />
     </template>
   </VDatatable>
 </template>

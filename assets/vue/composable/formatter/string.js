@@ -8,7 +8,7 @@ export const toTitle = (string) => {
     return string.charAt(0).toUpperCase() + string.substring(1);
 };
 
-export const singularize = (array = null, string) => {
+export const singularize = (string, array = null) => {
 
     if (array && array.length > 1) {
         return string;
