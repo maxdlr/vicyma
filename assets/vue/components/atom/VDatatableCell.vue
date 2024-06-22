@@ -58,7 +58,7 @@ const valueDisplayClass = 'fw-bold'
     <!-- string ----------------------------------------------------------------------------------------------------------- -->
 
     <div v-else-if="typeof value === 'string'" :class="templateClass.property">
-      <span v-if="name !== 'email'" :class="valueDisplayClass" class="text-start">
+      <span v-if="name !== 'email'" :class="valueDisplayClass">
         {{ toTitle(truncate(value, 45, '...')) }}
       </span>
       <span v-else>{{ value }}</span>
