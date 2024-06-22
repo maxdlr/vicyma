@@ -83,7 +83,6 @@ class AdminUserController extends AbstractController
         });
     }
 
-    // ---------------------------------------------------------------------------------------------------
 
     /**
      * @throws ReflectionException
