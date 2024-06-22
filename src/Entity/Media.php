@@ -23,7 +23,7 @@ class Media
     #[ORM\Column()]
     private ?float $mediaSize = null;
 
-    #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'medias', fetch: 'EAGER')]
+    #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'medias')]
     private Collection $lodgings;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

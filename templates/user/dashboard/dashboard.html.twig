@@ -1,0 +1,43 @@
+{% extends 'user-base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    Tableau de bord
+{% endblock %}
+
+{% block body %}
+    <div {{ vue_component('user/UserDashboard', {
+        user: user,
+        reservations: reservations
+    }) }}>{{ include('_components/Atom/_spinner.html.twig') }}</div>
+
+    {{ include('_components/Molecule/modal/_modal.html.twig', {
+        id: 'userAccountAddress',
+        headerTitle: 'Edit my address',
+        body: include('_components/Organism/form/_form_address.html.twig', {
+            save: true,
+            delete: user['address'] is not null,
+            reference: 'Edit my address'
+        })
+    }) }}
+
+    {{ include('_components/Molecule/modal/_modal.html.twig', {
+        id: 'accountSettings',
+        headerTitle: 'Edit my information',
+        body: include('_components/Organism/form/_form_user.html.twig', {
+            save: true,
+            delete: false,
+            reference: 'Edit my information'
+        })
+    }) }}
+
+    {{ include('_components/Molecule/modal/_modal.html.twig', {
+        id: 'userNewMessage',
+        headerTitle: 'Write to us',
+        body: include('_components/Organism/form/_form_message.html.twig', {
+            save: true,
+            delete: false,
+            reference: 'Write to us'
+        })
+    }) }}
+{% endblock %}

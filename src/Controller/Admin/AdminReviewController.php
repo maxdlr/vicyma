@@ -6,6 +6,7 @@ use App\Crud\ReviewCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\Review;
 use App\Enum\ReviewStatusEnum;
+use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
 use App\Service\VueDataFormatter;
@@ -16,8 +17,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/review', name: 'app_admin_review_')]
+#[IsGranted(RoleEnum::ROLE_ADMIN->value)]
 class AdminReviewController extends AbstractController
 {
     use AfterCrudTrait;
@@ -69,7 +72,7 @@ class AdminReviewController extends AbstractController
     /**
      * @throws ReflectionException
      */
-    public function getNotification()
+    public function getNotification(): array
     {
         $pendingReviews = $this->reviewRepository->findBy(['status' => ReviewStatusEnum::PENDING->value]);
 

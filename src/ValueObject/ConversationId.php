@@ -10,8 +10,7 @@ class ConversationId
     {
         $userName = $message->getUser()->getFullName(true);
         $date = $message->getCreatedOn();
-        $userId = $message->getId();
 
-        return $userName . '-' . $date->format('dmY') . '-' . $userId;
+        return '[' . $userName . ']--' . $message->getSubject() . '-' . $date->format('dmY');
     }
 }

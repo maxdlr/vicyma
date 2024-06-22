@@ -1,0 +1,16 @@
+{% extends 'user-base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    Tableau de bord
+{% endblock %}
+
+{% block body %}
+    <div class="pb-4">
+        {{ include('_components/Organism/form/_form_message.html.twig', {
+            reply: true,
+            replyLabel: 'Send',
+            reference: 'Reservation ' ~ reservation.arrivalDate|date('d/m/Y') ~ ' -> ' ~ reservation.departureDate|date('d/m/Y')
+        }) }}
+    </div>
+{% endblock %}

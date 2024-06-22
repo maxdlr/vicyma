@@ -5,7 +5,7 @@ import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
 import {isEmpty} from "../../composable/formatter/object";
 import {clearEmptyLocaleStorage} from "../../composable/action/localStorage";
-import Button from "../atom/Button.vue";
+import Button from "../atom/VButton.vue";
 import {goTo} from "../../composable/action/redirect";
 
 const props = defineProps({
@@ -17,7 +17,11 @@ const props = defineProps({
   dateFilter: {type: Object, default: null, required: false},
   searchableProperties: {type: Array, required: true},
   excludeFromRowProperties: {type: Array},
-  newItemLink: {type: String, default: null, required: false}
+  newItemLink: {type: String, default: null, required: false},
+  admin: {type: Boolean, default: false, required: false},
+  hideOrderBy: {type: Boolean},
+  hideEmpty: {type: Boolean},
+  maxCellCountInRow: {type: Number}
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
@@ -84,7 +88,11 @@ const resetFilters = () => {
 
 const orderBy = () => {
   filteredItems.value.sort((a, b) => {
-    return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
+    if (typeof a[selectedOrderByOption.value.codeName] === 'object') {
+      return ("" + a[selectedOrderByOption.value.codeName].value).localeCompare(b[selectedOrderByOption.value.codeName].value);
+    } else {
+      return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
+    }
   });
   storeOrderBy()
 }
@@ -177,7 +185,6 @@ const checkSearchQuery = (item) => {
             const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
             votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
           } else {
-            console.log(searchablePropertyElement)
             votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
           }
         }
@@ -216,7 +223,6 @@ const storeOrderBy = () => {
   const orderByAsString = selectedOrderByOption.value
   localStorage.setItem(`datatable/${props.title}/orderByState`, JSON.stringify(orderByAsString))
 }
-
 </script>
 
 <template>
@@ -238,6 +244,7 @@ const storeOrderBy = () => {
       :exclude-order-bys="excludeOrderBys"
       :main-filter="mainFilter"
       :date-filter="dateFilter"
+      :hide-order-by="hideOrderBy"
       v-model:search-query="searchQuery"
       v-model:order-by-option="selectedOrderByOption"
       v-model:filter-options="selectedFilterOptions"
@@ -254,7 +261,13 @@ const storeOrderBy = () => {
       :exclude-from-row-properties="excludeFromRowProperties"
       :is-loading="isLoading"
       v-model:is-order-reversed="isOrderReversed"
+      :admin="admin"
+      :hide-empty="hideEmpty"
+      :max-cell-count-in-row="maxCellCountInRow"
   >
+    <template #rowHeader="{item}" v-if="$slots.rowHeader">
+      <slot name="rowHeader" :item="item"/>
+    </template>
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>
     </template>

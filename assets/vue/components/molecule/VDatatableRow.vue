@@ -2,11 +2,14 @@
 import {onBeforeMount, onMounted, ref} from "vue";
 import VDatatableCell from "../atom/VDatatableCell.vue";
 import VYoyo from "./VYoyo.vue";
-import {singularize, toTitle} from "../../composable/formatter/string";
+import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({
   item: {type: Object, required: true},
-  excludeProperties: {type: Array}
+  excludeProperties: {type: Array},
+  admin: {type: Boolean, default: false, required: false},
+  hideEmpty: {type: Boolean, default: false},
+  maxCellCountInRow: {type: Number}
 })
 
 const mainRowItem = ref({})
@@ -61,6 +64,22 @@ onBeforeMount(() => {
   if (mainRowItem.value['rate']) {
     delete mainRowItem.value['rate']
   }
+
+  if (mainRowItem.value['reservationStatus']) {
+    delete mainRowItem.value['reservationStatus']
+  }
+
+  for (const key in mainRowItem.value) {
+    if ((
+        !mainRowItem.value[key] ||
+        (
+            typeof mainRowItem.value[key] === 'object' &&
+            Object.keys(mainRowItem.value[key]).length === 0
+        )
+    ) && props.hideEmpty) {
+      delete mainRowItem.value[key]
+    }
+  }
 })
 </script>
 
@@ -80,6 +99,9 @@ onBeforeMount(() => {
   >
     <div class="d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
+
+        <slot name="rowHeader" :item="item"/>
+
         <div v-if="item.rate">
           <span class="badge bg-success fw-bold fs-5 rounded-pill me-3">{{ item.rate }}</span>
           <a class="fs-5 fw-bold icon-link icon-link-hover"
@@ -91,9 +113,17 @@ onBeforeMount(() => {
 
         <div v-if="item.reservationNumber" class="d-flex justify-content-center align-items-center"
              :class="hovering ? 'text-secondary-emphasis' : 'text-secondary'">
+          <span class="me-3 badge fs-6 rounded-pill fw-bold"
+                :class="[
+                    ['PENDING'].includes(item.reservationStatus) ? hovering ? 'bg-warning' : 'bg-warning-subtle text-warning' : '',
+                    ['CONFIRMED'].includes(item.reservationStatus) ? hovering ? 'bg-success' : 'bg-success-subtle text-success' : '',
+                ]"
+                v-if="item.reservationStatus && ['PENDING', 'CONFIRMED'].includes(item.reservationStatus)">
+            {{ item.reservationStatus }}
+          </span>
           <span class="fs-5 fw-bold">{{ item.reservationNumber }}</span>
           <div class="d-inline badge ms-3 fs-6 rounded-pill"
-               :class="hovering ? 'bg-success' : 'bg-success-subtle text-success'">
+               :class="hovering ? 'bg-info' : 'bg-info-subtle text-info'">
             <span class="fw-bold" v-if="item.arrivalDate">{{ item.arrivalDate }} </span>
             <i class="bi bi-arrow-right mx-3"></i>
             <span class="fw-bold" v-if="item.departureDate">{{ item.departureDate }} </span>
@@ -111,7 +141,7 @@ onBeforeMount(() => {
       </div>
     </div>
     <div class="row"
-         :class="`row-cols-${cellCount > 4 ? Math.round(cellCount / 2) : cellCount}`"
+         :class="`row-cols-${cellCount > maxCellCountInRow ? Math.round(cellCount / 2) : cellCount}`"
          ref="datatableRow"
     >
       <div v-for="(property, index) in mainRowItem" :key="index" class="p-2">
@@ -119,6 +149,7 @@ onBeforeMount(() => {
           <VDatatableCell
               :name="index"
               :value="property"
+              :admin="admin"
           />
         </slot>
       </div>

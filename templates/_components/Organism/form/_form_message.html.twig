@@ -2,10 +2,11 @@
 
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
     fields: [
-        include('_components/Atom/form/_text-field.html.twig', {formRow: messageForm.subject, label: 'Sujet', placeholder: 'Heure d\'arrivée...'}),
+        messageForm.subject is defined ? include('_components/Atom/form/_text-field.html.twig', {formRow: messageForm.subject, label: 'Sujet', placeholder: 'Heure d\'arrivée...'}),
         include('_components/Atom/form/_text_area-field.html.twig', {formRow: messageForm.content, label: 'Message', placeholder: 'Votre message'}),
-        include('_components/Atom/form/_select-field.html.twig', {formRow: messageForm.lodging, label: 'Appartement'}),
-        include('_components/Atom/form/_select-field.html.twig', {formRow: messageForm.reservation, label: 'Reservation'})
+        messageForm.lodging is defined ? include('_components/Atom/form/_select-field.html.twig', {formRow: messageForm.lodging, label: 'Appartement'}),
+        messageForm.reservation is defined ? include('_components/Atom/form/_select-field.html.twig', {formRow: messageForm.reservation, label: 'Reservation'})
     ],
-    deleteRoute: 'app_message_delete'
+    delete: false,
+    deleteRoute: false
 }) }}

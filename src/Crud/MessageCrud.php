@@ -7,6 +7,7 @@ use App\Crud\Manager\CrudSetting;
 use App\Entity\Message;
 use App\Entity\User;
 use App\Form\MessageType;
+use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,13 +18,15 @@ class MessageCrud extends AbstractCrud
 {
     public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
     {
-        return parent::save($request, $object, $options, function ($form, $object) use ($options) {
+        return parent::save($request, $object, $options, function ($form, $object) use ($doBeforeSave, $options) {
             $user = $options['user'];
 
             assert($user instanceof User);
             assert($object instanceof Message);
 
             $object->setUser($user);
+
+            if ($doBeforeSave !== null) $doBeforeSave();
 
             return true;
         }
@@ -44,7 +47,6 @@ class MessageCrud extends AbstractCrud
      * It inherits $object, $redirectRoute and $redirectParams.
      * @param callable|null $doBeforeDelete
      * @throws Exception
-     * @throws \Exception
      *
      * @example fn($object, $redirectRoute, $redirectParams) => {}
      * If it returns void, it executes and delete() continues.

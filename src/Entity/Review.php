@@ -21,11 +21,11 @@ class Review
     #[ORM\Column(length: 1000, nullable: true)]
     private ?string $comment = null;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reviews')]
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Lodging $lodging = null;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reviews')]
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $user = null;
 

@@ -39,14 +39,14 @@ class Reservation
     #[ORM\Column]
     private ?float $price = null;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reservations')]
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: true)]
     private ?ReservationStatus $reservationStatus = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation', fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'reservation')]
     private Collection $messages;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'reservations')]
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $user = null;
 

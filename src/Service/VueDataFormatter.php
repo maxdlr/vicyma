@@ -15,6 +15,8 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use ReflectionException;
 use ReflectionMethod;
+use function PHPUnit\Framework\stringContains;
+use function Symfony\Component\String\u;
 
 class VueDataFormatter
 {
@@ -26,7 +28,6 @@ class VueDataFormatter
     public static function makeVueObjectOf(array $entities, array $properties): static
     {
         self::$vueObject = array_map(function (object $object) use ($entities, $properties) {
-            assert(get_class($object) === get_class($entities[0]));
             return self::makeVueObject($object, $properties);
         }, $entities);
 
@@ -53,7 +54,7 @@ class VueDataFormatter
     private static function makeVueObject(object $object, array $properties): array
     {
         $vueObject = [];
-        $objectFqcn = get_class($object);
+        $objectFqcn = u(get_class($object))->trimPrefix('Proxies\\__CG__\\')->toString();
         $allProperties = ClassBrowser::findAllProperties($objectFqcn);
 
         foreach ($allProperties as $property) {
@@ -111,11 +112,11 @@ class VueDataFormatter
     private static function getCollectionProperty(object $object): ?array
     {
         return match (true) {
-            $object instanceof Message => ['id', 'subject'],
+            $object instanceof Message => ['id', 'subject', 'isReadByAdmin', 'isReadByUser', 'admin', 'user'],
             $object instanceof Conversation => ['id', 'conversationId'],
             $object instanceof BedType => ['id', 'width', 'height'],
             $object instanceof Review => ['id', 'rate'],
-            $object instanceof Reservation => ['id', 'reservationNumber'],
+            $object instanceof Reservation => ['id', 'reservationNumber', 'reservationStatus'],
             $object instanceof Lodging => ['id', 'name'],
             default => null
         };

@@ -1,6 +1,6 @@
 <script setup>
 import {COLOR_CLASSES} from "../../constant/bootstrap-constants";
-import Button from "../atom/Button.vue";
+import Button from "../atom/VButton.vue";
 import {onUpdated, ref} from "vue";
 import {SLIDE_DOWN, SLIDE_UP} from "../../constant/animation";
 

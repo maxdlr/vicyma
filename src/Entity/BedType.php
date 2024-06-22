@@ -26,7 +26,7 @@ class BedType
     #[ORM\Column]
     private ?bool $isExtra = null;
 
-    #[ORM\ManyToMany(targetEntity: Lodging::class, mappedBy: 'beds', fetch: 'EAGER')]
+    #[ORM\ManyToMany(targetEntity: Lodging::class, mappedBy: 'beds')]
     private Collection $lodgings;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

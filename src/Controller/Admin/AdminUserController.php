@@ -15,8 +15,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/user', name: 'app_admin_user_')]
+#[IsGranted(RoleEnum::ROLE_ADMIN->value)]
 class AdminUserController extends AbstractController
 {
     use AfterCrudTrait;
@@ -79,24 +81,19 @@ class AdminUserController extends AbstractController
             $user->setIsDeleted(true);
             return ['save', 'exit'];
         });
-//        $this->entityManager->persist($user);
-//        $this->entityManager->flush();
-//        return $this->redirectTo('referer', $request, 'users');
     }
 
-    // ---------------------------------------------------------------------------------------------------
 
     /**
      * @throws ReflectionException
      */
-    public function getData(): array
+    public function getData(RoleEnum $roleEnum = RoleEnum::ROLE_USER): array
     {
-        $allUsers = $this->userRepository->findAll();
+        $allUsers = $this->userRepository->findByRole($roleEnum);
         $firstnames = VueDataFormatter::makeVueObjectOf($allUsers, ['firstname'])->regroup('firstname')->get();
         $lastnames = VueDataFormatter::makeVueObjectOf($allUsers, ['lastname'])->regroup('lastname')->get();
         $isDeleted = VueDataFormatter::makeVueObjectOf($allUsers, ['isDeleted'])->regroup('isDeleted')->get();
         $creationDate = VueDataFormatter::makeVueObjectOf($allUsers, ['createdOn'])->regroup('createdOn')->get();
-        $roles = array_map(fn(RoleEnum $roleEnum) => $roleEnum->value, RoleEnum::cases());
         $users = VueDataFormatter::makeVueObjectOf($allUsers,
             [
                 'id',
@@ -108,7 +105,6 @@ class AdminUserController extends AbstractController
                 'isDeleted',
                 'address',
                 'createdOn',
-                'roles'
             ])->get();
 
         return [
@@ -120,7 +116,6 @@ class AdminUserController extends AbstractController
                         'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
                         'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
                         'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted'],
-                        'roles' => ['name' => 'role', 'default' => 'ROLE_USER', 'values' => $roles, 'codeName' => 'roles'],
                         'createdOn' => ['name' => 'member since', 'default' => '', 'values' => $creationDate, 'codeName' => 'createdOn'],
                     ],
                     'items' => $users

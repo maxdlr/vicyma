@@ -1,6 +1,6 @@
 <script setup>
 import VDatatable from "../../../components/organism/VDatatable.vue";
-import Button from "../../../components/atom/Button.vue";
+import Button from "../../../components/atom/VButton.vue";
 import {getPropertyValue} from "../../../composable/formatter/object";
 import {goTo} from "../../../composable/action/redirect";
 
@@ -20,7 +20,7 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
 </script>
 
 <template>
-  <VDatatable
+  <VDatatable admin
       :title="title"
       :data="data"
       main-filter="reservationStatus"

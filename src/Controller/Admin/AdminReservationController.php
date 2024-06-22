@@ -6,6 +6,7 @@ use App\Crud\Manager\AfterCrudTrait;
 use App\Crud\ReservationCrud;
 use App\Entity\Reservation;
 use App\Enum\ReservationStatusEnum;
+use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReservationRepository;
 use App\Repository\ReservationStatusRepository;
@@ -17,8 +18,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin/reservation', name: 'app_admin_reservation_')]
+#[IsGranted(RoleEnum::ROLE_ADMIN->value)]
 class AdminReservationController extends AbstractController
 {
     use AfterCrudTrait;

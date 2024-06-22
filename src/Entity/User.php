@@ -44,16 +44,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 50)]
     private ?string $phoneNumber = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user', cascade: ['detach'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user', cascade: ['detach'])]
     private Collection $messages;
 
-    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', cascade: ['detach'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'user', cascade: ['detach'])]
     private Collection $reservations;
 
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user', cascade: ['detach'], fetch: 'EAGER')]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'user', cascade: ['detach'])]
     private Collection $reviews;
 
-    #[ORM\ManyToOne(cascade: ['persist'], fetch: 'EAGER')]
+    #[ORM\ManyToOne(cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Address $address = null;
 

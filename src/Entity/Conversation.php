@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ConversationRepository;
 use App\ValueObject\ConversationId;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -36,10 +37,18 @@ class Conversation
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\Column]
+    private ?bool $isArchivedByUser;
+
+    #[ORM\Column]
+    private ?bool $isArchivedByAdmin;
+
     public function __construct()
     {
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
         $this->messages = new ArrayCollection();
+        $this->isArchivedByAdmin = false;
+        $this->isArchivedByUser = false;
     }
 
     public function getId(): ?int
@@ -114,6 +123,30 @@ class Conversation
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getIsArchivedByUser(): ?bool
+    {
+        return $this->isArchivedByUser;
+    }
+
+    public function setIsArchivedByUser(bool $isArchivedByUser): static
+    {
+        $this->isArchivedByUser = $isArchivedByUser;
+
+        return $this;
+    }
+
+    public function getIsArchivedByAdmin(): ?bool
+    {
+        return $this->isArchivedByAdmin;
+    }
+
+    public function setIsArchivedByAdmin(bool $isArchivedByAdmin): static
+    {
+        $this->isArchivedByAdmin = $isArchivedByAdmin;
 
         return $this;
     }

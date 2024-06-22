@@ -1,0 +1,22 @@
+<div class="modal fade modal-lg"
+     id="{{ id }}"
+     tabindex="-1"
+     aria-labelledby="{{ id }}"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            {% if headerTitle is defined %}
+                <div class="modal-header">
+                    {{ headerTitle }}
+                </div>
+            {% endif %}
+            {% if body is defined %}
+                <div class="modal-body">{{ body|raw }}</div>
+            {% endif %}
+            {% if footer is defined %}
+                <div class="modal-footer">{{ footer }}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>

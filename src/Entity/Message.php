@@ -21,18 +21,18 @@ class Message
     #[ORM\Column(length: 2000)]
     private ?string $content = null;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Lodging $lodging = null;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'messages')]
     private ?Reservation $reservation = null;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(fetch: 'EAGER', inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn]
     private ?User $admin = null;
 
@@ -48,10 +48,14 @@ class Message
     #[ORM\Column]
     private ?bool $isReadByAdmin = null;
 
+    #[ORM\Column]
+    private ?bool $isReadByUser = null;
+
     public function __construct()
     {
         $this->createdOn = new \DateTime();
         $this->isReadByAdmin = false;
+        $this->isReadByUser = false;
     }
 
     public function getId(): ?int
@@ -167,6 +171,18 @@ class Message
     public function setIsReadByAdmin(bool $isReadByAdmin): static
     {
         $this->isReadByAdmin = $isReadByAdmin;
+
+        return $this;
+    }
+
+    public function getIsReadByUser(): ?bool
+    {
+        return $this->isReadByUser;
+    }
+
+    public function setIsReadByUser(bool $isReadByUser): static
+    {
+        $this->isReadByUser = $isReadByUser;
 
         return $this;
     }

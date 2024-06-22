@@ -1,6 +1,6 @@
 <script setup>
 import VDatatable from "../../../components/organism/VDatatable.vue";
-import Button from "../../../components/atom/Button.vue";
+import Button from "../../../components/atom/VButton.vue";
 import {goTo} from "../../../composable/action/redirect";
 import {toTitle} from "../../../composable/formatter/string";
 
@@ -15,7 +15,7 @@ const url = (id) => `${baseUrl}/${id}`;
 </script>
 
 <template>
-  <VDatatable
+  <VDatatable admin
       :title="title"
       :data="data"
       :searchable-properties="['name']"

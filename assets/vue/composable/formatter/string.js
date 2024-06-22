@@ -8,16 +8,21 @@ export const toTitle = (string) => {
     return string.charAt(0).toUpperCase() + string.substring(1);
 };
 
-export const singularize = (string) => {
-    if (string.charAt(string.length - 1) === 's' && string.charAt(string.length - 2) !== 's') {
-        return string.substring(0, string.length - 1)
-    } else {
+export const singularize = (string, array = null) => {
+
+    if (array && array.length > 1) {
         return string;
+    } else {
+        if (string.charAt(string.length - 1) === 's' && string.charAt(string.length - 2) !== 's') {
+            return string.substring(0, string.length - 1)
+        } else {
+            return string;
+        }
     }
 }
 
 export const truncate = (string, numberOfChars, suffix) => {
-    return string.substr(0, numberOfChars) + suffix
+    return string.length > numberOfChars ? string.substr(0, numberOfChars) + suffix : string
 }
 
 export const implode = (array, property) => {

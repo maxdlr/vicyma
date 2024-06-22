@@ -1,11 +1,12 @@
 {% set form = reservationForm %}
 
-<div class="badge fs-5 rounded-pill {{ reservation.reservationStatus.name is same as 'DELETED' ? 'bg-danger-subtle' :
+<div class="badge fs-5 rounded-pill {{ reservation is defined ?
+reservation.reservationStatus.name is same as 'DELETED' ? 'bg-danger-subtle' :
 reservation.reservationStatus.name is same as 'CONFIRMED' ? 'bg-success-subtle' :
 reservation.reservationStatus.name is same as 'ARCHIVED' ? 'bg-warning-subtle' :
 reservation.reservationStatus.name is same as 'PENDING' ? 'bg-primary' :
 reservation.reservationStatus.name is same as 'PAID' ? 'bg-success' : '' }}">
-    <span>{{ reservation.reservationStatus.name }}</span>
+    <span>{{ reservation is defined ? reservation.reservationStatus.name }}</span>
 </div>
 
 {{ include('_components/Molecule/form/_standalone_form.html.twig', {
@@ -16,7 +17,7 @@ reservation.reservationStatus.name is same as 'PAID' ? 'bg-success' : '' }}">
         include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.arrivalDate, label: 'Date d\'arrivée'}),
         include('_components/Atom/form/_date-field.html.twig', {formRow: reservationForm.departureDate, label: 'Date de départ'}),
         include('_components/Atom/form/_number-field.html.twig', {formRow: reservationForm.price, label: 'Prix'}),
-        include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.lodgings, label: 'Appartement', placeholder: 'Chercher un appartement'}),
+        include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.lodgings, label: 'Appartement', placeholder: false}),
     ],
     deleteRoute: 'app_reservation_delete',
     deleteConfirmMsg: 'Voulez-vous vraiment supprimer ?',

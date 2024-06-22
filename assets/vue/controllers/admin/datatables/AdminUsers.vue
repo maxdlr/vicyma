@@ -1,12 +1,13 @@
 <script setup>
 import VDatatable from "../../../components/organism/VDatatable.vue";
-import Button from "../../../components/atom/Button.vue";
+import Button from "../../../components/atom/VButton.vue";
 import {goTo} from "../../../composable/action/redirect";
 import {getPropertyValue} from "../../../composable/formatter/object";
 
 defineProps({
   data: {type: Object, required: true},
   title: {type: String},
+  hideEmpty: {type: Boolean, required: false, default: false}
 });
 
 const baseUrl = '/admin/user';
@@ -18,6 +19,7 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
 
 <template>
   <VDatatable
+      admin
       :title="title"
       :data="data"
       :searchable-properties="['firstname', 'lastname', 'reservations', 'email', 'phoneNumber']"
@@ -25,6 +27,8 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
       :exclude-from-row-properties="['id', 'isDeleted', 'createdOn', 'roles']"
       :new-item-link="`${baseUrl}/new`"
       :date-filter="{label: 'member since', codeName: 'createdOn'}"
+      :hide-empty="hideEmpty"
+      :max-cell-count-in-row="2"
   >
     <template #buttons="{item}">
       <Button
@@ -40,10 +44,11 @@ const canBeDeleted = (object) => !getPropertyValue(object, 'isDeleted');
           color-class="danger"
           class="my-1"
           icon-class-end="trash"
-          @click.prevent="goTo(
-                        `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer le compte de ${item.firstname} ${item.lastname} ?`
-                        )"
+          @click.prevent="
+          goTo(
+            `${url(item.id)}/delete`,
+            `Salut Maman, tu veux vraiment supprimer le compte de ${item.firstname} ${item.lastname} ?`
+          )"
       />
     </template>
   </VDatatable>

@@ -17,20 +17,21 @@ END_COLOR=\033[0m
 run: ## Start project
 	@make recipe-intro-msg msg="Starting project"
 
-	@make composer-install && \
+	@make create-local-env && \
 	clear && \
-	make create-local-env && \
-	make fill-local-env && \
+	make composer-install && \
 	clear && \
 	make db && \
-	make cache-clear && \
 	clear && \
 	make yarn-install && \
 	make yarn-build && \
+	make cache-clear && \
+	clear && \
 	make server-start && \
 	clear && \
 	make open-browser && \
 	make success-msg
+
 
 command-intro-msg:
 	@echo "[$(BLUE_COLOR)$(APP)$(END_COLOR)] -------------$(SUCCESS_COLOR)|=>$(END_COLOR) $(YELLOW_COLOR)$(msg)... $(END_COLOR)"
@@ -68,8 +69,9 @@ server-stop: ## Stop server
 create-local-env: ## Create .env.local file
 	@make command-intro-msg msg="Creating env file"
 	@if [ ! -f '.env.local' ]; then \
-		touch .env.local; \
+		touch .env.local && make fill-local-env; \
 	fi
+
 
 fill-local-env: ## Fill .env.local file with 'root/root'
 	@make command-intro-msg msg="Filling env , using 'root:root'"
@@ -115,6 +117,14 @@ test: ## Run Tests / testName=TESTNAME to only run TESTNAME
     else \
 		php bin/phpunit --colors=always --filter=$(testName); \
 	fi
+
+start-working: ## Launch server and open website
+	@make recipe-intro-msg msg="Starting work..."
+	@make server-start && \
+	make open-browser && \
+	clear && \
+	yarn watch
+
 
 yarn-install: ## Install node packages
 	@make command-intro-msg msg="Installing Yarn packages"

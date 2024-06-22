@@ -1,18 +1,20 @@
 <script setup>
-import {onBeforeMount, onUnmounted, ref} from "vue";
-import AdminReservationRequests from "./datatables/AdminReservationRequests.vue";
-import AdminUsers from "./datatables/AdminUsers.vue";
-import AdminMessages from "./datatables/AdminMessages.vue";
-import AdminReviews from "./datatables/AdminReviews.vue";
+import {onBeforeMount, onUnmounted, ref, shallowRef} from "vue";
 import {toTitle} from "../../composable/formatter/string";
+import {components} from "@symfony/ux-vue/dist/components";
 
 const props = defineProps({
-  datatables: {type: Object, required: true}
+  datatables: {type: Object, required: true},
+  components: {type: components, required: true},
+  defaultTab: {type: String, required: true},
+  hiddenEmptyDatatables: {type: Array, required: false, default: []}
 })
 
 onBeforeMount(() => {
+  tabs.value = props.components;
+  currentTab.value = props.defaultTab;
   const currentAnchor = window.location.hash;
-  currentTab.value = currentAnchor ? currentAnchor.substring(1) : 'reservations';
+  currentTab.value = currentAnchor ? currentAnchor.substring(1) : props.defaultTab;
 })
 
 const changeTab = (newTab) => {
@@ -20,14 +22,8 @@ const changeTab = (newTab) => {
   window.location.hash = '#' + newTab
 }
 
-const currentTab = ref('reservations');
-
-const tabs = {
-  reservations: AdminReservationRequests,
-  users: AdminUsers,
-  messages: AdminMessages,
-  reviews: AdminReviews
-}
+const currentTab = ref();
+const tabs = shallowRef();
 
 onUnmounted(() => {
   localStorage.clear()
@@ -57,10 +53,7 @@ onUnmounted(() => {
         :title="datatables[currentTab].name"
         :is="tabs[currentTab]"
         :data="datatables[currentTab].data"
+        :hide-empty="hiddenEmptyDatatables.includes(datatables[currentTab].name)"
     ></component>
   </KeepAlive>
 </template>
-
-<style scoped>
-
-</style>

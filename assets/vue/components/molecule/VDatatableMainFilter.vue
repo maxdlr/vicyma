@@ -1,5 +1,5 @@
 <script setup>
-import Button from "../atom/Button.vue";
+import Button from "../atom/VButton.vue";
 import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({
