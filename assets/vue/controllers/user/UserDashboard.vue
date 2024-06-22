@@ -8,8 +8,6 @@ const props = defineProps({
   reservations: {type: Object, required: true}
 })
 
-const baseUrl = '/user/reservation';
-const url = (id) => `${baseUrl}/${id}`;
 </script>
 
 <template>
