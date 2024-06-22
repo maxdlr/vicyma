@@ -62,7 +62,3 @@ const unreadMessages = (messageCollection) => {
     </template>
   </VDatatable>
 </template>
-
-<style scoped>
-
-</style>
