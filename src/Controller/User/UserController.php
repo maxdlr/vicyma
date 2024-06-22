@@ -14,7 +14,7 @@ class UserController extends AbstractController
     use AfterCrudTrait;
 
     public function __construct(
-        private readonly UserRepository         $userRepository,
+        private readonly UserRepository $userRepository,
     )
     {
     }
@@ -31,11 +31,11 @@ class UserController extends AbstractController
      */
     public function getData(): ?array
     {
-        $connectedUser = $this->getUser();
+        $user = $this->getLoggedUser();
 
-        return $connectedUser !== null ?
+        return $user !== null ?
             VueDataFormatter::makeVueObjectOf(
-                [$this->userRepository->findOneBy(['email' => $connectedUser->getUserIdentifier()])],
+                [$user],
                 $this->getEssentialUserPropertyKeys()
             )->get()[0] : null;
     }

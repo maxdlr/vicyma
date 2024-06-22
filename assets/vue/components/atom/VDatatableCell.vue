@@ -2,7 +2,7 @@
 import {isEmpty} from "../../composable/formatter/object";
 import {singularize, toTitle, truncate} from "../../composable/formatter/string"
 import {getReviewAverage} from "../../composable/formatter/number";
-import {rand, useToNumber} from "@vueuse/core";
+import {rand} from "@vueuse/core";
 import {Collapse} from 'bootstrap';
 import Button from "./VButton.vue";
 import {ref} from "vue";

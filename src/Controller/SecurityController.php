@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Controller\User\UserController;
 use App\Enum\RoleEnum;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -12,7 +13,10 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    public function __construct(private readonly UserRepository $userRepository)
+    public function __construct(
+        private readonly UserRepository $userRepository,
+        private readonly UserController $userController,
+    )
     {
     }
 
@@ -40,10 +44,9 @@ class SecurityController extends AbstractController
     #[Route(path: '/login/success', name: 'app_login_success')]
     public function loginSuccess(): RedirectResponse
     {
-        $userRoles = $this->getUser()->getRoles();
-        $user = $this->userRepository->findOneBy(['email' => $this->getUser()->getUserIdentifier()]);
+        $user = $this->userController->getLoggedUser();
 
-        return in_array(RoleEnum::ROLE_ADMIN->value, $userRoles) ?
+        return in_array(RoleEnum::ROLE_ADMIN->value, $user->getRoles()) ?
             $this->redirectToRoute('app_admin_dashboard') :
             $this->redirectToRoute('app_user_account_dashboard', ['id' => $user->getId()]);
     }

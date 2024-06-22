@@ -13,7 +13,7 @@ const props = defineProps({
   excludeOrderBys: {type: Array, default: [], required: false},
   mainFilter: {type: String, default: null, required: false},
   dateFilter: {type: Object, default: null, required: false},
-  allowOrderBy: {type: Boolean, default: true, required: false}
+  hideOrderBy: {type: Boolean, default: false, required: false}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
@@ -106,7 +106,7 @@ const isFilters = computed(() => {
     </div>
     <div v-if="isFilters">
       <Dropdown
-          v-if="allowOrderBy && orderByOptions[0]"
+          v-if="!hideOrderBy && orderByOptions[0]"
           :no-empty="true"
           :options="orderByOptions"
           property-of="label"

@@ -34,7 +34,7 @@ const props = defineProps({
           'updatedOn'
       ]"
       :date-filter="{label: 'created on', codeName: 'createdOn'}"
-      :allow-order-by="false"
+      hide-order-by
       hide-empty
   >
     <template #titleButtons>

@@ -19,7 +19,7 @@ const props = defineProps({
   excludeFromRowProperties: {type: Array},
   newItemLink: {type: String, default: null, required: false},
   admin: {type: Boolean, default: false, required: false},
-  allowOrderBy: {type: Boolean, default: true},
+  hideOrderBy: {type: Boolean},
   hideEmpty: {type: Boolean, default: false},
   maxCellCountInRow: {type: Number}
 });
@@ -245,7 +245,7 @@ const storeOrderBy = () => {
       :exclude-order-bys="excludeOrderBys"
       :main-filter="mainFilter"
       :date-filter="dateFilter"
-      :allow-order-by="allowOrderBy"
+      :hide-order-by="hideOrderBy"
       v-model:search-query="searchQuery"
       v-model:order-by-option="selectedOrderByOption"
       v-model:filter-options="selectedFilterOptions"
