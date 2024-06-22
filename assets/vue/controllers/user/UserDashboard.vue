@@ -63,7 +63,3 @@ const props = defineProps({
     </template>
   </VDatatable>
 </template>
-
-<style scoped>
-
-</style>
