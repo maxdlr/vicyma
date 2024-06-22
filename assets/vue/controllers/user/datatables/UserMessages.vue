@@ -8,9 +8,6 @@ const props = defineProps({
   title: {type: String},
 })
 
-const baseUrl = '/user/message';
-const url = (id) => `${baseUrl}/${id}`;
-
 </script>
 
 <template>
