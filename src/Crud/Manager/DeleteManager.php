@@ -53,13 +53,8 @@ class DeleteManager extends AbstractController
         callable $doBeforeDelete = null
     ): Response
     {
-//        if ($redirectRoute !== 'referer') {
-//            $redirectRoute = $this->generateUrl($redirectRoute, $redirectParams);
-//        }
-
         if ($this->isCsrfTokenValid('delete' . $object->getId(), $request->getPayload()->get('_token'))) {
             if ($doBeforeDelete !== null) {
-
                 $do = $doBeforeDelete($object, $redirectRoute, $redirectParams);
                 try {
                     if (in_array('save', $do)) {
