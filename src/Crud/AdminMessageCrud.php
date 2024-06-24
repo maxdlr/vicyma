@@ -8,6 +8,7 @@ use App\Entity\Message;
 use App\Entity\User;
 use App\Enum\RoleEnum;
 use App\Form\AdminMessageType;
+use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +49,6 @@ class AdminMessageCrud extends AbstractCrud
      * It inherits $object, $redirectRoute and $redirectParams.
      * @param callable|null $doBeforeDelete
      * @throws Exception
-     * @throws \Exception
      *
      * @example fn($object, $redirectRoute, $redirectParams) => {}
      * If it returns void, it executes and delete() continues.

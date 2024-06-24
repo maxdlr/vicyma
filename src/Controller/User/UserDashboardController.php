@@ -10,7 +10,6 @@ use App\Entity\Address;
 use App\Entity\Message;
 use App\Enum\RoleEnum;
 use App\Service\UserManager;
-use App\Service\Vue\VueFormatter;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

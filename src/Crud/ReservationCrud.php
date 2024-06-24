@@ -7,10 +7,7 @@ use App\Crud\Manager\CrudSetting;
 use App\Crud\Manager\DeleteManager;
 use App\Crud\Manager\SaveManager;
 use App\Crud\Manager\UploadManager;
-use App\Entity\Lodging;
 use App\Entity\Reservation;
-use App\Entity\ReservationStatus;
-use App\Entity\User;
 use App\Enum\ReservationStatusEnum;
 use App\Form\ReservationType;
 use App\Repository\ReservationStatusRepository;
@@ -81,20 +78,23 @@ class ReservationCrud extends AbstractCrud
      * $doBeforeDelete() is an optional ?callable function that executes before the actual delete.
      * Return array|void
      * It inherits $object, $redirectRoute and $redirectParams.
-     * @param callable|null $doBeforeDelete
+     * @param Request $request
+     * @param Reservation $object
+     * @param string $redirectRoute
+     * @param array $redirectParams
+     * @param string $anchor
+     * @return Response
      * @throws Exception
-     *
      * @example fn($object, $redirectRoute, $redirectParams) => {}
      * If it returns void, it executes and delete() continues.
      * If it returns an array, the array can only contain 'save' or 'exit'.
      * If it returns 'save', it persists the reservation object, flushes and delete() continues.
      * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
-     *
      */
     #[Route('/reservation/{id}/delete', name: 'app_reservation_delete', methods: ['GET', 'POST'])]
-    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = []): Response
+    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = [], string $anchor = 'reservations'): Response
     {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, function ($object) {
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $anchor, function ($object) {
             assert($object instanceof Reservation);
             $object->setReservationStatus($this->reservationStatusRepository->findOneByName(ReservationStatusEnum::DELETED->value));
             return ['save', 'exit'];

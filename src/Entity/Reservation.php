@@ -51,10 +51,10 @@ class Reservation
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdOn;
+    private ?DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updatedOn = null;
+    private ?DateTimeInterface $updatedOn = null;
 
     public function __construct()
     {
@@ -218,12 +218,12 @@ class Reservation
         return $this;
     }
 
-    public function getCreatedOn(): ?\DateTimeInterface
+    public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
     }
 
-    public function getUpdatedOn(): ?\DateTimeInterface
+    public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
     }

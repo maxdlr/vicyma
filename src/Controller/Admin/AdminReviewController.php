@@ -77,7 +77,6 @@ class AdminReviewController extends AbstractController
     public function getNotification(): array
     {
         $pendingReviews = $this->reviewRepository->findBy(['status' => ReviewStatusEnum::PENDING->value]);
-
         return VueObjectMaker::makeVueObjectOf($pendingReviews, ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
     }
 

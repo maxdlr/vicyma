@@ -37,7 +37,7 @@ class Message
     private ?User $admin = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $createdOn = null;
+    private ?DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
@@ -46,10 +46,10 @@ class Message
     private ?Conversation $conversation = null;
 
     #[ORM\Column]
-    private ?bool $isReadByAdmin = null;
+    private ?bool $isReadByAdmin;
 
     #[ORM\Column]
-    private ?bool $isReadByUser = null;
+    private ?bool $isReadByUser;
 
     public function __construct()
     {

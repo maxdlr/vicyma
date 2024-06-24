@@ -80,7 +80,7 @@ class Navigation extends AbstractController
             null;
 
         $userId = $user?->getId();
-        $isUserAdmin = $user !== null && in_array('ROLE_ADMIN', $user?->getRoles());
+        $isUserAdmin = $user !== null && in_array('ROLE_ADMIN', $user->getRoles());
 
         $nav = [
             'about' =>

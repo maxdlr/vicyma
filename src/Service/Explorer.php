@@ -6,7 +6,7 @@ use function Symfony\Component\String\u;
 
 class Explorer
 {
-    public static function getDirContents($dir, &$results = array()): array
+    public static function getDirContents($dir, &$results = array(), bool $deep = true): array
     {
         $files = scandir($dir);
 
@@ -14,7 +14,7 @@ class Explorer
             $path = realpath($dir . DIRECTORY_SEPARATOR . $value);
             if (!is_dir($path)) {
                 $results[] = $path;
-            } else if ($value != "." && $value != "..") {
+            } else if ($value != "." && $value != ".." && $deep) {
                 self::getDirContents($path, $results);
             }
         }

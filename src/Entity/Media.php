@@ -20,14 +20,14 @@ class Media
     #[ORM\Column(length: 255)]
     private ?string $mediaPath = null;
 
-    #[ORM\Column()]
+    #[ORM\Column]
     private ?float $mediaSize = null;
 
     #[ORM\ManyToMany(targetEntity: Lodging::class, inversedBy: 'medias')]
     private Collection $lodgings;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $createdOn = null;
+    private ?DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;

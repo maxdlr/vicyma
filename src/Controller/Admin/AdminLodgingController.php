@@ -13,6 +13,7 @@ use App\Service\Vue\VueFormatter;
 use App\Service\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,7 +84,7 @@ class AdminLodgingController extends AbstractController
     // ---------------------------------------------------------------------------------------------------
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getData(): array
     {

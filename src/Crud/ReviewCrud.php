@@ -8,6 +8,7 @@ use App\Entity\Lodging;
 use App\Entity\Review;
 use App\Entity\User;
 use App\Form\ReviewType;
+use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,8 +58,8 @@ class ReviewCrud extends AbstractCrud
      *
      */
     #[Route('review/{id}', name: 'app_review_delete', methods: ['POST'])]
-    public function delete(Request $request, Review $object, string $redirectRoute = 'referer', array $redirectParams = [], ?callable $doBeforeDelete = null): Response
+    public function delete(Request $request, Review $object, string $redirectRoute = 'referer', array $redirectParams = [], string $anchor = 'reviews', ?callable $doBeforeDelete = null): Response
     {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $doBeforeDelete);
+        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $anchor, $doBeforeDelete);
     }
 }
