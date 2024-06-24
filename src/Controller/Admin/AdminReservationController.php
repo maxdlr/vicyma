@@ -10,9 +10,9 @@ use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReservationRepository;
 use App\Repository\ReservationStatusRepository;
-use App\Service\Vue\VueDatatableSetting;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -162,6 +162,7 @@ class AdminReservationController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
@@ -194,6 +195,6 @@ class AdminReservationController extends AbstractController
                 new VueDatatableSetting(name: 'check in date', values: $arrivalDates, default: '', codeName: 'arrivalDate'),
             ],
             items: $reservations
-        );
+        )->getAsVueObject();
     }
 }

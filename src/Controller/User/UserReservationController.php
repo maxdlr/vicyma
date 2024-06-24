@@ -6,9 +6,9 @@ use App\Enum\ReservationStatusEnum;
 use App\Repository\ReservationRepository;
 use App\Repository\ReservationStatusRepository;
 use App\Service\UserManager;
-use App\Service\Vue\VueDatatableSetting;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -63,6 +63,6 @@ class UserReservationController extends AbstractController
                 new VueDatatableSetting(name: 'status', values: $statuses, default: 'PENDING', codeName: 'reservationStatus')
             ],
             items: $reservations
-        );
+        )->getAsVueObject();
     }
 }

@@ -4,7 +4,7 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\VueObjectMaker;
 use ReflectionException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
@@ -12,10 +12,12 @@ use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundE
 readonly class UserManager
 {
     public ?User $user;
+
     public function __construct(
         private Security       $security,
         private UserRepository $userRepository
-    ){
+    )
+    {
         $this->user = $this->getLoggedUser();
     }
 

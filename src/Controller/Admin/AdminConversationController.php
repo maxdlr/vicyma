@@ -7,10 +7,11 @@ use App\Entity\Conversation;
 use App\Enum\RoleEnum;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
-use App\Service\Vue\VueDatatableSetting;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -61,6 +62,7 @@ class AdminConversationController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
@@ -77,6 +79,6 @@ class AdminConversationController extends AbstractController
                 new VueDatatableSetting(name: 'creation date', values: $creationDates, default: '', codeName: 'createdOn')
             ],
             items: $conversations
-        );
+        )->getAsVueObject();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Vue;
+namespace App\Vue;
 
 use App\Entity\Address;
 use App\Entity\BedType;
@@ -32,20 +32,6 @@ class VueObjectMaker
         }, $entities);
 
         return new static;
-    }
-
-    public function regroup(string $property): static
-    {
-        self::$vueObject = array_unique(
-            array_map(fn(array $object) => $object[$property], self::$vueObject), SORT_REGULAR
-        );
-        sort(self::$vueObject);
-        return new static;
-    }
-
-    public function get(): array
-    {
-        return self::$vueObject;
     }
 
     /**
@@ -129,5 +115,19 @@ class VueObjectMaker
             $sortedVueObject[$property] = $vueObject[$property];
         }
         return $sortedVueObject;
+    }
+
+    public function regroup(string $property): static
+    {
+        self::$vueObject = array_unique(
+            array_map(fn(array $object) => $object[$property], self::$vueObject), SORT_REGULAR
+        );
+        sort(self::$vueObject);
+        return new static;
+    }
+
+    public function get(): array
+    {
+        return self::$vueObject;
     }
 }

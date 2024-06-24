@@ -11,10 +11,10 @@ use App\Enum\RoleEnum;
 use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
 use App\Service\UserManager;
-use App\Service\Vue\VueDatatableSetting;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
 use App\ValueObject\ConversationId;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -134,6 +134,7 @@ class UserMessageController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
@@ -152,6 +153,7 @@ class UserMessageController extends AbstractController
             settings: [
                 new VueDatatableSetting(name: 'sent on', values: $creationDates, default: '', codeName: 'createdOn')
             ],
-            items: $messages);
+            items: $messages
+        )->getAsVueObject();
     }
 }

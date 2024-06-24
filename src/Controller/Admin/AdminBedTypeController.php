@@ -8,8 +8,8 @@ use App\Entity\BedType;
 use App\Enum\RoleEnum;
 use App\Repository\BedTypeRepository;
 use App\Repository\ReviewRepository;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -81,6 +81,8 @@ class AdminBedTypeController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
+     * @throws Exception
      */
     public function getData(): array
     {
@@ -95,6 +97,6 @@ class AdminBedTypeController extends AbstractController
             component: 'AdminBeds',
             settings: [],
             items: $beds
-        );
+        )->getAsVueObject();
     }
 }

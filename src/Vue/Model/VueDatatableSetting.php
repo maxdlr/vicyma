@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Vue;
+namespace App\Vue\Model;
 
 class VueDatatableSetting
 {
@@ -20,7 +20,6 @@ class VueDatatableSetting
             'default' => $this->default,
             'values' => $this->values,
             'codeName' => $this->codeName
-
         ];
 
         return match ($key) {

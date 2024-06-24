@@ -7,9 +7,9 @@ use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\User;
 use App\Enum\RoleEnum;
 use App\Repository\UserRepository;
-use App\Service\Vue\VueDatatableSetting;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -88,6 +88,7 @@ class AdminUserController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(RoleEnum $roleEnum = RoleEnum::ROLE_USER): array
     {
@@ -119,6 +120,6 @@ class AdminUserController extends AbstractController
                 new VueDatatableSetting(name: 'member since', values: $creationDate, default: '', codeName: 'createdOn')
             ],
             items: $users
-        );
+        )->getAsVueObject();
     }
 }

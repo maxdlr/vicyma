@@ -1,41 +1,44 @@
 <?php
 
-namespace App\Service\Vue;
+namespace App\Vue;
 
 use App\Service\Explorer;
+use App\Vue\Model\VueDatatable;
+use App\Vue\Model\VueDatatableComponent;
+use App\Vue\Model\VueDatatableSetting;
+use Exception;
 
 class VueFormatter
 {
+    /**
+     * @throws Exception
+     */
     public static function createDatatableComponent(
         string $name,
         string $component,
-        array $settings,
-        array $items
-    )
+        array  $settings,
+        array  $items
+    ): VueDatatableComponent
     {
-       assert(self::isVueComponent($component), 'Vue component ' . $component . ' not found');
-
-       return [
-           'name' => $name,
-           'component' => $component,
-           'data' => self::createDatatable($settings, $items)
-       ];
-    }
-
-    private static function isVueComponent(string $path): bool
-    {
-        return in_array($path, Explorer::findFileNames('../assets/vue', 'vue'));
+        return new VueDatatableComponent(
+            name: $name,
+            component: $component,
+            datatable: self::createDatatable(
+                settings: $settings,
+                items: $items
+            )
+        );
     }
 
     public static function createDatatable(
         array $settings,
         array $items
-    ): array
+    ): VueDatatable
     {
-        return [
-            'settings' => self::constructSettings($settings),
-            'items' => $items
-        ];
+        return new VueDatatable(
+            settings: self::constructSettings($settings),
+            items: $items
+        );
     }
 
     private static function constructSettings(array $settings): array

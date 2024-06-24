@@ -8,9 +8,9 @@ use App\Entity\Lodging;
 use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
-use App\Service\Vue\VueDatatableSetting;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -85,6 +85,7 @@ class AdminLodgingController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
@@ -120,6 +121,6 @@ class AdminLodgingController extends AbstractController
                 new VueDatatableSetting(name: 'reviews', values: $reviewRates, default: '', codeName: 'reviews'),
             ],
             items: $lodgings
-        );
+        )->getAsVueObject();
     }
 }

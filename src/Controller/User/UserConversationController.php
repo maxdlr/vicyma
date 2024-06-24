@@ -9,9 +9,9 @@ use App\Entity\Message;
 use App\Enum\RoleEnum;
 use App\Repository\ConversationRepository;
 use App\Service\UserManager;
-use App\Service\Vue\VueDatatableSetting;
-use App\Service\Vue\VueFormatter;
-use App\Service\Vue\VueObjectMaker;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -60,6 +60,7 @@ class UserConversationController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
@@ -78,7 +79,7 @@ class UserConversationController extends AbstractController
                 new VueDatatableSetting(name: 'archived', values: $isArchivedByUser, default: false, codeName: 'isArchivedByUser'),
             ],
             items: $conversations
-        );
+        )->getAsVueObject();
     }
 
     #[Route(path: '/{id}/archive', name: 'archive', methods: ['GET'])]
