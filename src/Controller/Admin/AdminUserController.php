@@ -7,7 +7,9 @@ use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\User;
 use App\Enum\RoleEnum;
 use App\Repository\UserRepository;
-use App\Service\VueDataFormatter;
+use App\Service\Vue\VueDatatableSetting;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -90,11 +92,11 @@ class AdminUserController extends AbstractController
     public function getData(RoleEnum $roleEnum = RoleEnum::ROLE_USER): array
     {
         $allUsers = $this->userRepository->findByRole($roleEnum);
-        $firstnames = VueDataFormatter::makeVueObjectOf($allUsers, ['firstname'])->regroup('firstname')->get();
-        $lastnames = VueDataFormatter::makeVueObjectOf($allUsers, ['lastname'])->regroup('lastname')->get();
-        $isDeleted = VueDataFormatter::makeVueObjectOf($allUsers, ['isDeleted'])->regroup('isDeleted')->get();
-        $creationDate = VueDataFormatter::makeVueObjectOf($allUsers, ['createdOn'])->regroup('createdOn')->get();
-        $users = VueDataFormatter::makeVueObjectOf($allUsers,
+        $firstnames = VueObjectMaker::makeVueObjectOf($allUsers, ['firstname'])->regroup('firstname')->get();
+        $lastnames = VueObjectMaker::makeVueObjectOf($allUsers, ['lastname'])->regroup('lastname')->get();
+        $isDeleted = VueObjectMaker::makeVueObjectOf($allUsers, ['isDeleted'])->regroup('isDeleted')->get();
+        $creationDate = VueObjectMaker::makeVueObjectOf($allUsers, ['createdOn'])->regroup('createdOn')->get();
+        $users = VueObjectMaker::makeVueObjectOf($allUsers,
             [
                 'id',
                 'firstname',
@@ -107,19 +109,16 @@ class AdminUserController extends AbstractController
                 'createdOn',
             ])->get();
 
-        return [
-            'name' => 'users',
-            'component' => 'AdminUsers',
-            'data' =>
-                [
-                    'settings' => [
-                        'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
-                        'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
-                        'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted'],
-                        'createdOn' => ['name' => 'member since', 'default' => '', 'values' => $creationDate, 'codeName' => 'createdOn'],
-                    ],
-                    'items' => $users
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'users',
+            component: 'AdminUsers',
+            settings: [
+                new VueDatatableSetting('lastname', '', $lastnames, 'lastname'),
+                new VueDatatableSetting('firstname', '', $firstnames, 'firstname'),
+                new VueDatatableSetting('is deleted', false, $isDeleted, 'isDeleted'),
+                new VueDatatableSetting('member since', '', $creationDate , 'createdOn')
+            ],
+            items: $users
+        );
     }
 }

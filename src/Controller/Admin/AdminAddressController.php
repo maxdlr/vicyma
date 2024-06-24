@@ -8,7 +8,6 @@ use App\Entity\Address;
 use App\Enum\RoleEnum;
 use App\Repository\AddressRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

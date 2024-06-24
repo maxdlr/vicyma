@@ -8,7 +8,9 @@ use App\Entity\Lodging;
 use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
+use App\Service\Vue\VueDatatableSetting;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -87,12 +89,12 @@ class AdminLodgingController extends AbstractController
     {
         $allLodgings = $this->lodgingRepository->findAll();
 
-        $capacities = VueDataFormatter::makeVueObjectOf($allLodgings, ['capacity'])->regroup('capacity')->get();
-        $names = VueDataFormatter::makeVueObjectOf($allLodgings, ['name'])->regroup('name')->get();
-        $priceByNights = VueDataFormatter::makeVueObjectOf($allLodgings, ['priceByNight'])->regroup('priceByNight')->get();
-        $reviewRates = VueDataFormatter::makeVueObjectOf($this->reviewRepository->findAll(), ['rate'])->regroup('rate')->get();
+        $capacities = VueObjectMaker::makeVueObjectOf($allLodgings, ['capacity'])->regroup('capacity')->get();
+        $names = VueObjectMaker::makeVueObjectOf($allLodgings, ['name'])->regroup('name')->get();
+        $priceByNights = VueObjectMaker::makeVueObjectOf($allLodgings, ['priceByNight'])->regroup('priceByNight')->get();
+        $reviewRates = VueObjectMaker::makeVueObjectOf($this->reviewRepository->findAll(), ['rate'])->regroup('rate')->get();
 
-        $lodgings = VueDataFormatter::makeVueObjectOf(
+        $lodgings = VueObjectMaker::makeVueObjectOf(
             $allLodgings,
             [
                 'id',
@@ -107,19 +109,16 @@ class AdminLodgingController extends AbstractController
             ]
         )->get();
 
-        return [
-            'name' => 'lodgings',
-            'component' => 'AdminLodgings',
-            'data' =>
-                [
-                    'settings' => [
-                        'capacity' => ['name' => 'capacity', 'default' => '', 'values' => $capacities, 'codeName' => 'capacity'],
-                        'name' => ['name' => 'name', 'default' => '', 'values' => $names, 'codeName' => 'name'],
-                        'priceByNight' => ['name' => 'priceByNight', 'default' => '', 'values' => $priceByNights, 'codeName' => 'priceByNight'],
-                        'reviews' => ['name' => 'reviews', 'default' => '', 'values' => $reviewRates, 'codeName' => 'reviews'],
-                    ],
-                    'items' => $lodgings
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'lodgings',
+            component: 'AdminLodgings',
+            settings: [
+                new VueDatatableSetting('capacity', '', $capacities, 'capacity'),
+                new VueDatatableSetting('name', '', $names, 'name'),
+                new VueDatatableSetting('priceByNight', '', $priceByNights, 'priceByNight'),
+                new VueDatatableSetting('reviews', '', $reviewRates, 'reviews'),
+            ],
+            items: $lodgings
+        );
     }
 }

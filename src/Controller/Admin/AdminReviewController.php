@@ -2,14 +2,16 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\ReviewCrud;
 use App\Crud\Manager\AfterCrudTrait;
+use App\Crud\ReviewCrud;
 use App\Entity\Review;
 use App\Enum\ReviewStatusEnum;
 use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
+use App\Service\Vue\VueDatatableSetting;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -76,7 +78,7 @@ class AdminReviewController extends AbstractController
     {
         $pendingReviews = $this->reviewRepository->findBy(['status' => ReviewStatusEnum::PENDING->value]);
 
-        return VueDataFormatter::makeVueObjectOf($pendingReviews, ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
+        return VueObjectMaker::makeVueObjectOf($pendingReviews, ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
     }
 
     /**
@@ -85,11 +87,11 @@ class AdminReviewController extends AbstractController
     public function getData(): array
     {
         $allReviews = $this->reviewRepository->findAll();
-        $users = VueDataFormatter::makeVueObjectOf($allReviews, ['user'])->regroup('user')->get();
-        $rates = VueDataFormatter::makeVueObjectOf($allReviews, ['rate'])->regroup('rate')->get();
-        $lodgings = VueDataFormatter::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
-        $publicationDates = VueDataFormatter::makeVueObjectOf($allReviews, ['createdOn'])->regroup('createdOn')->get();
-        $reviews = VueDataFormatter::makeVueObjectOf($this->reviewRepository->findAll(),
+        $users = VueObjectMaker::makeVueObjectOf($allReviews, ['user'])->regroup('user')->get();
+        $rates = VueObjectMaker::makeVueObjectOf($allReviews, ['rate'])->regroup('rate')->get();
+        $lodgings = VueObjectMaker::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
+        $publicationDates = VueObjectMaker::makeVueObjectOf($allReviews, ['createdOn'])->regroup('createdOn')->get();
+        $reviews = VueObjectMaker::makeVueObjectOf($this->reviewRepository->findAll(),
             [
                 'id',
                 'rate',
@@ -99,19 +101,16 @@ class AdminReviewController extends AbstractController
                 'createdOn'
             ])->get();
 
-        return [
-            'name' => 'reviews',
-            'component' => 'AdminReviews',
-            'data' =>
-                [
-                    'settings' => [
-                        'rate' => ['name' => 'rates', 'default' => '', 'values' => $rates, 'codeName' => 'rate'],
-                        'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
-                        'lodging' => ['name' => 'lodging', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodging'],
-                        'createdOn' => ['name' => 'publication date', 'default' => '', 'values' => $publicationDates, 'codeName' => 'createdOn'],
-                    ],
-                    'items' => $reviews
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'reviews',
+            component: 'AdminReviews',
+            settings: [
+                new VueDatatableSetting('rates', '', $rates, 'rate'),
+                new VueDatatableSetting('clients', '', $users, 'user'),
+                new VueDatatableSetting('lodging', '', $lodgings, 'lodging'),
+                new VueDatatableSetting('publication date', '', $publicationDates, 'createdOn'),
+            ],
+            items: $reviews
+        );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Vue;
 
 use App\Entity\Address;
 use App\Entity\BedType;
@@ -11,14 +11,14 @@ use App\Entity\Reservation;
 use App\Entity\ReservationStatus;
 use App\Entity\Review;
 use App\Entity\User;
+use App\Service\ClassBrowser;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use ReflectionException;
 use ReflectionMethod;
-use function PHPUnit\Framework\stringContains;
 use function Symfony\Component\String\u;
 
-class VueDataFormatter
+class VueObjectMaker
 {
     private static array $vueObject = [];
 

@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Controller\User\UserController;
 use App\Enum\RoleEnum;
-use App\Repository\UserRepository;
+use App\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,8 +13,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     public function __construct(
-        private readonly UserRepository $userRepository,
-        private readonly UserController $userController,
+        private readonly UserManager $userManager
     )
     {
     }
@@ -44,7 +42,7 @@ class SecurityController extends AbstractController
     #[Route(path: '/login/success', name: 'app_login_success')]
     public function loginSuccess(): RedirectResponse
     {
-        $user = $this->userController->getLoggedUser();
+        $user = $this->userManager->user;
 
         return in_array(RoleEnum::ROLE_ADMIN->value, $user->getRoles()) ?
             $this->redirectToRoute('app_admin_dashboard') :

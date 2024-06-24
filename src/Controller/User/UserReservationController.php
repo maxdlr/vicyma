@@ -2,11 +2,13 @@
 
 namespace App\Controller\User;
 
-use App\Crud\ReservationCrud;
 use App\Enum\ReservationStatusEnum;
 use App\Repository\ReservationRepository;
 use App\Repository\ReservationStatusRepository;
-use App\Service\VueDataFormatter;
+use App\Service\UserManager;
+use App\Service\Vue\VueDatatableSetting;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -15,7 +17,7 @@ class UserReservationController extends AbstractController
     public function __construct(
         private readonly ReservationStatusRepository $reservationStatusRepository,
         private readonly ReservationRepository $reservationRepository,
-        private readonly UserController $userController
+        private readonly UserManager $userManager
     )
     {
     }
@@ -25,10 +27,10 @@ class UserReservationController extends AbstractController
      */
     public function getData(): array
     {
-        $user = $this->userController->getLoggedUser();
+        $user = $this->userManager->user;
         $userReservations = $this->reservationRepository->findBy(['user' => $user]);
-        $creationDates = VueDataFormatter::makeVueObjectOf($userReservations, ['createdOn'])->regroup('createdOn')->get();
-        $statuses = VueDataFormatter::makeVueObjectOf(
+        $creationDates = VueObjectMaker::makeVueObjectOf($userReservations, ['createdOn'])->regroup('createdOn')->get();
+        $statuses = VueObjectMaker::makeVueObjectOf(
             [
                 ...$this->reservationStatusRepository->findBy(['name' => ReservationStatusEnum::PENDING->value]),
                 ...$this->reservationStatusRepository->findBy(['name' => ReservationStatusEnum::CONFIRMED->value]),
@@ -38,7 +40,7 @@ class UserReservationController extends AbstractController
         )
             ->regroup('name')
             ->get();
-        $reservations = VueDataFormatter::makeVueObjectOf(
+        $reservations = VueObjectMaker::makeVueObjectOf(
             $userReservations,
             [
                 'id',
@@ -55,18 +57,12 @@ class UserReservationController extends AbstractController
             ]
         )->get();
 
-        return [
-            'settings' => [
-                'createdOn' => ['name' => 'sent on', 'default' => '', 'values' => $creationDates, 'codeName' => 'createdOn'],
-                'reservationStatus' => [
-                    'name' => 'status',
-                    'default' => 'PENDING',
-                    'values' => $statuses,
-                    'codeName' => 'reservationStatus'
-                ],
+        return VueFormatter::createDatatable(
+            settings: [
+                new VueDatatableSetting('sent on', '', $creationDates, 'createdOn'),
+                new VueDatatableSetting('status', 'PENDING', $statuses, 'reservationStatus')
             ],
-            'items' => $reservations
-        ];
-
+            items: $reservations
+        );
     }
 }

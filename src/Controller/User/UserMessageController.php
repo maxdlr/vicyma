@@ -7,11 +7,13 @@ use App\Crud\MessageCrud;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Entity\Reservation;
-use App\Entity\User;
 use App\Enum\RoleEnum;
 use App\Repository\MessageRepository;
 use App\Repository\UserRepository;
-use App\Service\VueDataFormatter;
+use App\Service\UserManager;
+use App\Service\Vue\VueDatatableSetting;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use App\ValueObject\ConversationId;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,17 +31,14 @@ class UserMessageController extends AbstractController
 {
     use AfterCrudTrait;
 
-    private readonly ?User $user;
-
     public function __construct(
         private readonly MessageRepository      $messageRepository,
         private readonly MessageCrud            $messageCrud,
         private readonly EntityManagerInterface $entityManager,
         private readonly UserRepository         $userRepository,
-        private readonly UserController         $userController
+        private readonly UserManager            $userManager
     )
     {
-        $this->user = $userController->getLoggedUser();
     }
 
     /**
@@ -74,7 +73,7 @@ class UserMessageController extends AbstractController
             $request,
             $newMessage,
             [
-                'user' => $this->user,
+                'user' => $this->userManager->user,
                 'isReply' => true
             ],
             function () use ($message, $newMessage, $pastMessages) {
@@ -118,12 +117,12 @@ class UserMessageController extends AbstractController
         $message = new Message();
         $message
             ->setSubject('Question about ' . $reservation->getReservationNumber())
-            ->setUser($this->user)
+            ->setUser($this->userManager->user)
             ->setReservation($reservation);
 
         if (count($reservation->getLodgings()) === 1) $message->setLodging($reservation->getLodgings()[0]);
 
-        $options = ['lodgings' => $reservation->getLodgings(), 'user' => $this->user];
+        $options = ['lodgings' => $reservation->getLodgings(), 'user' => $this->userManager->user];
         $messageForm = $this->messageCrud->save($request, $message, $options);
         if ($messageForm === true) return $this->redirectTo('referer', $request);
 
@@ -139,32 +138,20 @@ class UserMessageController extends AbstractController
     public function getData(): array
     {
         $userMessages = $this->messageRepository->findBy([
-            'user' => $this->user,
+            'user' => $this->userManager->user,
             'conversation' => null
         ]);
-        $creationDates = VueDataFormatter::makeVueObjectOf($userMessages, ['createdOn'])->regroup('createdOn')->get();
-        $messages = VueDataFormatter::makeVueObjectOf($userMessages, [
-            'id',
-            'createdOn',
-            'subject',
-            'content',
-            'lodging',
-            'reservation',
-            'conversation',
-            'isReadByUser',
-            'admin',
-            'user'
+        $creationDates = VueObjectMaker::makeVueObjectOf($userMessages, ['createdOn'])->regroup('createdOn')->get();
+        $messages = VueObjectMaker::makeVueObjectOf($userMessages, [
+            'id', 'createdOn', 'subject', 'content', 'lodging', 'reservation', 'conversation', 'isReadByUser', 'admin', 'user'
         ])->get();
 
-        return [
-            'name' => 'sent',
-            'component' => 'UserMessages',
-            'data' => [
-                'settings' => [
-                    'createdOn' => ['name' => 'sent on', 'default' => '', 'values' => $creationDates, 'codeName' => 'createdOn']
-                ],
-                'items' => $messages
-            ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'sent',
+            component: 'UserMessages',
+            settings: [
+                new VueDatatableSetting('sent on', '', $creationDates, 'createdOn')
+            ],
+            items: $messages);
     }
 }

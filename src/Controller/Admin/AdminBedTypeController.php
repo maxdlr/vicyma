@@ -8,7 +8,8 @@ use App\Entity\BedType;
 use App\Enum\RoleEnum;
 use App\Repository\BedTypeRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -84,25 +85,15 @@ class AdminBedTypeController extends AbstractController
     {
         $allBeds = $this->bedRepository->findAll();
 
-        $beds = VueDataFormatter::makeVueObjectOf(
-            $allBeds,
-            [
-                'id',
-                'height',
-                'width',
-                'isExtra',
-                'lodgings'
-            ]
+        $beds = VueObjectMaker::makeVueObjectOf(
+            $allBeds, ['id', 'height', 'width', 'isExtra', 'lodgings']
         )->get();
 
-        return [
-            'name' => 'beds',
-            'component' => 'AdminBeds',
-            'data' =>
-                [
-                    'settings' => [],
-                    'items' => $beds
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'beds',
+            component: 'AdminBeds',
+            settings: [],
+            items: $beds
+        );
     }
 }

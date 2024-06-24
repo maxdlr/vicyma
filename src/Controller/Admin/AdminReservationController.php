@@ -10,7 +10,9 @@ use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReservationRepository;
 use App\Repository\ReservationStatusRepository;
-use App\Service\VueDataFormatter;
+use App\Service\Vue\VueDatatableSetting;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -136,7 +138,7 @@ class AdminReservationController extends AbstractController
             ]
         );
 
-        return VueDataFormatter::makeVueObjectOf(
+        return VueObjectMaker::makeVueObjectOf(
             $pendingReservations,
             ['id', 'createdOn', 'user', 'lodgings', 'arrivalDate', 'departureDate']
         )->get();
@@ -148,12 +150,12 @@ class AdminReservationController extends AbstractController
     public function getData(): array
     {
         $allReservations = $this->reservationRepository->findAll();
-        $arrivalDates = VueDataFormatter::makeVueObjectOf($allReservations, ['arrivalDate'])->regroup('arrivalDate')->get();
-        $statuses = VueDataFormatter::makeVueObjectOf($this->reservationStatusRepository->findAll(), ['name'])->regroup('name')->get();
-        $clients = VueDataFormatter::makeVueObjectOf($allReservations, ['user'])->regroup('user')->get();
-        $lodgings = VueDataFormatter::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
+        $arrivalDates = VueObjectMaker::makeVueObjectOf($allReservations, ['arrivalDate'])->regroup('arrivalDate')->get();
+        $statuses = VueObjectMaker::makeVueObjectOf($this->reservationStatusRepository->findAll(), ['name'])->regroup('name')->get();
+        $clients = VueObjectMaker::makeVueObjectOf($allReservations, ['user'])->regroup('user')->get();
+        $lodgings = VueObjectMaker::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
 
-        $reservations = VueDataFormatter::makeVueObjectOf($allReservations,
+        $reservations = VueObjectMaker::makeVueObjectOf($allReservations,
             [
                 'id',
                 'reservationNumber',
@@ -166,20 +168,17 @@ class AdminReservationController extends AbstractController
                 'createdOn'
             ])->get();
 
-        return [
-            'name' => 'reservations',
-            'component' => 'AdminReservationRequests',
-            'data' =>
-                [
-                    'settings' => [
-                        'reservationStatus' => ['name' => 'status', 'default' => 'PENDING', 'values' => $statuses, 'codeName' => 'reservationStatus'],
-                        'user' => ['name' => 'clients', 'default' => '', 'values' => $clients, 'codeName' => 'user'],
-                        'lodgings' => ['name' => 'lodgings', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodgings'],
-                        'arrivalDate' => ['name' => 'check in date', 'default' => '', 'values' => $arrivalDates, 'codeName' => 'arrivalDate'],
-                    ],
-                    'items' => $reservations
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'reservations',
+            component: 'AdminReservationRequests',
+            settings: [
+                new VueDatatableSetting('status', 'PENDING', $statuses, 'reservationStatus'),
+                new VueDatatableSetting('clients', '', $clients, 'user'),
+                new VueDatatableSetting('lodgings', '', $lodgings, 'lodgings'),
+                new VueDatatableSetting('check in date', '', $arrivalDates, 'arrivalDate'),
+            ],
+            items: $reservations
+        );
     }
 
     /**

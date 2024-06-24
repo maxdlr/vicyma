@@ -3,13 +3,15 @@
 namespace App\Controller\Admin;
 
 use App\Crud\AdminMessageCrud;
-use App\Crud\MessageCrud;
 use App\Crud\Manager\AfterCrudTrait;
+use App\Crud\MessageCrud;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Enum\RoleEnum;
 use App\Repository\MessageRepository;
-use App\Service\VueDataFormatter;
+use App\Service\Vue\VueDatatableSetting;
+use App\Service\Vue\VueFormatter;
+use App\Service\Vue\VueObjectMaker;
 use App\ValueObject\ConversationId;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -129,10 +131,10 @@ class AdminMessageController extends AbstractController
     public function getData(): array
     {
         $allMessages = $this->messageRepository->findBy(['admin' => null]);
-        $users = VueDataFormatter::makeVueObjectOf($allMessages, ['user'])->regroup('user')->get();
-        $subjects = VueDataFormatter::makeVueObjectOf($allMessages, ['subject'])->regroup('subject')->get();
-        $receptionDate = VueDataFormatter::makeVueObjectOf($allMessages, ['createdOn'])->regroup('createdOn')->get();
-        $messages = VueDataFormatter::makeVueObjectOf($allMessages,
+        $users = VueObjectMaker::makeVueObjectOf($allMessages, ['user'])->regroup('user')->get();
+        $subjects = VueObjectMaker::makeVueObjectOf($allMessages, ['subject'])->regroup('subject')->get();
+        $receptionDate = VueObjectMaker::makeVueObjectOf($allMessages, ['createdOn'])->regroup('createdOn')->get();
+        $messages = VueObjectMaker::makeVueObjectOf($allMessages,
             [
                 'id',
                 'user',
@@ -143,18 +145,15 @@ class AdminMessageController extends AbstractController
                 'createdOn'
             ])->get();
 
-        return [
-            'name' => 'messages',
-            'component' => 'AdminMessages',
-            'data' =>
-                [
-                    'settings' => [
-                        'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
-                        'subject' => ['name' => 'subjects', 'default' => '', 'values' => $subjects, 'codeName' => 'subject'],
-                        'createdOn' => ['name' => 'reception date', 'default' => '', 'values' => $receptionDate, 'codeName' => 'createdOn']
-                    ],
-                    'items' => $messages
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'messages',
+            component: 'AdminMessages',
+            settings: [
+                new VueDatatableSetting('clients', '', $users, 'user'),
+                new VueDatatableSetting('subjects', '', $subjects, 'subject'),
+                new VueDatatableSetting('reception date', '', $receptionDate, 'createdOn'),
+            ],
+            items: $messages
+        );
     }
 }

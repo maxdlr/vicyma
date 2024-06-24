@@ -66,7 +66,7 @@ class Navigation extends AbstractController
             'conversations' =>
                 [
                     'label' => 'conversations',
-                    'value' => $this->generateUrl('app_user_account_conversations'),
+                    'value' => $this->generateUrl('app_user_account_conversation_dashboard'),
                     'iconClass' => 'chat-dots-fill'
                 ]
         ];

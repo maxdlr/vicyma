@@ -9,6 +9,8 @@ use App\Crud\UserCrud;
 use App\Entity\Address;
 use App\Entity\Message;
 use App\Enum\RoleEnum;
+use App\Service\UserManager;
+use App\Service\Vue\VueFormatter;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,10 +29,8 @@ class UserDashboardController extends AbstractController
         private readonly AddressCrud               $addressCrud,
         private readonly UserCrud                  $userCrud,
         private readonly UserReservationController $userReservationController,
-        private readonly UserController            $userController,
-        private readonly UserConversationController $userConversationController,
-        private readonly UserMessageController $userMessageController,
         private readonly MessageCrud $messageCrud,
+        private readonly UserManager $userManager
     )
     {
     }
@@ -42,9 +42,9 @@ class UserDashboardController extends AbstractController
     #[Route(path: '/dashboard', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(Request $request): Response
     {
-        $user = $this->userController->getLoggedUser();
+        $user = $this->userManager->user;
 
-        $userData = $this->userController->getData();
+        $userData = $this->userManager->getData();
         $reservationsData = $this->userReservationController->getData();
 
         $messageForm = $this->messageCrud->save($request, new Message(), ['user' => $user]);
@@ -62,27 +62,6 @@ class UserDashboardController extends AbstractController
             'addressForm' => $addressForm->createView(),
             'userForm' => $userForm->createView(),
             'reservations' => $reservationsData,
-            'messageForm' => $messageForm->createView()
-        ]);
-    }
-
-    /**
-     * @throws ReflectionException
-     * @throws Exception
-     */
-    #[Route(path: '/conversations', name: 'conversations', methods: ['GET', 'POST'])]
-    public function conversations(Request $request): Response
-    {
-        $user = $this->userController->getLoggedUser();
-
-        $messageForm = $this->messageCrud->save($request, new Message(), ['user' => $user]);
-        if ($messageForm === true) return $this->redirectTo('referer', $request);
-
-        return $this->render('user/dashboard/inbox.html.twig', [
-            'datatables' => [
-                'conversations' => $this->userConversationController->getData(),
-                'messages' => $this->userMessageController->getData(),
-            ],
             'messageForm' => $messageForm->createView()
         ]);
     }
