@@ -6,8 +6,8 @@ class VueDatatableSetting
 {
     public function __construct(
         public string $name,
-        public mixed $default,
-        public array $values,
+        public array  $values,
+        public mixed  $default,
         public string $codeName
     )
     {

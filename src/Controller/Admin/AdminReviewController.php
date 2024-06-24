@@ -45,11 +45,11 @@ class AdminReviewController extends AbstractController
         Request $request
     ): Response
     {
-        $reviewForm = $this->reviewCrud->save($request, $review);
+        $reviewForm = $this->reviewCrud->save(request: $request, object: $review);
 
-        if ($reviewForm === true) return $this->redirectTo('referer', $request);
+        if ($reviewForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('admin/review/review-details.html.twig', [
+        return $this->render(view: 'admin/review/review-details.html.twig', parameters: [
             'reviewForm' => $reviewForm,
             'review' => $review
         ]);
@@ -66,7 +66,7 @@ class AdminReviewController extends AbstractController
     {
         $this->entityManager->remove($review);
         $this->entityManager->flush();
-        return $this->redirectTo('referer', $request, 'reviews');
+        return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reviews');
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ class AdminReviewController extends AbstractController
     public function getNotification(): array
     {
         $pendingReviews = $this->reviewRepository->findBy(['status' => ReviewStatusEnum::PENDING->value]);
-        return VueObjectMaker::makeVueObjectOf($pendingReviews, ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
+        return VueObjectMaker::makeVueObjectOf(entities: $pendingReviews, properties: ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
     }
 
     /**
@@ -86,12 +86,12 @@ class AdminReviewController extends AbstractController
     public function getData(): array
     {
         $allReviews = $this->reviewRepository->findAll();
-        $users = VueObjectMaker::makeVueObjectOf($allReviews, ['user'])->regroup('user')->get();
-        $rates = VueObjectMaker::makeVueObjectOf($allReviews, ['rate'])->regroup('rate')->get();
-        $lodgings = VueObjectMaker::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
-        $publicationDates = VueObjectMaker::makeVueObjectOf($allReviews, ['createdOn'])->regroup('createdOn')->get();
-        $reviews = VueObjectMaker::makeVueObjectOf($this->reviewRepository->findAll(),
-            [
+        $users = VueObjectMaker::makeVueObjectOf(entities: $allReviews, properties: ['user'])->regroup('user')->get();
+        $rates = VueObjectMaker::makeVueObjectOf(entities: $allReviews, properties: ['rate'])->regroup('rate')->get();
+        $lodgings = VueObjectMaker::makeVueObjectOf(entities: $this->lodgingRepository->findAll(), properties: ['name'])->regroup('name')->get();
+        $publicationDates = VueObjectMaker::makeVueObjectOf(entities: $allReviews, properties: ['createdOn'])->regroup('createdOn')->get();
+        $reviews = VueObjectMaker::makeVueObjectOf(entities: $this->reviewRepository->findAll(),
+            properties: [
                 'id',
                 'rate',
                 'user',
@@ -104,10 +104,10 @@ class AdminReviewController extends AbstractController
             name: 'reviews',
             component: 'AdminReviews',
             settings: [
-                new VueDatatableSetting('rates', '', $rates, 'rate'),
-                new VueDatatableSetting('clients', '', $users, 'user'),
-                new VueDatatableSetting('lodging', '', $lodgings, 'lodging'),
-                new VueDatatableSetting('publication date', '', $publicationDates, 'createdOn'),
+                new VueDatatableSetting(name: 'rates', values: $rates, default: '', codeName: 'rate'),
+                new VueDatatableSetting(name: 'clients', values: $users, default: '', codeName: 'user'),
+                new VueDatatableSetting(name: 'lodging', values: $lodgings, default: '', codeName: 'lodging'),
+                new VueDatatableSetting(name: 'publication date', values: $publicationDates, default: '', codeName: 'createdOn'),
             ],
             items: $reviews
         );

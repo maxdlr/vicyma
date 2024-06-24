@@ -74,7 +74,7 @@ class AdminConversationController extends AbstractController
             name: 'conversations',
             component: 'AdminConversations',
             settings: [
-                new VueDatatableSetting('creation date', '', $creationDates, 'createdOn')
+                new VueDatatableSetting(name: 'creation date', values: $creationDates, default: '', codeName: 'createdOn')
             ],
             items: $conversations
         );

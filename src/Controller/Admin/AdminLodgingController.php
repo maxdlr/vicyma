@@ -114,10 +114,10 @@ class AdminLodgingController extends AbstractController
             name: 'lodgings',
             component: 'AdminLodgings',
             settings: [
-                new VueDatatableSetting('capacity', '', $capacities, 'capacity'),
-                new VueDatatableSetting('name', '', $names, 'name'),
-                new VueDatatableSetting('priceByNight', '', $priceByNights, 'priceByNight'),
-                new VueDatatableSetting('reviews', '', $reviewRates, 'reviews'),
+                new VueDatatableSetting(name: 'capacity', values: $capacities, default: '', codeName: 'capacity'),
+                new VueDatatableSetting(name: 'name', values: $names, default: '', codeName: 'name'),
+                new VueDatatableSetting(name: 'priceByNight', values: $priceByNights, default: '', codeName: 'priceByNight'),
+                new VueDatatableSetting(name: 'reviews', values: $reviewRates, default: '', codeName: 'reviews'),
             ],
             items: $lodgings
         );

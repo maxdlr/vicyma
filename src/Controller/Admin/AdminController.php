@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route(path: '/admin', name: 'app_admin_')]
-#[IsGranted(RoleEnum::ROLE_ADMIN->value)]
+#[IsGranted(attribute: RoleEnum::ROLE_ADMIN->value)]
 class AdminController extends AbstractController
 {
     public function __construct(
@@ -31,7 +31,7 @@ class AdminController extends AbstractController
     #[Route(path: '/', name: 'dashboard', methods: ['GET', 'POST'])]
     public function dashboard(): Response
     {
-        return $this->render('admin/dashboard/dashboard.html.twig', [
+        return $this->render(view: 'admin/dashboard/dashboard.html.twig', parameters: [
             'notifications' =>
                 [
                     'reservations' => $this->adminReservationController->getNotification(),
@@ -46,7 +46,7 @@ class AdminController extends AbstractController
     #[Route(path: '/business', name: 'business', methods: ['GET', 'POST'])]
     public function business(): Response
     {
-        return $this->render('admin/dashboard/business.html.twig', [
+        return $this->render(view: 'admin/dashboard/business.html.twig', parameters: [
             'datatables' =>
                 [
                     'reservations' => $this->adminReservationController->getData(),
@@ -63,12 +63,12 @@ class AdminController extends AbstractController
     #[Route(path: '/management', name: 'management', methods: ['GET', 'POST'])]
     public function management(): Response
     {
-        return $this->render('admin/dashboard/management.html.twig', [
+        return $this->render(view: 'admin/dashboard/management.html.twig', parameters: [
             'datatables' =>
                 [
                     'lodgings' => $this->adminLodgingController->getData(),
                     'beds' => $this->adminBedController->getData(),
-                    'users' => $this->adminUserController->getData(RoleEnum::ROLE_ADMIN),
+                    'users' => $this->adminUserController->getData(roleEnum: RoleEnum::ROLE_ADMIN),
                 ]
         ]);
     }
@@ -79,7 +79,7 @@ class AdminController extends AbstractController
     #[Route(path: '/conversations', name: 'conversations', methods: ['GET', 'POST'])]
     public function conversations(): Response
     {
-        return $this->render('admin/dashboard/conversations.html.twig', [
+        return $this->render(view: 'admin/dashboard/conversations.html.twig', parameters: [
             'conversations' => $this->adminConversationController->getData()
         ]);
     }

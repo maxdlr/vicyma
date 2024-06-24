@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ReviewRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -40,7 +41,7 @@ class Review
 
     public function __construct()
     {
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
     }
 
     public function getId(): ?int
@@ -96,12 +97,6 @@ class Review
         return $this;
     }
 
-    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
-    {
-        $this->updatedOn = $updatedOn;
-        return $this;
-    }
-
     public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
@@ -110,6 +105,12 @@ class Review
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
     }
 
     public function getStatus(): ?string

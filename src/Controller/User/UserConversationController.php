@@ -21,17 +21,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted(RoleEnum::ROLE_USER->value)]
+#[IsGranted(attribute: RoleEnum::ROLE_USER->value)]
 #[Route(path: '/user/conversation', name: 'app_user_account_conversation_')]
 class UserConversationController extends AbstractController
 {
     use AfterCrudTrait;
+
     public function __construct(
         private readonly ConversationRepository $conversationRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UserManager $userManager,
-        private readonly MessageCrud $messageCrud,
-        private readonly UserMessageController $userMessageController
+        private readonly UserManager            $userManager,
+        private readonly MessageCrud            $messageCrud,
+        private readonly UserMessageController  $userMessageController
     )
     {
     }
@@ -45,10 +46,10 @@ class UserConversationController extends AbstractController
     {
         $user = $this->userManager->user;
 
-        $messageForm = $this->messageCrud->save($request, new Message(), ['user' => $user]);
-        if ($messageForm === true) return $this->redirectTo('referer', $request);
+        $messageForm = $this->messageCrud->save(request: $request, object: new Message(), options: ['user' => $user]);
+        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('user/dashboard/inbox.html.twig', [
+        return $this->render(view: 'user/dashboard/inbox.html.twig', parameters: [
             'datatables' => [
                 'conversations' => $this->getData(),
                 'messages' => $this->userMessageController->getData(),
@@ -57,29 +58,15 @@ class UserConversationController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/{id}/archive', name: 'archive', methods: ['GET'])]
-    public function archive(
-        Conversation $conversation,
-        Request $request
-    ): Response
-    {
-        $conversation->setIsArchivedByUser(true);
-
-        $this->entityManager->persist($conversation);
-        $this->entityManager->flush();
-
-        return $this->redirectTo('referer', $request);
-    }
-
     /**
      * @throws ReflectionException
      */
     public function getData(): array
     {
         $userConversations = $this->conversationRepository->findBy(['user' => $this->userManager->user]);
-        $creationDates = VueObjectMaker::makeVueObjectOf($userConversations, ['createdOn'])->regroup('createdOn')->get();
-        $isArchivedByUser = VueObjectMaker::makeVueObjectOf($userConversations, ['isArchivedByUser'])->regroup('isArchivedByUser')->get();
-        $conversations = VueObjectMaker::makeVueObjectOf($userConversations, [
+        $creationDates = VueObjectMaker::makeVueObjectOf(entities: $userConversations, properties: ['createdOn'])->regroup(property: 'createdOn')->get();
+        $isArchivedByUser = VueObjectMaker::makeVueObjectOf(entities: $userConversations, properties: ['isArchivedByUser'])->regroup(property: 'isArchivedByUser')->get();
+        $conversations = VueObjectMaker::makeVueObjectOf(entities: $userConversations, properties: [
             'id', 'createdOn', 'messages', 'conversationId', 'isArchivedByUser'
         ])->get();
 
@@ -87,10 +74,24 @@ class UserConversationController extends AbstractController
             name: 'conversations',
             component: 'UserConversations',
             settings: [
-                new VueDatatableSetting('updated on', '', $creationDates, 'createdOn'),
-                new VueDatatableSetting('archived', false, $isArchivedByUser, 'isArchivedByUser'),
+                new VueDatatableSetting(name: 'updated on', values: $creationDates, default: '', codeName: 'createdOn'),
+                new VueDatatableSetting(name: 'archived', values: $isArchivedByUser, default: false, codeName: 'isArchivedByUser'),
             ],
             items: $conversations
         );
+    }
+
+    #[Route(path: '/{id}/archive', name: 'archive', methods: ['GET'])]
+    public function archive(
+        Conversation $conversation,
+        Request      $request
+    ): Response
+    {
+        $conversation->setIsArchivedByUser(isArchivedByUser: true);
+
+        $this->entityManager->persist(object: $conversation);
+        $this->entityManager->flush();
+
+        return $this->redirectTo(routeName: 'referer', request: $request);
     }
 }

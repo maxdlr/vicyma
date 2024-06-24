@@ -16,8 +16,8 @@ class UserReservationController extends AbstractController
 {
     public function __construct(
         private readonly ReservationStatusRepository $reservationStatusRepository,
-        private readonly ReservationRepository $reservationRepository,
-        private readonly UserManager $userManager
+        private readonly ReservationRepository       $reservationRepository,
+        private readonly UserManager                 $userManager
     )
     {
     }
@@ -29,20 +29,20 @@ class UserReservationController extends AbstractController
     {
         $user = $this->userManager->user;
         $userReservations = $this->reservationRepository->findBy(['user' => $user]);
-        $creationDates = VueObjectMaker::makeVueObjectOf($userReservations, ['createdOn'])->regroup('createdOn')->get();
+        $creationDates = VueObjectMaker::makeVueObjectOf(entities: $userReservations, properties: ['createdOn'])->regroup('createdOn')->get();
         $statuses = VueObjectMaker::makeVueObjectOf(
-            [
+            entities: [
                 ...$this->reservationStatusRepository->findBy(['name' => ReservationStatusEnum::PENDING->value]),
                 ...$this->reservationStatusRepository->findBy(['name' => ReservationStatusEnum::CONFIRMED->value]),
                 ...$this->reservationStatusRepository->findBy(['name' => ReservationStatusEnum::ARCHIVED->value]),
             ],
-            ['name']
+            properties: ['name']
         )
             ->regroup('name')
             ->get();
         $reservations = VueObjectMaker::makeVueObjectOf(
-            $userReservations,
-            [
+            entities: $userReservations,
+            properties: [
                 'id',
                 'reservationNumber',
                 'arrivalDate',
@@ -59,8 +59,8 @@ class UserReservationController extends AbstractController
 
         return VueFormatter::createDatatable(
             settings: [
-                new VueDatatableSetting('sent on', '', $creationDates, 'createdOn'),
-                new VueDatatableSetting('status', 'PENDING', $statuses, 'reservationStatus')
+                new VueDatatableSetting(name: 'sent on', values: $creationDates, default: '', codeName: 'createdOn'),
+                new VueDatatableSetting(name: 'status', values: $statuses, default: 'PENDING', codeName: 'reservationStatus')
             ],
             items: $reservations
         );

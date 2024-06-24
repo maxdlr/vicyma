@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ReservationRepository;
 use App\ValueObject\ReservationNumber;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -60,7 +61,7 @@ class Reservation
     {
         $this->lodgings = new ArrayCollection();
         $this->messages = new ArrayCollection();
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
     }
 
     public function getId(): ?int

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -78,7 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->messages = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->reviews = new ArrayCollection();
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
         $this->conversations = new ArrayCollection();
     }
 
@@ -318,12 +319,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
-    {
-        $this->updatedOn = $updatedOn;
-        return $this;
-    }
-
     public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
@@ -332,6 +327,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
     }
 
     /**

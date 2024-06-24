@@ -28,8 +28,8 @@ class UserDashboardController extends AbstractController
         private readonly AddressCrud               $addressCrud,
         private readonly UserCrud                  $userCrud,
         private readonly UserReservationController $userReservationController,
-        private readonly MessageCrud $messageCrud,
-        private readonly UserManager $userManager
+        private readonly MessageCrud               $messageCrud,
+        private readonly UserManager               $userManager
     )
     {
     }
@@ -46,17 +46,17 @@ class UserDashboardController extends AbstractController
         $userData = $this->userManager->getData();
         $reservationsData = $this->userReservationController->getData();
 
-        $messageForm = $this->messageCrud->save($request, new Message(), ['user' => $user]);
-        if ($messageForm === true) return $this->redirectTo('referer', $request);
+        $messageForm = $this->messageCrud->save(request: $request, object: new Message(), options: ['user' => $user]);
+        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        $userForm = $this->userCrud->save($request, $user);
-        if ($userForm === true) return $this->redirectTo('referer', $request);
+        $userForm = $this->userCrud->save(request: $request, object: $user);
+        if ($userForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
         $address = $user->getAddress() ?? new Address();
-        $addressForm = $this->addressCrud->save($request, $address, ['user' => $user]);
-        if ($addressForm === true) return $this->redirectTo('referer', $request);
+        $addressForm = $this->addressCrud->save(request: $request, object: $address, options: ['user' => $user]);
+        if ($addressForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('user/dashboard/dashboard.html.twig', [
+        return $this->render(view: 'user/dashboard/dashboard.html.twig', parameters: [
             'user' => $userData,
             'addressForm' => $addressForm->createView(),
             'userForm' => $userForm->createView(),

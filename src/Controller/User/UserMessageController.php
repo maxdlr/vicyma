@@ -25,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted(RoleEnum::ROLE_USER->value)]
+#[IsGranted(attribute: RoleEnum::ROLE_USER->value)]
 #[Route(path: '/user/message', name: 'app_user_account_message_')]
 class UserMessageController extends AbstractController
 {
@@ -57,48 +57,48 @@ class UserMessageController extends AbstractController
 
         foreach ($pastMessages as $pastMessage) {
             if ($pastMessage->getAdmin() !== null) {
-                $pastMessage->setIsReadByUser(true);
-                $this->entityManager->persist($pastMessage);
+                $pastMessage->setIsReadByUser(isReadByUser: true);
+                $this->entityManager->persist(object: $pastMessage);
                 $this->entityManager->flush();
             }
         }
 
         $newMessage = new Message();
         $newMessage
-            ->setSubject($message->getSubject())
-            ->setLodging($message->getLodging())
-            ->setReservation($message->getReservation());
+            ->setSubject(subject: $message->getSubject())
+            ->setLodging(lodging: $message->getLodging())
+            ->setReservation(reservation: $message->getReservation());
 
         $messageForm = $this->messageCrud->save(
-            $request,
-            $newMessage,
-            [
+            request: $request,
+            object: $newMessage,
+            options: [
                 'user' => $this->userManager->user,
                 'isReply' => true
             ],
-            function () use ($message, $newMessage, $pastMessages) {
+            doBeforeSave: function () use ($message, $newMessage, $pastMessages) {
 
                 if ($message->getConversation() === null) {
                     $conversation = new Conversation();
                     $conversation
-                        ->setUser($message->getUser())
-                        ->addMessage($message);
+                        ->setUser(user: $message->getUser())
+                        ->addMessage(message: $message);
                 } else {
                     $conversation = $message->getConversation();
-                    $conversation->setUpdatedOn(new DateTime());
+                    $conversation->setUpdatedOn(updatedOn: new DateTime());
                 }
 
-                $newMessage->setSubject('Message of ' . $conversation->getConversationId() . ' - ' . $message->getCreatedOn()->format('d/m/y'));
+                $newMessage->setSubject(subject: 'Message of ' . $conversation->getConversationId() . ' - ' . $message->getCreatedOn()->format(format: 'd/m/y'));
 
                 $conversation
-                    ->addMessage($newMessage)
-                    ->setConversationId(ConversationId::new($message));
+                    ->addMessage(message: $newMessage)
+                    ->setConversationId(conversationId: ConversationId::new(message: $message));
             }
         );
 
-        if ($messageForm === true) return $this->redirectTo('referer', $request);
+        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('user/message/conversation.html.twig', [
+        return $this->render(view: 'user/message/conversation.html.twig', parameters: [
             'messageForm' => $messageForm->createView(),
             'conversation' => $pastMessages,
             'userMessage' => $message
@@ -116,17 +116,17 @@ class UserMessageController extends AbstractController
     {
         $message = new Message();
         $message
-            ->setSubject('Question about ' . $reservation->getReservationNumber())
-            ->setUser($this->userManager->user)
-            ->setReservation($reservation);
+            ->setSubject(subject: 'Question about ' . $reservation->getReservationNumber())
+            ->setUser(user: $this->userManager->user)
+            ->setReservation(reservation: $reservation);
 
-        if (count($reservation->getLodgings()) === 1) $message->setLodging($reservation->getLodgings()[0]);
+        if (count(value: $reservation->getLodgings()) === 1) $message->setLodging(lodging: $reservation->getLodgings()[0]);
 
         $options = ['lodgings' => $reservation->getLodgings(), 'user' => $this->userManager->user];
-        $messageForm = $this->messageCrud->save($request, $message, $options);
-        if ($messageForm === true) return $this->redirectTo('referer', $request);
+        $messageForm = $this->messageCrud->save(request: $request, object: $message, options: $options);
+        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('user/message/new.html.twig', [
+        return $this->render(view: 'user/message/new.html.twig', parameters: [
             "messageForm" => $messageForm->createView(),
             'reservation' => $reservation
         ]);
@@ -141,8 +141,8 @@ class UserMessageController extends AbstractController
             'user' => $this->userManager->user,
             'conversation' => null
         ]);
-        $creationDates = VueObjectMaker::makeVueObjectOf($userMessages, ['createdOn'])->regroup('createdOn')->get();
-        $messages = VueObjectMaker::makeVueObjectOf($userMessages, [
+        $creationDates = VueObjectMaker::makeVueObjectOf(entities: $userMessages, properties: ['createdOn'])->regroup(property: 'createdOn')->get();
+        $messages = VueObjectMaker::makeVueObjectOf(entities: $userMessages, properties: [
             'id', 'createdOn', 'subject', 'content', 'lodging', 'reservation', 'conversation', 'isReadByUser', 'admin', 'user'
         ])->get();
 
@@ -150,7 +150,7 @@ class UserMessageController extends AbstractController
             name: 'sent',
             component: 'UserMessages',
             settings: [
-                new VueDatatableSetting('sent on', '', $creationDates, 'createdOn')
+                new VueDatatableSetting(name: 'sent on', values: $creationDates, default: '', codeName: 'createdOn')
             ],
             items: $messages);
     }
