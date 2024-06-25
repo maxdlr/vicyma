@@ -220,8 +220,7 @@ const storeFilters = () => {
 }
 
 const storeOrderBy = () => {
-  const orderByAsString = selectedOrderByOption.value
-  localStorage.setItem(`datatable/${props.title}/orderByState`, JSON.stringify(orderByAsString))
+  localStorage.setItem(`datatable/${props.title}/orderByState`, JSON.stringify(selectedOrderByOption.value))
 }
 </script>
 

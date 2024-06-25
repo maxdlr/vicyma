@@ -124,7 +124,11 @@ class UserMessageController extends AbstractController
 
         $options = ['lodgings' => $reservation->getLodgings(), 'user' => $this->userManager->user];
         $messageForm = $this->messageCrud->save(request: $request, object: $message, options: $options);
-        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($messageForm === true) return $this->redirectTo(
+            routeName: 'app_user_account_conversation_inbox',
+            request: $request,
+            anchor: 'messages'
+        );
 
         return $this->render(view: 'user/message/new.html.twig', parameters: [
             "messageForm" => $messageForm->createView(),
