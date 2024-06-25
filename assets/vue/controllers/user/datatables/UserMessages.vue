@@ -3,11 +3,10 @@ import VDatatable from "../../../components/organism/VDatatable.vue";
 import {goTo} from "../../../composable/action/redirect";
 import Button from "../../../components/atom/VButton.vue";
 
-const props = defineProps({
+defineProps({
   data: {type: Object, required: true},
   title: {type: String},
 })
-
 </script>
 
 <template>

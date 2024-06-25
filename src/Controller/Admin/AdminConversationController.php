@@ -4,12 +4,14 @@ namespace App\Controller\Admin;
 
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\Conversation;
-use App\Entity\Message;
 use App\Enum\RoleEnum;
 use App\Repository\ConversationRepository;
 use App\Repository\MessageRepository;
-use App\Service\VueDataFormatter;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,28 +62,23 @@ class AdminConversationController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
         $allConversations = $this->conversationRepository->findAll();
-        $creationDates = VueDataFormatter::makeVueObjectOf($allConversations, ['createdOn'])->regroup('createdOn')->get();
-        $conversations = VueDataFormatter::makeVueObjectOf($allConversations,
-            [
-                'id',
-                'conversationId',
-                'user',
-                'createdOn'
-            ])->get();
+        $creationDates = VueObjectMaker::makeVueObjectOf($allConversations, ['createdOn'])->regroup('createdOn')->get();
+        $conversations = VueObjectMaker::makeVueObjectOf(
+            $allConversations, ['id', 'conversationId', 'user', 'createdOn']
+        )->get();
 
-        return [
-            'name' => 'conversations',
-            'component' => 'AdminConversations',
-            'data' => [
-                'settings' => [
-                    'createdOn' => ['name' => 'creation date', 'default' => '', 'values' => $creationDates, 'codeName' => 'createdOn']
-                ],
-                'items' => $conversations
-            ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'conversations',
+            component: 'AdminConversations',
+            settings: [
+                new VueDatatableSetting(name: 'creation date', values: $creationDates, default: '', codeName: 'createdOn')
+            ],
+            items: $conversations
+        )->getAsVueObject();
     }
 }

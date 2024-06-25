@@ -7,7 +7,9 @@ use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\User;
 use App\Enum\RoleEnum;
 use App\Repository\UserRepository;
-use App\Service\VueDataFormatter;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -38,11 +40,11 @@ class AdminUserController extends AbstractController
     public function new(Request $request): Response
     {
         $user = new User();
-        $userForm = $this->adminUserCrud->save($request, $user);
+        $userForm = $this->adminUserCrud->save(request: $request, object: $user);
 
-        if ($userForm === true) return $this->redirectTo('app_admin_business', $request, 'users');
+        if ($userForm === true) return $this->redirectTo(routeName: 'app_admin_business', request: $request, anchor: 'users');
 
-        return $this->render('admin/user/user-new.html.twig', [
+        return $this->render(view: 'admin/user/user-new.html.twig', parameters: [
             'userForm' => $userForm->createView(),
         ]);
     }
@@ -57,11 +59,11 @@ class AdminUserController extends AbstractController
         Request $request
     ): Response
     {
-        $userForm = $this->adminUserCrud->save($request, $user);
+        $userForm = $this->adminUserCrud->save(request: $request, object: $user);
 
-        if ($userForm === true) return $this->redirectTo('referer', $request);
+        if ($userForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('admin/user/user-details.html.twig', [
+        return $this->render(view: 'admin/user/user-details.html.twig', parameters: [
             'userForm' => $userForm,
             'user' => $user
         ]);
@@ -76,7 +78,7 @@ class AdminUserController extends AbstractController
         Request $request
     ): Response
     {
-        return $this->adminUserCrud->delete($request, $user, 'app_admin_business', doBeforeDelete: function ($object) use ($user) {
+        return $this->adminUserCrud->delete(request: $request, object: $user, redirectRoute: 'app_admin_business', doBeforeDelete: function ($object) use ($user) {
             assert($object instanceof User);
             $user->setIsDeleted(true);
             return ['save', 'exit'];
@@ -86,16 +88,17 @@ class AdminUserController extends AbstractController
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(RoleEnum $roleEnum = RoleEnum::ROLE_USER): array
     {
         $allUsers = $this->userRepository->findByRole($roleEnum);
-        $firstnames = VueDataFormatter::makeVueObjectOf($allUsers, ['firstname'])->regroup('firstname')->get();
-        $lastnames = VueDataFormatter::makeVueObjectOf($allUsers, ['lastname'])->regroup('lastname')->get();
-        $isDeleted = VueDataFormatter::makeVueObjectOf($allUsers, ['isDeleted'])->regroup('isDeleted')->get();
-        $creationDate = VueDataFormatter::makeVueObjectOf($allUsers, ['createdOn'])->regroup('createdOn')->get();
-        $users = VueDataFormatter::makeVueObjectOf($allUsers,
-            [
+        $firstnames = VueObjectMaker::makeVueObjectOf(entities: $allUsers, properties: ['firstname'])->regroup('firstname')->get();
+        $lastnames = VueObjectMaker::makeVueObjectOf(entities: $allUsers, properties: ['lastname'])->regroup('lastname')->get();
+        $isDeleted = VueObjectMaker::makeVueObjectOf(entities: $allUsers, properties: ['isDeleted'])->regroup('isDeleted')->get();
+        $creationDate = VueObjectMaker::makeVueObjectOf(entities: $allUsers, properties: ['createdOn'])->regroup('createdOn')->get();
+        $users = VueObjectMaker::makeVueObjectOf(entities: $allUsers,
+            properties: [
                 'id',
                 'firstname',
                 'lastname',
@@ -107,19 +110,16 @@ class AdminUserController extends AbstractController
                 'createdOn',
             ])->get();
 
-        return [
-            'name' => 'users',
-            'component' => 'AdminUsers',
-            'data' =>
-                [
-                    'settings' => [
-                        'lastname' => ['name' => 'last name', 'default' => '', 'values' => $lastnames, 'codeName' => 'lastname'],
-                        'firstname' => ['name' => 'first name', 'default' => '', 'values' => $firstnames, 'codeName' => 'firstname'],
-                        'isDeleted' => ['name' => 'is deleted', 'default' => false, 'values' => $isDeleted, 'codeName' => 'isDeleted'],
-                        'createdOn' => ['name' => 'member since', 'default' => '', 'values' => $creationDate, 'codeName' => 'createdOn'],
-                    ],
-                    'items' => $users
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'users',
+            component: 'AdminUsers',
+            settings: [
+                new VueDatatableSetting(name: 'lastname', values: $lastnames, default: '', codeName: 'lastname'),
+                new VueDatatableSetting(name: 'firstname', values: $firstnames, default: '', codeName: 'firstname'),
+                new VueDatatableSetting(name: 'is deleted', values: $isDeleted, default: false, codeName: 'isDeleted'),
+                new VueDatatableSetting(name: 'member since', values: $creationDate, default: '', codeName: 'createdOn')
+            ],
+            items: $users
+        )->getAsVueObject();
     }
 }

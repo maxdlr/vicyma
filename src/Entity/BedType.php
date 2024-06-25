@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\BedTypeRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -30,7 +31,7 @@ class BedType
     private Collection $lodgings;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $createdOn = null;
+    private ?DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
@@ -38,7 +39,7 @@ class BedType
     public function __construct()
     {
         $this->lodgings = new ArrayCollection();
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
     }
 
     public function getId(): ?int

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\MessageRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -37,7 +38,7 @@ class Message
     private ?User $admin = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $createdOn = null;
+    private ?DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
@@ -46,14 +47,14 @@ class Message
     private ?Conversation $conversation = null;
 
     #[ORM\Column]
-    private ?bool $isReadByAdmin = null;
+    private ?bool $isReadByAdmin;
 
     #[ORM\Column]
-    private ?bool $isReadByUser = null;
+    private ?bool $isReadByUser;
 
     public function __construct()
     {
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
         $this->isReadByAdmin = false;
         $this->isReadByUser = false;
     }
@@ -135,12 +136,6 @@ class Message
         return $this;
     }
 
-    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
-    {
-        $this->updatedOn = $updatedOn;
-        return $this;
-    }
-
     public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
@@ -149,6 +144,12 @@ class Message
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
     }
 
     public function getConversation(): ?Conversation

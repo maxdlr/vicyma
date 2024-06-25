@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Website;
 
-use App\Controller\User\UserController;
-use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;

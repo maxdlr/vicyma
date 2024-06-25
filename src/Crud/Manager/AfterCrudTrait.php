@@ -33,11 +33,17 @@ trait AfterCrudTrait
         }
 
         if ($routeName === 'referer' && $request !== null) {
-            return new RedirectResponse($request->headers->get('referer'), 302);
+
+            $url = $request->headers->get('referer');
+
+            if (str_contains($url, 'admin') || str_contains($url, 'user')) {
+                $url .= $anchorHash;
+            }
+
+            return new RedirectResponse($url, 302);
         }
 
         $routeName = $this->generateUrl($routeName, $routeParams) . $anchorHash;
-
 
         return new RedirectResponse($routeName, 302);
     }

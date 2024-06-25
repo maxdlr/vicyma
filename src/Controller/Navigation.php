@@ -66,7 +66,7 @@ class Navigation extends AbstractController
             'conversations' =>
                 [
                     'label' => 'conversations',
-                    'value' => $this->generateUrl('app_user_account_conversations'),
+                    'value' => $this->generateUrl('app_user_account_conversation_inbox'),
                     'iconClass' => 'chat-dots-fill'
                 ]
         ];
@@ -80,7 +80,7 @@ class Navigation extends AbstractController
             null;
 
         $userId = $user?->getId();
-        $isUserAdmin = $user !== null && in_array('ROLE_ADMIN', $user?->getRoles());
+        $isUserAdmin = $user !== null && in_array('ROLE_ADMIN', $user->getRoles());
 
         $nav = [
             'about' =>

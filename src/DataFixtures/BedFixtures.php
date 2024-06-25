@@ -12,7 +12,6 @@ use ReflectionException;
 class BedFixtures extends Fixture
 {
     /**
-     * @throws ReflectionException
      * @throws Exception
      */
     public function load(ObjectManager $manager): void

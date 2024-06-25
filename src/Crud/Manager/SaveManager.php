@@ -50,7 +50,7 @@ class SaveManager extends AbstractController
                 if ($doBeforeSave !== null) {
                     if ($doBeforeSave($form, $object, $entityManager) !== true) {
                         return $form;
-                    };
+                    }
                 }
 
                 if ($object->getId() !== null) {

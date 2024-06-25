@@ -40,11 +40,10 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
         $admin = $this->createAdmin($address);
         $manager->persist($admin);
 
-        $this->createAndPersistReservations(20, $user, $manager);
-        $this->createAndPersistMessages(4, $user, $manager, 'augustaReservation');
-        $conversationMessages = $this->createAndPersistMessages(4, $user, $manager, 'augustaReservation');
+        $this->createAndPersistReservations($user, $manager);
+        $this->createAndPersistMessages($user, $manager);
+        $conversationMessages = $this->createAndPersistMessages($user, $manager);
         $this->createAndPersistConversations(
-            2,
             $conversationMessages,
             $admin,
             $manager,
@@ -111,12 +110,11 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
     }
 
     private function createAndPersistReservations(
-        int           $number,
         User          $user,
         ObjectManager $manager
     ): void
     {
-        for ($i = 0; $i < $number; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $userReservation = new Reservation();
             $arrivalDate = $this->faker->dateTimeBetween('- 1 year', '+ 90 days');
             $departureDate = $this->faker->dateTimeBetween('- 6 months', '+ 180 days');
@@ -140,14 +138,12 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
     }
 
     private function createAndPersistMessages(
-        int           $number,
         User          $user,
-        ObjectManager $manager,
-        string        $referencePrefix
+        ObjectManager $manager
     ): array
     {
         $messages = [];
-        for ($i = 0; $i < $number; $i++) {
+        for ($i = 0; $i < 4; $i++) {
             $message = new Message();
 
             $message
@@ -163,7 +159,7 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
                 ->setReservation($this->faker->randomElement(
                     [
                         null,
-                        $this->getReference($referencePrefix . '_' . rand(1, 20 - 1))
+                        $this->getReference('augustaReservation' . '_' . rand(1, 20 - 1))
                     ]
                 ));
             $this->setReference('message_' . $i, $message);
@@ -174,7 +170,6 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
     }
 
     private function createAndPersistConversations(
-        int           $numberOfAdminResponse,
         array         $messages,
         User          $admin,
         ObjectManager $manager,
@@ -195,7 +190,7 @@ class SpecificFixtures extends Fixture implements DependentFixtureInterface
         }
 
         foreach ($conversations as $conv) {
-            for ($i = 0; $i < $numberOfAdminResponse * rand(1, 3); $i++) {
+            for ($i = 0; $i < 2 * rand(1, 3); $i++) {
                 $adminMessage = new Message();
                 $adminMessage
                     ->setUser(null)

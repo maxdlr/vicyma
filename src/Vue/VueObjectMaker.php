@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Vue;
 
 use App\Entity\Address;
 use App\Entity\BedType;
@@ -11,14 +11,14 @@ use App\Entity\Reservation;
 use App\Entity\ReservationStatus;
 use App\Entity\Review;
 use App\Entity\User;
+use App\Service\ClassBrowser;
 use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use ReflectionException;
 use ReflectionMethod;
-use function PHPUnit\Framework\stringContains;
 use function Symfony\Component\String\u;
 
-class VueDataFormatter
+class VueObjectMaker
 {
     private static array $vueObject = [];
 
@@ -32,20 +32,6 @@ class VueDataFormatter
         }, $entities);
 
         return new static;
-    }
-
-    public function regroup(string $property): static
-    {
-        self::$vueObject = array_unique(
-            array_map(fn(array $object) => $object[$property], self::$vueObject), SORT_REGULAR
-        );
-        sort(self::$vueObject);
-        return new static;
-    }
-
-    public function get(): array
-    {
-        return self::$vueObject;
     }
 
     /**
@@ -129,5 +115,19 @@ class VueDataFormatter
             $sortedVueObject[$property] = $vueObject[$property];
         }
         return $sortedVueObject;
+    }
+
+    public function regroup(string $property): static
+    {
+        self::$vueObject = array_unique(
+            array_map(fn(array $object) => $object[$property], self::$vueObject), SORT_REGULAR
+        );
+        sort(self::$vueObject);
+        return new static;
+    }
+
+    public function get(): array
+    {
+        return self::$vueObject;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\LodgingRepository;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -87,7 +88,7 @@ class Lodging
     private ?bool $airConditioning = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?DateTimeInterface $createdOn = null;
+    private ?DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?DateTimeInterface $updatedOn = null;
@@ -99,7 +100,7 @@ class Lodging
         $this->reservations = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->reviews = new ArrayCollection();
-        $this->createdOn = new \DateTime();
+        $this->createdOn = new DateTime();
     }
 
     public function getId(): ?int
@@ -461,12 +462,6 @@ class Lodging
         return $this;
     }
 
-    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
-    {
-        $this->updatedOn = $updatedOn;
-        return $this;
-    }
-
     public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
@@ -475,5 +470,11 @@ class Lodging
     public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
+    }
+
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
+    {
+        $this->updatedOn = $updatedOn;
+        return $this;
     }
 }

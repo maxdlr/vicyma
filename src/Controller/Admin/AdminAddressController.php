@@ -8,7 +8,6 @@ use App\Entity\Address;
 use App\Enum\RoleEnum;
 use App\Repository\AddressRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,11 +40,11 @@ class AdminAddressController extends AbstractController
         Request $request
     ): Response
     {
-        $addressForm = $this->addressCrud->save($request, $address);
+        $addressForm = $this->addressCrud->save(request: $request, object: $address);
 
-        if ($addressForm === true) return $this->redirectTo('referer', $request);
+        if ($addressForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('admin/address/address-details.html.twig', [
+        return $this->render(view: 'admin/address/address-details.html.twig', parameters: [
             'addressForm' => $addressForm,
             'address' => $address
         ]);
@@ -58,11 +57,11 @@ class AdminAddressController extends AbstractController
     public function new(Request $request): Response
     {
         $address = new Address();
-        $addressForm = $this->addressCrud->save($request, $address);
+        $addressForm = $this->addressCrud->save(request: $request, object: $address);
 
-        if ($addressForm === true) return $this->redirectTo('app_admin_management', $request, 'addresss');
+        if ($addressForm === true) return $this->redirectTo(routeName: 'app_admin_management', request: $request, anchor: 'addresss');
 
-        return $this->render('admin/address/address-new.html.twig', [
+        return $this->render(view: 'admin/address/address-new.html.twig', parameters: [
             'addressForm' => $addressForm->createView(),
         ]);
     }
@@ -73,6 +72,6 @@ class AdminAddressController extends AbstractController
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
     public function delete(Address $address, Request $request): Response
     {
-        return $this->addressCrud->delete($request, $address, 'app_admin_business');
+        return $this->addressCrud->delete(request: $request, object: $address, redirectRoute: 'app_admin_business');
     }
 }

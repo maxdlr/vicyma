@@ -12,8 +12,6 @@ use ReflectionNamedType;
 
 use ReflectionProperty;
 
-use Symfony\Component\Uid\Uuid;
-use function PHPUnit\Framework\stringContains;
 use function Symfony\Component\String\u;
 
 class ClassBrowser
@@ -174,7 +172,7 @@ class ClassBrowser
                 }
             }
         } catch (Exception) {
-            throw new Exception('Cannot find attribute ' . $search . ' in ' . $classFQCN . '.');
+            throw new Exception('Cannot find attribute ' . $searchFQCN . ' in ' . $classFQCN . '.');
         }
 
         return null;

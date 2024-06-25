@@ -3,8 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ConversationRepository;
-use App\ValueObject\ConversationId;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -19,10 +19,10 @@ class Conversation
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdOn = null;
+    private ?DateTimeInterface $createdOn;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $updatedOn = null;
+    private ?DateTimeInterface $updatedOn = null;
 
     /**
      * @var Collection<int, Message>
@@ -56,17 +56,17 @@ class Conversation
         return $this->id;
     }
 
-    public function getCreatedOn(): ?\DateTimeInterface
+    public function getCreatedOn(): ?DateTimeInterface
     {
         return $this->createdOn;
     }
 
-    public function getUpdatedOn(): ?\DateTimeInterface
+    public function getUpdatedOn(): ?DateTimeInterface
     {
         return $this->updatedOn;
     }
 
-    public function setUpdatedOn(?\DateTimeInterface $updatedOn): static
+    public function setUpdatedOn(?DateTimeInterface $updatedOn): static
     {
         $this->updatedOn = $updatedOn;
 

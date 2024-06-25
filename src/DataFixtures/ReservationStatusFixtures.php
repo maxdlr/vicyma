@@ -21,7 +21,7 @@ class ReservationStatusFixtures extends Fixture
         foreach (ReservationStatusEnum::cases() as $statusName) {
             $reservationStatus = new ReservationStatus();
             $reservationStatus->setName($statusName->value);
-            $reservationStatus->setDescription($faker->sentence(10, true));
+            $reservationStatus->setDescription($faker->sentence(10));
             $this->setReference('reservationStatus_' . $statusName->value, $reservationStatus);
             $manager->persist($reservationStatus);
         }

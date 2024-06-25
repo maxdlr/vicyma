@@ -8,9 +8,11 @@ use App\Entity\BedType;
 use App\Enum\RoleEnum;
 use App\Repository\BedTypeRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,10 +43,10 @@ class AdminBedTypeController extends AbstractController
         Request $request
     ): Response
     {
-        $bedForm = $this->bedTypeCrud->save($request, $bed);
-        if ($bedForm === true) return $this->redirectTo('app_admin_management', $request, 'beds');
+        $bedForm = $this->bedTypeCrud->save(request: $request, object: $bed);
+        if ($bedForm === true) return $this->redirectTo(routeName: 'app_admin_management', request: $request, anchor: 'beds');
 
-        return $this->render('admin/bed/bed-details.html.twig', [
+        return $this->render(view: 'admin/bed/bed-details.html.twig', parameters: [
             'bedForm' => $bedForm->createView(),
             'bed' => $bed
         ]);
@@ -57,11 +59,11 @@ class AdminBedTypeController extends AbstractController
     public function new(Request $request): Response
     {
         $bed = new BedType();
-        $bedForm = $this->bedTypeCrud->save($request, $bed);
+        $bedForm = $this->bedTypeCrud->save(request: $request, object: $bed);
 
-        if ($bedForm === true) return $this->redirectTo('app_admin_management', $request, 'beds');
+        if ($bedForm === true) return $this->redirectTo(routeName: 'app_admin_management', request: $request, anchor: 'beds');
 
-        return $this->render('admin/bed/bed-new.html.twig', [
+        return $this->render(view: 'admin/bed/bed-new.html.twig', parameters: [
             'bedForm' => $bedForm->createView(),
         ]);
     }
@@ -72,37 +74,29 @@ class AdminBedTypeController extends AbstractController
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
     public function delete(BedType $bed, Request $request): Response
     {
-        return $this->bedTypeCrud->delete($request, $bed, 'app_admin_management', anchor: 'beds');
+        return $this->bedTypeCrud->delete(request: $request, object: $bed, redirectRoute: 'app_admin_management', anchor: 'beds');
     }
 
     // ---------------------------------------------------------------------------------------------------
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Exception
+     * @throws Exception
      */
     public function getData(): array
     {
         $allBeds = $this->bedRepository->findAll();
 
-        $beds = VueDataFormatter::makeVueObjectOf(
-            $allBeds,
-            [
-                'id',
-                'height',
-                'width',
-                'isExtra',
-                'lodgings'
-            ]
+        $beds = VueObjectMaker::makeVueObjectOf(
+            entities: $allBeds, properties: ['id', 'height', 'width', 'isExtra', 'lodgings']
         )->get();
 
-        return [
-            'name' => 'beds',
-            'component' => 'AdminBeds',
-            'data' =>
-                [
-                    'settings' => [],
-                    'items' => $beds
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'beds',
+            component: 'AdminBeds',
+            settings: [],
+            items: $beds
+        )->getAsVueObject();
     }
 }

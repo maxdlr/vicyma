@@ -2,14 +2,16 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\ReviewCrud;
 use App\Crud\Manager\AfterCrudTrait;
+use App\Crud\ReviewCrud;
 use App\Entity\Review;
 use App\Enum\ReviewStatusEnum;
 use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
@@ -43,11 +45,11 @@ class AdminReviewController extends AbstractController
         Request $request
     ): Response
     {
-        $reviewForm = $this->reviewCrud->save($request, $review);
+        $reviewForm = $this->reviewCrud->save(request: $request, object: $review);
 
-        if ($reviewForm === true) return $this->redirectTo('referer', $request);
+        if ($reviewForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
 
-        return $this->render('admin/review/review-details.html.twig', [
+        return $this->render(view: 'admin/review/review-details.html.twig', parameters: [
             'reviewForm' => $reviewForm,
             'review' => $review
         ]);
@@ -64,7 +66,7 @@ class AdminReviewController extends AbstractController
     {
         $this->entityManager->remove($review);
         $this->entityManager->flush();
-        return $this->redirectTo('referer', $request, 'reviews');
+        return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reviews');
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -75,22 +77,22 @@ class AdminReviewController extends AbstractController
     public function getNotification(): array
     {
         $pendingReviews = $this->reviewRepository->findBy(['status' => ReviewStatusEnum::PENDING->value]);
-
-        return VueDataFormatter::makeVueObjectOf($pendingReviews, ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
+        return VueObjectMaker::makeVueObjectOf(entities: $pendingReviews, properties: ['id', 'createdOn', 'user', 'rate', 'comment'])->get();
     }
 
     /**
      * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
         $allReviews = $this->reviewRepository->findAll();
-        $users = VueDataFormatter::makeVueObjectOf($allReviews, ['user'])->regroup('user')->get();
-        $rates = VueDataFormatter::makeVueObjectOf($allReviews, ['rate'])->regroup('rate')->get();
-        $lodgings = VueDataFormatter::makeVueObjectOf($this->lodgingRepository->findAll(), ['name'])->regroup('name')->get();
-        $publicationDates = VueDataFormatter::makeVueObjectOf($allReviews, ['createdOn'])->regroup('createdOn')->get();
-        $reviews = VueDataFormatter::makeVueObjectOf($this->reviewRepository->findAll(),
-            [
+        $users = VueObjectMaker::makeVueObjectOf(entities: $allReviews, properties: ['user'])->regroup('user')->get();
+        $rates = VueObjectMaker::makeVueObjectOf(entities: $allReviews, properties: ['rate'])->regroup('rate')->get();
+        $lodgings = VueObjectMaker::makeVueObjectOf(entities: $this->lodgingRepository->findAll(), properties: ['name'])->regroup('name')->get();
+        $publicationDates = VueObjectMaker::makeVueObjectOf(entities: $allReviews, properties: ['createdOn'])->regroup('createdOn')->get();
+        $reviews = VueObjectMaker::makeVueObjectOf(entities: $this->reviewRepository->findAll(),
+            properties: [
                 'id',
                 'rate',
                 'user',
@@ -99,19 +101,16 @@ class AdminReviewController extends AbstractController
                 'createdOn'
             ])->get();
 
-        return [
-            'name' => 'reviews',
-            'component' => 'AdminReviews',
-            'data' =>
-                [
-                    'settings' => [
-                        'rate' => ['name' => 'rates', 'default' => '', 'values' => $rates, 'codeName' => 'rate'],
-                        'user' => ['name' => 'clients', 'default' => '', 'values' => $users, 'codeName' => 'user'],
-                        'lodging' => ['name' => 'lodging', 'default' => '', 'values' => $lodgings, 'codeName' => 'lodging'],
-                        'createdOn' => ['name' => 'publication date', 'default' => '', 'values' => $publicationDates, 'codeName' => 'createdOn'],
-                    ],
-                    'items' => $reviews
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'reviews',
+            component: 'AdminReviews',
+            settings: [
+                new VueDatatableSetting(name: 'rates', values: $rates, default: '', codeName: 'rate'),
+                new VueDatatableSetting(name: 'clients', values: $users, default: '', codeName: 'user'),
+                new VueDatatableSetting(name: 'lodging', values: $lodgings, default: '', codeName: 'lodging'),
+                new VueDatatableSetting(name: 'publication date', values: $publicationDates, default: '', codeName: 'createdOn'),
+            ],
+            items: $reviews
+        )->getAsVueObject();
     }
 }

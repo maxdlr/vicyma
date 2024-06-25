@@ -8,9 +8,12 @@ use App\Entity\Lodging;
 use App\Enum\RoleEnum;
 use App\Repository\LodgingRepository;
 use App\Repository\ReviewRepository;
-use App\Service\VueDataFormatter;
+use App\Vue\Model\VueDatatableSetting;
+use App\Vue\VueFormatter;
+use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,18 +84,19 @@ class AdminLodgingController extends AbstractController
     // ---------------------------------------------------------------------------------------------------
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function getData(): array
     {
         $allLodgings = $this->lodgingRepository->findAll();
 
-        $capacities = VueDataFormatter::makeVueObjectOf($allLodgings, ['capacity'])->regroup('capacity')->get();
-        $names = VueDataFormatter::makeVueObjectOf($allLodgings, ['name'])->regroup('name')->get();
-        $priceByNights = VueDataFormatter::makeVueObjectOf($allLodgings, ['priceByNight'])->regroup('priceByNight')->get();
-        $reviewRates = VueDataFormatter::makeVueObjectOf($this->reviewRepository->findAll(), ['rate'])->regroup('rate')->get();
+        $capacities = VueObjectMaker::makeVueObjectOf($allLodgings, ['capacity'])->regroup('capacity')->get();
+        $names = VueObjectMaker::makeVueObjectOf($allLodgings, ['name'])->regroup('name')->get();
+        $priceByNights = VueObjectMaker::makeVueObjectOf($allLodgings, ['priceByNight'])->regroup('priceByNight')->get();
+        $reviewRates = VueObjectMaker::makeVueObjectOf($this->reviewRepository->findAll(), ['rate'])->regroup('rate')->get();
 
-        $lodgings = VueDataFormatter::makeVueObjectOf(
+        $lodgings = VueObjectMaker::makeVueObjectOf(
             $allLodgings,
             [
                 'id',
@@ -107,19 +111,16 @@ class AdminLodgingController extends AbstractController
             ]
         )->get();
 
-        return [
-            'name' => 'lodgings',
-            'component' => 'AdminLodgings',
-            'data' =>
-                [
-                    'settings' => [
-                        'capacity' => ['name' => 'capacity', 'default' => '', 'values' => $capacities, 'codeName' => 'capacity'],
-                        'name' => ['name' => 'name', 'default' => '', 'values' => $names, 'codeName' => 'name'],
-                        'priceByNight' => ['name' => 'priceByNight', 'default' => '', 'values' => $priceByNights, 'codeName' => 'priceByNight'],
-                        'reviews' => ['name' => 'reviews', 'default' => '', 'values' => $reviewRates, 'codeName' => 'reviews'],
-                    ],
-                    'items' => $lodgings
-                ]
-        ];
+        return VueFormatter::createDatatableComponent(
+            name: 'lodgings',
+            component: 'AdminLodgings',
+            settings: [
+                new VueDatatableSetting(name: 'capacity', values: $capacities, default: '', codeName: 'capacity'),
+                new VueDatatableSetting(name: 'name', values: $names, default: '', codeName: 'name'),
+                new VueDatatableSetting(name: 'priceByNight', values: $priceByNights, default: '', codeName: 'priceByNight'),
+                new VueDatatableSetting(name: 'reviews', values: $reviewRates, default: '', codeName: 'reviews'),
+            ],
+            items: $lodgings
+        )->getAsVueObject();
     }
 }
