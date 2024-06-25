@@ -50,15 +50,62 @@ abstract class AbstractCrud
      * @return FormInterface|true
      * @throws Exception
      */
-    public function save(Request $request, object $object, array $options = [], ?callable $doBeforeSave = null): FormInterface|true
+    public function save(
+        Request $request,
+        object $object,
+        array $options = [],
+        ?callable $doBeforeSave = null
+    ): FormInterface|true
     {
-        return $this->saveManager->handleAndSave($object, $this->formType, $request, $options, $doBeforeSave);
+        assert($object instanceof $this->entity);
+
+        return $this->saveManager
+            ->handleAndSave(
+                $object,
+                $this->formType,
+                $request, $options,
+                $doBeforeSave
+            );
+    }
+
+    /**
+     * Takes the $request and deletes the address object from the database.
+     * By default, it just deletes the address object as is and redirects to the referer page.
+     *
+     * ```$doBeforeDelete()``` is an optional ?callable function that executes before the actual delete.
+     * Return array|void
+     * It inherits $object, $redirectRoute and $redirectParams.
+     * @param Request $request
+     * @param object $object
+     * @param callable|null $doBeforeDelete
+     * @return bool
+     * @throws Exception
+     * @example fn($object) => {}
+     * If it returns void, it executes and delete() continues.
+     * If it returns an array, the array can only contain 'save' or 'exit'.
+     * If it returns 'save', it persists the address object, flushes and delete() continues.
+     * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
+     * If it returns both 'save' and 'exit', it will then persist the object, flush, interrupt delete() and redirect to $redirectRoute
+     */
+    public function delete(
+        Request $request,
+        object $object,
+        ?callable $doBeforeDelete = null
+    ): bool
+    {
+        assert($object instanceof $this->entity);
+        return $this->deleteManager
+            ->delete(
+                $request,
+                $object,
+                $doBeforeDelete
+            );
     }
 
     /**
      * @throws Exception
      */
-    protected function getCrudSetting(string $attributeArgument): string
+    private function getCrudSetting(string $attributeArgument): string
     {
         $crudAttributes = ClassBrowser::findAttribute($this::class, CrudSetting::class);
         return $crudAttributes->getArguments()[$attributeArgument];

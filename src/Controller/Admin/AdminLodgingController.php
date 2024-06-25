@@ -46,7 +46,8 @@ class AdminLodgingController extends AbstractController
     {
         $lodgingForm = $this->lodgingCrud->save($request, $lodging);
 
-        if ($lodgingForm === true) return $this->redirectTo('referer', $request);
+        if ($lodgingForm === true)
+            return $this->redirectTo('referer', $request)->do();
 
         return $this->render('admin/lodging/lodging-details.html.twig', [
             'lodgingForm' => $lodgingForm,
@@ -63,7 +64,15 @@ class AdminLodgingController extends AbstractController
         $lodging = new Lodging();
         $lodgingForm = $this->lodgingCrud->save($request, $lodging);
 
-        if ($lodgingForm === true) return $this->redirectTo('app_admin_management', $request, 'lodgings');
+        if ($lodgingForm === true) {
+            $newLodgingId = $this->lodgingRepository
+                ->findOneBy(
+                    ['name' => $lodging->getName()],
+                    ['createdOn' => 'DESC']
+                )->getId();
+
+            return $this->redirectTo(routeName: 'app_admin_lodging_show', routeParams: ['id' => $newLodgingId])->do();
+        }
 
         return $this->render('admin/lodging/lodging-new.html.twig', [
             'lodgingForm' => $lodgingForm->createView(),
@@ -76,9 +85,11 @@ class AdminLodgingController extends AbstractController
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
     public function delete(Lodging $lodging, Request $request): Response
     {
-        $this->entityManager->remove($lodging);
-        $this->entityManager->flush();
-        return $this->redirectTo('referer', $request, 'lodgings');
+        $this->lodgingCrud->delete($request, $lodging);
+
+        return $this->redirectTo('app_admin_management', $request)
+            ->withAnchor('lodgings')
+            ->do();
     }
 
     // ---------------------------------------------------------------------------------------------------

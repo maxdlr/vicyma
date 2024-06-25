@@ -14,11 +14,8 @@ use App\Enum\ReservationStatusEnum;
 use App\Form\ReservationType;
 use App\Repository\ReservationStatusRepository;
 use App\Service\YieldManager;
-use Exception;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 #[CrudSetting(entity: Reservation::class, formType: ReservationType::class)]
 class ReservationRequestCrud extends AbstractCrud
@@ -71,40 +68,6 @@ class ReservationRequestCrud extends AbstractCrud
                 );
             }
             return true;
-        });
-    }
-
-    /**
-     * Takes the $request and deletes the reservation object from the database.
-     * By default, it just deletes the reservation object as is and redirects to the referer page.
-     *
-     * $redirectRoute is an optional string that has to be a valid route name.
-     *
-     * $redirectParams is an optional array that has to be valid parameters associated with $redirectRoute
-     *
-     * $doBeforeDelete() is an optional ?callable function that executes before the actual delete.
-     * Return array|void
-     * It inherits $object, $redirectRoute and $redirectParams.
-     * @param Request $request
-     * @param Reservation $object
-     * @param string $redirectRoute
-     * @param array $redirectParams
-     * @param string $anchor
-     * @return Response
-     * @throws Exception
-     * @example fn($object, $redirectRoute, $redirectParams) => {}
-     * If it returns void, it executes and delete() continues.
-     * If it returns an array, the array can only contain 'save' or 'exit'.
-     * If it returns 'save', it persists the reservation object, flushes and delete() continues.
-     * If it returns 'exit', it interrupts delete() redirects to $redirectRoute.
-     */
-    #[Route('/reservation/{id}/delete', name: 'app_reservation_delete', methods: ['GET', 'POST'])]
-    public function delete(Request $request, Reservation $object, string $redirectRoute = 'referer', array $redirectParams = [], string $anchor = ''): Response
-    {
-        return $this->deleteManager->delete($request, $object, $redirectRoute, $redirectParams, $anchor, function ($object) {
-            assert($object instanceof Reservation);
-            $object->setReservationStatus($this->reservationStatusRepository->findOneByName(ReservationStatusEnum::DELETED->value));
-            return ['save', 'exit'];
         });
     }
 }

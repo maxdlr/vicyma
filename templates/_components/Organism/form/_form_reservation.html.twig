@@ -19,7 +19,7 @@ reservation.reservationStatus.name is same as 'PAID' ? 'bg-success' : '' }}">
         include('_components/Atom/form/_number-field.html.twig', {formRow: reservationForm.price, label: 'Prix'}),
         include('_components/Atom/form/_select-field.html.twig', {formRow: reservationForm.lodgings, label: 'Appartement', placeholder: false}),
     ],
-    deleteRoute: 'app_reservation_delete',
+    deleteRoute: 'app_admin_reservation_delete',
     deleteConfirmMsg: 'Voulez-vous vraiment supprimer ?',
     archiveRoute: 'app_admin_reservation_archive',
     archiveConfirmMsg: 'Voulez-vous vraiment archiver ?',

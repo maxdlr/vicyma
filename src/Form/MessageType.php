@@ -46,6 +46,7 @@ class MessageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Message::class,
+            'admin' => null,
             'user' => null,
             'isReply' => false,
             'lodgings' => null,

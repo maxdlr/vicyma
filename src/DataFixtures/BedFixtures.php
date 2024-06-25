@@ -7,7 +7,6 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Faker\Factory;
-use ReflectionException;
 
 class BedFixtures extends Fixture
 {

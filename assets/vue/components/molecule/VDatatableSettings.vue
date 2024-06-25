@@ -5,7 +5,7 @@ import Dropdown from "../atom/Dropdown.vue";
 import {computed} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
-import {SLIDE_LEFT, SLIDE_RIGHT} from "../../constant/animation";
+import {SLIDE_RIGHT} from "../../constant/animation";
 
 const props = defineProps({
   settings: {type: Object, required: true},

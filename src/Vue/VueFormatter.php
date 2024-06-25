@@ -2,7 +2,6 @@
 
 namespace App\Vue;
 
-use App\Service\Explorer;
 use App\Vue\Model\VueDatatable;
 use App\Vue\Model\VueDatatableComponent;
 use App\Vue\Model\VueDatatableSetting;

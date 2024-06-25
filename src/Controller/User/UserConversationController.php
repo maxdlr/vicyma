@@ -47,7 +47,7 @@ class UserConversationController extends AbstractController
         $user = $this->userManager->user;
 
         $messageForm = $this->messageCrud->save(request: $request, object: new Message(), options: ['user' => $user]);
-        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request)->do();
 
         return $this->render(view: 'user/dashboard/inbox.html.twig', parameters: [
             'datatables' => [
@@ -93,6 +93,6 @@ class UserConversationController extends AbstractController
         $this->entityManager->persist(object: $conversation);
         $this->entityManager->flush();
 
-        return $this->redirectTo(routeName: 'referer', request: $request);
+        return $this->redirectTo(routeName: 'referer', request: $request)->do();
     }
 }

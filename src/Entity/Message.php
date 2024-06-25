@@ -7,6 +7,7 @@ use DateTime;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 class Message
@@ -129,7 +130,7 @@ class Message
         return $this->admin;
     }
 
-    public function setAdmin(?User $admin): static
+    public function setAdmin(?UserInterface $admin): static
     {
         $this->admin = $admin;
 

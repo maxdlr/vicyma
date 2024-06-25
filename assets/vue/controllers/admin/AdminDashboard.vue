@@ -1,6 +1,6 @@
 <script setup>
 import VDashboardNotification from "../../components/organism/VDashboardNotification.vue";
-import {implode, toTitle, truncate} from "../../composable/formatter/string";
+import {toTitle, truncate} from "../../composable/formatter/string";
 
 const props = defineProps({
   notifications: {type: Object, required: true}
