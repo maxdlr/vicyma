@@ -71,7 +71,7 @@ class AdminLodgingController extends AbstractController
                     ['createdOn' => 'DESC']
                 )->getId();
 
-            return $this->redirectTo('app_admin_lodging_show', null, ['id' => $newLodgingId])->do();
+            return $this->redirectTo(routeName: 'app_admin_lodging_show', routeParams: ['id' => $newLodgingId])->do();
         }
 
         return $this->render('admin/lodging/lodging-new.html.twig', [
