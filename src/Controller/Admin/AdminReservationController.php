@@ -74,7 +74,7 @@ class AdminReservationController extends AbstractController
                     ['createdOn' => 'DESC']
                 )->getId();
 
-            return $this->redirectTo('app_admin_reservation_show',null, ['id' => $newReservationId])->do();
+            return $this->redirectTo(routeName: 'app_admin_reservation_show', routeParams: ['id' => $newReservationId])->do();
         }
 
         return $this->render(view: 'admin/reservation/reservation-new.html.twig', parameters: [
