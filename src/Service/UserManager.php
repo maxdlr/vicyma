@@ -38,7 +38,7 @@ readonly class UserManager
     {
         $user = $this->user;
 
-        if ($user === null) throw new AuthenticationCredentialsNotFoundException('No logged user found, cannot get data');
+        if ($user === null) throw new Exception('No logged user found, cannot get data');
 
         return VueObjectMaker::makeVueObjectOf([$user], self::getEssentialUserPropertyKeys())
             ->get()[0];
