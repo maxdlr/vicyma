@@ -89,7 +89,6 @@
     "dama/doctrine-test-bundle": "^8.0",
     "phpunit/phpunit": "^11.0",
     "symfony/maker-bundle": "^1.54",
-    "symfony/panther": "^2.1",
     "symfony/web-profiler-bundle": "7.0.*"
   }
 }

@@ -27,8 +27,8 @@ class MessageType extends AbstractType
                     'choice_label' => 'name',
                     'empty_data' => null,
                     'required' => false,
-                ]);
-                $builder->add('reservation', EntityType::class, [
+                ])
+                ->add('reservation', EntityType::class, [
                     'class' => Reservation::class,
                     'choices' => $options['user']->getReservations(),
                     'choice_label' => function (Reservation $reservation) use ($options) {
