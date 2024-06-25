@@ -41,7 +41,7 @@ class UserConversationController extends AbstractController
      * @throws ReflectionException
      * @throws Exception
      */
-    #[Route(path: '/', name: 'dashboard', methods: ['GET', 'POST'])]
+    #[Route(path: '/', name: 'inbox', methods: ['GET', 'POST'])]
     public function conversations(Request $request): Response
     {
         $user = $this->userManager->user;
