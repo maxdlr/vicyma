@@ -4,47 +4,72 @@ namespace App\Crud\Manager;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Maxime de la Rocheterie
  */
 trait AfterCrudTrait
 {
-    /**
-     * If $url === 'referer', it redirects to the previous (referer) page.
-     *
-     * @param string $routeName
-     * @param Request|null $request
-     * @param string $anchor
-     * @param array $routeParams
-     * @return Response
-     */
+    private ?string $redirectionUrl = null;
+    private ?string $routeName = null;
+    const ROUTES_WITH_HASHES = [
+        'app_user_account_conversation_inbox',
+        'app_admin_business',
+        'app_admin_management',
+    ];
+
     protected function redirectTo(
-        string  $routeName,
+        string $routeName,
         Request $request = null,
-        string  $anchor = '',
-        array   $routeParams = [],
-    ): Response
+        array $routeParams = []
+    ): self
     {
-        $anchorHash = '';
-        if ($anchor !== '') {
-            $anchorHash = '#' . $anchor;
+        if ($routeName === 'referer') {
+            $this->routeName = $request->attributes->get('_route');
+            $this->redirectionUrl = $this->getReferer($request);
+        } else {
+            $this->routeName = $routeName;
+            $this->redirectionUrl = $this->getRequestedRedirection($routeName, $routeParams);
         }
 
-        if ($routeName === 'referer' && $request !== null) {
+        return $this;
+    }
 
-            $url = $request->headers->get('referer');
+    protected function withAnchor(string $anchor): self
+    {
+        assert($this->routeName !== null);
+        assert($this->doesRouteUseHashes(), 'This route does use hashes/anchors');
+        $this->redirectionUrl .= $this->getHash($anchor);
 
-            if (str_contains($url, 'admin') || str_contains($url, 'user')) {
-                $url .= $anchorHash;
-            }
+        return $this;
+    }
 
-            return new RedirectResponse($url, 302);
-        }
+    protected function do(): RedirectResponse
+    {
+        return new RedirectResponse($this->redirectionUrl, 302);
+    }
 
-        $routeName = $this->generateUrl($routeName, $routeParams) . $anchorHash;
+    private function doesRouteUseHashes(): bool
+    {
+        return in_array($this->routeName, self::ROUTES_WITH_HASHES);
+    }
 
-        return new RedirectResponse($routeName, 302);
+    private function getHash(string $anchor = ''): string
+    {
+        return $anchor !== '' ? '#' . $anchor : '';
+    }
+
+    private function getRequestedRedirection(
+        string $routeName,
+        array $routeParams
+    ): string
+    {
+        return $this->generateUrl($routeName, $routeParams);
+    }
+
+    private function getReferer(Request $request): string
+    {
+        assert($request !== null, 'Cannot redirect to referer without Request');
+        return $request->headers->get('referer');
     }
 }

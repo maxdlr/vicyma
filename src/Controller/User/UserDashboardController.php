@@ -13,6 +13,7 @@ use App\Service\UserManager;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -47,14 +48,14 @@ class UserDashboardController extends AbstractController
         $reservationsData = $this->userReservationController->getData();
 
         $messageForm = $this->messageCrud->save(request: $request, object: new Message(), options: ['user' => $user]);
-        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($messageForm === true) return $this->refresh($request);
 
         $userForm = $this->userCrud->save(request: $request, object: $user);
-        if ($userForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($userForm === true) return $this->refresh($request);
 
         $address = $user->getAddress() ?? new Address();
         $addressForm = $this->addressCrud->save(request: $request, object: $address, options: ['user' => $user]);
-        if ($addressForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($addressForm === true) return $this->refresh($request);
 
         return $this->render(view: 'user/dashboard/dashboard.html.twig', parameters: [
             'user' => $userData,
@@ -63,5 +64,10 @@ class UserDashboardController extends AbstractController
             'reservations' => $reservationsData,
             'messageForm' => $messageForm->createView()
         ]);
+    }
+
+    public function refresh(Request $request): RedirectResponse
+    {
+        return $this->redirectTo('referer', $request)->do();
     }
 }

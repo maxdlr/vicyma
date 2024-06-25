@@ -42,7 +42,8 @@ class AdminAddressController extends AbstractController
     {
         $addressForm = $this->addressCrud->save(request: $request, object: $address);
 
-        if ($addressForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($addressForm === true)
+            return $this->redirectTo(routeName: 'referer', request: $request)->do();
 
         return $this->render(view: 'admin/address/address-details.html.twig', parameters: [
             'addressForm' => $addressForm,
@@ -59,7 +60,9 @@ class AdminAddressController extends AbstractController
         $address = new Address();
         $addressForm = $this->addressCrud->save(request: $request, object: $address);
 
-        if ($addressForm === true) return $this->redirectTo(routeName: 'app_admin_management', request: $request, anchor: 'addresss');
+        if ($addressForm === true)
+            return $this->redirectTo(routeName: 'app_admin_management')
+                ->withAnchor('users')->do();
 
         return $this->render(view: 'admin/address/address-new.html.twig', parameters: [
             'addressForm' => $addressForm->createView(),
@@ -72,6 +75,10 @@ class AdminAddressController extends AbstractController
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
     public function delete(Address $address, Request $request): Response
     {
-        return $this->addressCrud->delete(request: $request, object: $address, redirectRoute: 'app_admin_business');
+        $this->addressCrud->delete($request, $address);
+        return $this->redirectTo(
+            'app_admin_business',
+            $request
+        )->withAnchor('users')->do();
     }
 }

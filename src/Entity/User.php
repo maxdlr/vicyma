@@ -357,7 +357,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->conversations->removeElement($conversation)) {
             // set the owning side to null (unless already changed)
-            if ($conversation->getClient() === $this) {
+            if ($conversation->getUser() === $this) {
                 $conversation->setUser(null);
             }
         }

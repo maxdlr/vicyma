@@ -48,8 +48,8 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $reservationForm = $this->reservationCrud->save(request: $request, object: $reservation);
-
-        if ($reservationForm === true) return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reservations');
+        if ($reservationForm === true)
+            return $this->redirectTo(routeName: 'referer', request: $request)->do();
 
         return $this->render(view: 'admin/reservation/reservation-details.html.twig', parameters: [
             'reservationForm' => $reservationForm->createView(),
@@ -66,7 +66,16 @@ class AdminReservationController extends AbstractController
         $reservation = new Reservation();
         $reservationForm = $this->reservationCrud->save(request: $request, object: $reservation);
 
-        if ($reservationForm === true) return $this->redirectTo(routeName: 'app_admin_business', request: $request, anchor: 'reservations');
+        if ($reservationForm === true) {
+
+            $newReservationId = $this->reservationRepository
+                ->findOneBy(
+                    ['reservationNumber' => $reservation->getReservationNumber()],
+                    ['createdOn' => 'DESC']
+                )->getId();
+
+            return $this->redirectTo('app_admin_reservation_show',null, ['id' => $newReservationId])->do();
+        }
 
         return $this->render(view: 'admin/reservation/reservation-new.html.twig', parameters: [
             'reservationForm' => $reservationForm->createView(),
@@ -83,7 +92,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus(reservation: $reservation, reservationStatusEnum: ReservationStatusEnum::CONFIRMED);
-        return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reservations');
+        return $this->redirectTo(routeName: 'referer', request: $request)->do();
     }
 
     /**
@@ -95,7 +104,9 @@ class AdminReservationController extends AbstractController
     ): void
     {
         try {
-            $reservation->setReservationStatus($this->reservationStatusRepository->findOneByName($reservationStatusEnum->value));
+            $reservation->setReservationStatus(
+                $this->reservationStatusRepository->findOneByName($reservationStatusEnum->value)
+            );
             $this->entityManager->persist($reservation);
             $this->entityManager->flush();
         } catch (Exception $e) {
@@ -106,14 +117,20 @@ class AdminReservationController extends AbstractController
     /**
      * @throws Exception
      */
-    #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET'])]
+    #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
     public function delete(
         Reservation $reservation,
-        Request     $request
+        Request $request
     ): Response
     {
-        $this->editStatus(reservation: $reservation, reservationStatusEnum: ReservationStatusEnum::DELETED);
-        return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reservations');
+        $this->reservationCrud->delete($request, $reservation, function ($object) {
+            assert($object instanceof Reservation);
+            $object->setReservationStatus(
+                $this->reservationStatusRepository->findOneByName(ReservationStatusEnum::DELETED->value)
+            );
+            return ['save', 'exit'];
+        });
+        return $this->redirectTo(routeName: 'app_admin_business')->withAnchor('reservations')->do();
     }
 
     /**
@@ -126,7 +143,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus(reservation: $reservation, reservationStatusEnum: ReservationStatusEnum::ARCHIVED);
-        return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reservations');
+        return $this->redirectTo(routeName: 'referer', request: $request)->do();
     }
 
     // ---------------------------------------------------------------------------------------------------
@@ -141,7 +158,7 @@ class AdminReservationController extends AbstractController
     ): Response
     {
         $this->editStatus(reservation: $reservation, reservationStatusEnum: ReservationStatusEnum::PAID);
-        return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reservations');
+        return $this->redirectTo(routeName: 'referer', request: $request)->do();
     }
 
     /**

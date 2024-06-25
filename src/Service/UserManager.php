@@ -8,7 +8,6 @@ use App\Vue\VueObjectMaker;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 
 readonly class UserManager
 {

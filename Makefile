@@ -107,10 +107,10 @@ composer-install: ## Install dependencies
 
 test: ## Run Tests / testName=TESTNAME to only run TESTNAME
 	@make command-intro-msg msg="Running tests"
-	@$(SYMFONY) d:d:d -f --env=test --if-exists && \
-	$(SYMFONY) d:d:c --env=test --if-not-exists && \
-	$(SYMFONY) --env=test doctrine:schema:create && \
-	$(SYMFONY) --env=test doctrine:fixtures:load --no-interaction \
+#	@$(SYMFONY) d:d:d -f --env=test --if-exists && \
+#	$(SYMFONY) d:d:c --env=test --if-not-exists && \
+#	$(SYMFONY) --env=test doctrine:schema:create && \
+#	$(SYMFONY) --env=test doctrine:fixtures:load --no-interaction \
 
 	@if [ -z $(testName) ]; then \
 		php bin/phpunit --colors=always; \

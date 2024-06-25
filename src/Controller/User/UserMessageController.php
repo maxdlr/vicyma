@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -96,13 +97,28 @@ class UserMessageController extends AbstractController
             }
         );
 
-        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($messageForm === true)
+            return $this->redirectTo(routeName: 'referer', request: $request)->do();
 
         return $this->render(view: 'user/message/conversation.html.twig', parameters: [
             'messageForm' => $messageForm->createView(),
             'conversation' => $pastMessages,
             'userMessage' => $message
         ]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route('message/{id}', name: 'app_message_delete', methods: ['POST'])]
+    public function delete(
+        Request $request,
+        Message $message
+    ): RedirectResponse
+    {
+        $this->messageCrud->delete($request, $message);
+        return $this->redirectTo('app_user_account_conversation_inbox')
+            ->withAnchor('messages')->do();
     }
 
     /**
@@ -124,11 +140,10 @@ class UserMessageController extends AbstractController
 
         $options = ['lodgings' => $reservation->getLodgings(), 'user' => $this->userManager->user];
         $messageForm = $this->messageCrud->save(request: $request, object: $message, options: $options);
-        if ($messageForm === true) return $this->redirectTo(
-            routeName: 'app_user_account_conversation_inbox',
-            request: $request,
-            anchor: 'messages'
-        );
+
+        if ($messageForm === true)
+            return $this->redirectTo('app_user_account_conversation_inbox')
+                ->withAnchor('messages')->do();
 
         return $this->render(view: 'user/message/new.html.twig', parameters: [
             "messageForm" => $messageForm->createView(),

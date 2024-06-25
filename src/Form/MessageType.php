@@ -27,8 +27,8 @@ class MessageType extends AbstractType
                     'choice_label' => 'name',
                     'empty_data' => null,
                     'required' => false,
-                ])
-                ->add('reservation', EntityType::class, [
+                ]);
+                $builder->add('reservation', EntityType::class, [
                     'class' => Reservation::class,
                     'choices' => $options['user']->getReservations(),
                     'choice_label' => function (Reservation $reservation) use ($options) {
@@ -46,6 +46,7 @@ class MessageType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Message::class,
+            'admin' => null,
             'user' => null,
             'isReply' => false,
             'lodgings' => null,

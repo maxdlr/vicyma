@@ -46,7 +46,7 @@ class AdminConversationController extends AbstractController
         return $this->redirectTo(
             routeName: 'app_admin_message_reply',
             routeParams: ['id' => $latestMessage->getId()]
-        );
+        )->do();
     }
 
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
@@ -57,7 +57,7 @@ class AdminConversationController extends AbstractController
         $this->entityManager->remove($conversation);
         $this->entityManager->flush();
 
-        return $this->redirectTo('app_admin_conversations');
+        return $this->redirectTo('app_admin_conversations')->do();
     }
 
     /**

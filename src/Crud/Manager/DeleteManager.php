@@ -2,23 +2,26 @@
 
 namespace App\Crud\Manager;
 
+use App\Enum\RoleEnum;
+use App\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Maxime de la Rocheterie
  */
 class DeleteManager extends AbstractController
 {
-    use AfterCrudTrait;
-
     /**
      * @param EntityManagerInterface $entityManager
+     * @param UserManager $userManager
      */
-    public function __construct(private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UserManager $userManager,
+    )
     {
     }
 
@@ -47,21 +50,23 @@ class DeleteManager extends AbstractController
     public function delete(
         Request  $request,
         object   $object,
-        string   $redirectRoute,
-        array    $redirectParams,
-        string   $anchor = '',
         callable $doBeforeDelete = null
-    ): Response
+    ): bool
     {
-        if ($this->isCsrfTokenValid('delete' . $object->getId(), $request->getPayload()->get('_token'))) {
+        if (
+            $this->isCsrfTokenValid(
+                'delete' . $object->getId(),
+                $request->getPayload()->get('_token')
+            ) || in_array(RoleEnum::ROLE_ADMIN->value, $this->userManager->user->getRoles())
+        ) {
             if ($doBeforeDelete !== null) {
-                $do = $doBeforeDelete($object, $redirectRoute, $redirectParams);
+                $do = $doBeforeDelete($object);
                 try {
                     if (in_array('save', $do)) {
                         $this->entityManager->persist($object);
                         $this->entityManager->flush();
                     }
-                    if (in_array('exit', $do)) return $this->redirectTo($redirectRoute, $request);
+                    if (in_array('exit', $do)) return true;
                 } catch (Exception) {
                     throw new Exception('Cannot delete this object: ' . $object->getid());
                 }
@@ -69,8 +74,8 @@ class DeleteManager extends AbstractController
 
             $this->entityManager->remove($object);
             $this->entityManager->flush();
+            return true;
         }
-
-        return $this->redirectTo($redirectRoute, $request, $anchor);
+        return false;
     }
 }

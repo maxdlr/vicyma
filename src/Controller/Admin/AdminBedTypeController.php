@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -44,7 +45,7 @@ class AdminBedTypeController extends AbstractController
     ): Response
     {
         $bedForm = $this->bedTypeCrud->save(request: $request, object: $bed);
-        if ($bedForm === true) return $this->redirectTo(routeName: 'app_admin_management', request: $request, anchor: 'beds');
+        if ($bedForm === true) return $this->redirectToManagementUsers();
 
         return $this->render(view: 'admin/bed/bed-details.html.twig', parameters: [
             'bedForm' => $bedForm->createView(),
@@ -61,7 +62,7 @@ class AdminBedTypeController extends AbstractController
         $bed = new BedType();
         $bedForm = $this->bedTypeCrud->save(request: $request, object: $bed);
 
-        if ($bedForm === true) return $this->redirectTo(routeName: 'app_admin_management', request: $request, anchor: 'beds');
+        if ($bedForm === true) return $this->redirectToManagementUsers();
 
         return $this->render(view: 'admin/bed/bed-new.html.twig', parameters: [
             'bedForm' => $bedForm->createView(),
@@ -74,10 +75,17 @@ class AdminBedTypeController extends AbstractController
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET', 'POST'])]
     public function delete(BedType $bed, Request $request): Response
     {
-        return $this->bedTypeCrud->delete(request: $request, object: $bed, redirectRoute: 'app_admin_management', anchor: 'beds');
+        $this->bedTypeCrud->delete(request: $request, object: $bed);
+        return $this->redirectToManagementUsers();
     }
 
     // ---------------------------------------------------------------------------------------------------
+
+    public function redirectToManagementUsers(): RedirectResponse
+    {
+        return $this->redirectTo(routeName: 'app_admin_management')
+            ->withAnchor('beds')->do();
+    }
 
     /**
      * @throws ReflectionException

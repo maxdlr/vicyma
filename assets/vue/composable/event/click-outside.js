@@ -1,3 +1,5 @@
+// noinspection JSUnusedGlobalSymbols
+
 import {onBeforeUnmount, onMounted} from 'vue'
 
 export function clickOutside(

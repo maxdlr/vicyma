@@ -1,6 +1,5 @@
 <script setup>
 import VNavItem from "../../components/atom/VNavItem.vue";
-import {computed, ref} from "vue";
 
 const props = defineProps({
   navigation: {type: Object, required: true}

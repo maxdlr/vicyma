@@ -47,7 +47,7 @@ class AdminReviewController extends AbstractController
     {
         $reviewForm = $this->reviewCrud->save(request: $request, object: $review);
 
-        if ($reviewForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($reviewForm === true) return $this->redirectTo(routeName: 'referer', request: $request)->do();
 
         return $this->render(view: 'admin/review/review-details.html.twig', parameters: [
             'reviewForm' => $reviewForm,
@@ -60,13 +60,12 @@ class AdminReviewController extends AbstractController
      */
     #[Route(path: '/{id}/delete', name: 'delete', methods: ['GET'])]
     public function delete(
-        Review  $review,
-        Request $request
+        Review  $review
     ): Response
     {
         $this->entityManager->remove($review);
         $this->entityManager->flush();
-        return $this->redirectTo(routeName: 'referer', request: $request, anchor: 'reviews');
+        return $this->redirectTo(routeName: 'app_admin_business')->withAnchor('reviews')->do();
     }
 
     // ---------------------------------------------------------------------------------------------------

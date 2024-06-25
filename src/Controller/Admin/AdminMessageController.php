@@ -2,13 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\AdminMessageCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Crud\MessageCrud;
 use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Enum\RoleEnum;
 use App\Repository\MessageRepository;
+use App\Service\UserManager;
 use App\ValueObject\ConversationId;
 use App\Vue\Model\VueDatatableSetting;
 use App\Vue\VueFormatter;
@@ -33,7 +33,7 @@ class AdminMessageController extends AbstractController
         private readonly MessageRepository      $messageRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly MessageCrud            $messageCrud,
-        private readonly AdminMessageCrud       $adminMessageCrud
+        private readonly UserManager $userManager
     )
     {
     }
@@ -72,17 +72,14 @@ class AdminMessageController extends AbstractController
             $pastMessages = [$userMessage];
         }
 
-        $admin = $this->getUser();
-        if (!$admin) {
-            return $this->redirectTo(routeName: 'app_login', request: $request);
-        }
-
+        $admin = $this->userManager->user;
         $responseMessage = new Message();
-        $messageForm = $this->adminMessageCrud->save(
+        $messageForm = $this->messageCrud->save(
             request: $request,
             object: $responseMessage,
-            options: ['admin' => $admin],
-            doBeforeSave: function () use ($userMessage, $responseMessage) {
+            options: ['isReply' => true, 'user' => $userMessage->getUser()],
+            doBeforeSave: function () use ($userMessage, $responseMessage, $admin) {
+                $responseMessage->setAdmin($admin);
                 $userMessage->setIsReadByAdmin(true);
 
                 if ($userMessage->getConversation() === null) {
@@ -102,7 +99,8 @@ class AdminMessageController extends AbstractController
             }
         );
 
-        if ($messageForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        if ($messageForm === true)
+            return $this->redirectTo(routeName: 'referer', request: $request)->do();
 
         return $this->render(view: 'admin/message/admin-conversation.html.twig', parameters: [
             'messageForm' => $messageForm->createView(),
@@ -120,7 +118,8 @@ class AdminMessageController extends AbstractController
         Request $request
     ): Response
     {
-        return $this->messageCrud->delete(request: $request, object: $message, redirectRoute: 'app_admin_business', anchor: 'messages');
+        $this->messageCrud->delete(request: $request, object: $message);
+        return $this->redirectTo('app_admin_business')->withAnchor('messages')->do();
     }
 
     // ---------------------------------------------------------------------------------------------------

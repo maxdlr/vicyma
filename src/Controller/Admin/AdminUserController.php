@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Crud\AdminUserCrud;
+use App\Crud\UserCrud;
 use App\Crud\Manager\AfterCrudTrait;
 use App\Entity\User;
 use App\Enum\RoleEnum;
@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,7 +29,7 @@ class AdminUserController extends AbstractController
     public function __construct(
         private readonly UserRepository         $userRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly AdminUserCrud          $adminUserCrud
+        private readonly UserCrud $userCrud
     )
     {
     }
@@ -40,15 +41,14 @@ class AdminUserController extends AbstractController
     public function new(Request $request): Response
     {
         $user = new User();
-        $userForm = $this->adminUserCrud->save(request: $request, object: $user);
+        $userForm = $this->userCrud->save(request: $request, object: $user);
 
-        if ($userForm === true) return $this->redirectTo(routeName: 'app_admin_business', request: $request, anchor: 'users');
+        if ($userForm === true) return $this->redirectToBusinessUsers($request);
 
         return $this->render(view: 'admin/user/user-new.html.twig', parameters: [
             'userForm' => $userForm->createView(),
         ]);
     }
-
 
     /**
      * @throws Exception
@@ -59,9 +59,8 @@ class AdminUserController extends AbstractController
         Request $request
     ): Response
     {
-        $userForm = $this->adminUserCrud->save(request: $request, object: $user);
-
-        if ($userForm === true) return $this->redirectTo(routeName: 'referer', request: $request);
+        $userForm = $this->userCrud->save(request: $request, object: $user);
+        if ($userForm === true) return $this->redirectToBusinessUsers($request);
 
         return $this->render(view: 'admin/user/user-details.html.twig', parameters: [
             'userForm' => $userForm,
@@ -78,13 +77,30 @@ class AdminUserController extends AbstractController
         Request $request
     ): Response
     {
-        return $this->adminUserCrud->delete(request: $request, object: $user, redirectRoute: 'app_admin_business', doBeforeDelete: function ($object) use ($user) {
-            assert($object instanceof User);
-            $user->setIsDeleted(true);
+        $this->userCrud->delete($request, $user, function($object) {
+            if (!$object->getIsDeleted()) {
+                $object->setIsDeleted(true);
+            }
             return ['save', 'exit'];
         });
+
+        if (str_contains($request->headers->get('referer'), 'management')) {
+            return $this->redirectTo('app_admin_management')
+                ->withAnchor('users')
+                ->do();
+        } else {
+            return $this->redirectToBusinessUsers($request);
+        }
     }
 
+    private function redirectToBusinessUsers(Request $request): RedirectResponse
+    {
+        return $this->redirectTo(
+            routeName: 'app_admin_business',
+            request: $request)
+            ->withAnchor(anchor: 'users')
+            ->do();
+    }
 
     /**
      * @throws ReflectionException
