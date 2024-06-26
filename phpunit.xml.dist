@@ -24,7 +24,11 @@
     <!--    <listeners>-->
     <!--        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>-->
     <!--    </listeners>-->
+    <!--    <extensions>-->
+    <!--        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>-->
+    <!--    </extensions>-->
     <extensions>
-        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
+        <bootstrap class="Symfony\Component\Panther\ServerExtension"/>
     </extensions>
 </phpunit>
+
