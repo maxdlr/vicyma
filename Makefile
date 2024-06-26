@@ -105,13 +105,20 @@ composer-install: ## Install dependencies
 	@make command-intro-msg msg="Installing composer dependencies"
 	@composer install --no-interaction
 
+test-db: ## Migrate test DB and run tests / testName=TESTNAME to only run TESTNAME
+	@make command-intro-msg msg="Migrating database and Running tests"
+
+	$(SYMFONY) d:m:m --env=test --no-interaction && \
+	$(SYMFONY) doctrine:fixtures:load --env=test --no-interaction; \
+
+	@if [ -z $(testName) ]; then \
+		php bin/phpunit --colors=always; \
+	else \
+		php bin/phpunit --colors=always --filter=$(testName); \
+	fi
+
 test: ## Run Tests / testName=TESTNAME to only run TESTNAME
 	@make command-intro-msg msg="Running tests"
-
-	@if [ -z $(db) ]; then \
-  		$(SYMFONY) d:m:m --env=test --no-interaction && \
-        $(SYMFONY) doctrine:fixtures:load --env=test --no-interaction; \
-	fi
 
 	@if [ -z $(testName) ]; then \
 		php bin/phpunit --colors=always; \
