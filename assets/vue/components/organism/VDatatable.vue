@@ -15,7 +15,7 @@ const props = defineProps({
   excludeFilters: {type: Array},
   excludeOrderBys: {type: Array},
   dateFilter: {type: Object, default: null, required: false},
-  searchableProperties: {type: Array, required: true},
+  searchableProperties: {type: Array, default: null, required: false},
   excludeFromRowProperties: {type: Array},
   newItemLink: {type: String, default: null, required: false},
   admin: {type: Boolean, default: false, required: false},
@@ -123,13 +123,14 @@ const isItemMatch = (item) => {
   let votes = [];
 
   for (const key in props.data.settings) {
+
     let selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].codeName];
 
     if (selectedFilterValue !== '' && item[key] !== null) {
       votes.push(checkFilterCondition(item[key], selectedFilterValue));
     }
 
-    if (searchQuery.value !== '' && item[key]) {
+    if (props.searchableProperties && searchQuery.value !== '' && item[key]) {
       votes.push(checkSearchQuery(item));
     }
   }
@@ -166,6 +167,7 @@ const checkFilterCondition = (itemValue, selectedFilterValue) => {
       return date.getTime() > selectedFilterValue.start.getTime() && date < selectedFilterValue.end.getTime()
     }
   }
+
   return itemValue.toString() === selectedFilterValue.toString();
 }
 
@@ -253,7 +255,11 @@ const storeOrderBy = () => {
       @reset="resetFilters"
       @order="orderBy"
       @filter="filterResults"
-  />
+  >
+    <template #filters="{label, options}">
+      <slot name="filters" :label="label" :options="options"/>
+    </template>
+  </VDatatableSettings>
 
   <VDatatableResults
       :items="filteredItems"
@@ -269,6 +275,9 @@ const storeOrderBy = () => {
     </template>
     <template #buttons="{item}">
       <slot name="buttons" :item="item"/>
+    </template>
+    <template #row="{item}">
+      <slot name="customRow" :item="item"/>
     </template>
   </VDatatableResults>
 </template>

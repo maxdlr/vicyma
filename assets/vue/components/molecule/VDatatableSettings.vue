@@ -9,11 +9,14 @@ import {SLIDE_RIGHT} from "../../constant/animation";
 
 const props = defineProps({
   settings: {type: Object, required: true},
-  excludeFilters: {type: Array, default: [], required: false},
-  excludeOrderBys: {type: Array, default: [], required: false},
-  mainFilter: {type: String, default: null, required: false},
-  dateFilter: {type: Object, default: null, required: false},
-  hideOrderBy: {type: Boolean, default: false, required: false}
+  excludeFilters: {type: Array, default: []},
+  excludeOrderBys: {type: Array, default: []},
+  mainFilter: {type: String, default: null},
+  dateFilter: {type: Object, default: null},
+  hideOrderBy: {type: Boolean, default: false},
+  resetButton: {type: String, default: 'left', validator(value) {
+    return ['left', 'right'].includes(value)
+    }}
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
@@ -95,7 +98,7 @@ const isFilters = computed(() => {
 
   <div :class="`row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`"
        class="justify-content-center align-items-center py-4">
-    <div class="d-flex justify-content-center align-items-center" v-if="isFilters">
+    <div class="d-flex justify-content-center align-items-center" v-if="isFilters && resetButton === 'left'">
       <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
       <i class="bi bi-arrow-right-short"></i>
       <Transition :name="SLIDE_RIGHT">
@@ -129,7 +132,7 @@ const isFilters = computed(() => {
     </div>
 
     <div v-for="(filter, index) in activeFilters" :key="index" v-if="isFilters">
-      <slot name="filters" :filter="filter">
+      <slot name="filters" :label="filter['name']" :options="filter['values']">
         <Dropdown
             :label="filter['name']"
             :options="filter['values']"

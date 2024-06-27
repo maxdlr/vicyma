@@ -2,7 +2,9 @@
 
 {% block body %}
 
-    <div {{ vue_component('HomePage') }}></div>
+    <div {{ vue_component('HomePage', {
+        lodgings: lodgings
+    }) }}></div>
     <h1>Hello World</h1>
 
 {% endblock %}
