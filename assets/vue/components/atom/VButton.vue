@@ -11,13 +11,13 @@ defineProps({
 
 <template>
   <button
-      class="btn text-nowrap"
-      role="button"
       :class="[
       `btn-${colorClass}`,
       !size ? '' : `btn-${size}`,
       roundClass ? `rounded-${roundClass}` : '',
     ]"
+      class="btn text-nowrap"
+      role="button"
   >
     <slot name="iconStart">
       <i :class="`bi bi-${iconClassStart}`"></i>
@@ -33,3 +33,10 @@ defineProps({
     </slot>
   </button>
 </template>
+<style lang="scss" scoped>
+@import "../../../styles/animation/animation";
+
+button {
+  transition: all $duration $timing;
+}
+</style>

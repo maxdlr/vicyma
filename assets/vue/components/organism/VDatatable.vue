@@ -1,5 +1,5 @@
 <script setup>
-import {onBeforeMount, ref, watch} from "vue";
+import {onBeforeMount, onMounted, onUnmounted, ref, watch} from "vue";
 import VDatatableResults from "../molecule/VDatatableResults.vue";
 import VDatatableSettings from "../molecule/VDatatableSettings.vue";
 import VDatatableTitle from "../atom/VDatatableTitle.vue";
@@ -7,6 +7,8 @@ import {isEmpty} from "../../composable/formatter/object";
 import {clearEmptyLocaleStorage} from "../../composable/action/localStorage";
 import Button from "../atom/VButton.vue";
 import {goTo} from "../../composable/action/redirect";
+import VButton from "../atom/VButton.vue";
+import {BREAKPOINTS} from "../../constant/bootstrap-constants";
 
 const props = defineProps({
   data: {type: Object, required: true},
@@ -21,7 +23,9 @@ const props = defineProps({
   admin: {type: Boolean, default: false, required: false},
   hideOrderBy: {type: Boolean},
   hideEmpty: {type: Boolean},
-  maxCellCountInRow: {type: Number}
+  maxCellCountInRow: {type: Number},
+  hideResultCount: {type: Boolean},
+  resetButton: {type: [String, false]}
 });
 const filteredItems = ref([])
 const selectedFilterOptions = ref({});
@@ -224,6 +228,21 @@ const storeFilters = () => {
 const storeOrderBy = () => {
   localStorage.setItem(`datatable/${props.title}/orderByState`, JSON.stringify(selectedOrderByOption.value))
 }
+
+const screenWidth = ref(window.innerWidth);
+const screenHeight = ref(window.innerHeight);
+
+const handleResize = () => {
+  screenWidth.value = window.innerWidth;
+  screenHeight.value = window.innerHeight;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
 </script>
 
 <template>
@@ -231,53 +250,56 @@ const storeOrderBy = () => {
     <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
     <div>
       <Button
-          label="Create new"
+          v-if="newItemLink"
           icon-class-end="plus-circle-fill"
-          @click.prevent="goTo(newItemLink)"
-          v-if="newItemLink"/>
+          label="Create new"
+          @click.prevent="goTo(newItemLink)"/>
       <slot name="titleButtons"/>
     </div>
   </div>
 
-  <VDatatableSettings
-      :settings="data.settings"
-      :exclude-filters="excludeFilters"
-      :exclude-order-bys="excludeOrderBys"
-      :main-filter="mainFilter"
-      :date-filter="dateFilter"
-      :hide-order-by="hideOrderBy"
-      v-model:search-query="searchQuery"
-      v-model:order-by-option="selectedOrderByOption"
-      v-model:filter-options="selectedFilterOptions"
-      v-model:main-filter-option="selectedMainFilterOption"
-      v-model:date-filter-option="selectedDateFilterOption"
-      @search="filterResults"
-      @reset="resetFilters"
-      @order="orderBy"
-      @filter="filterResults"
-  >
-    <template #filters="{label, options}">
-      <slot name="filters" :label="label" :options="options"/>
-    </template>
-  </VDatatableSettings>
+  <div>
+    <VDatatableSettings
+        v-model:date-filter-option="selectedDateFilterOption"
+        v-model:filter-options="selectedFilterOptions"
+        v-model:main-filter-option="selectedMainFilterOption"
+        v-model:order-by-option="selectedOrderByOption"
+        v-model:search-query="searchQuery"
+        :date-filter="dateFilter"
+        :exclude-filters="excludeFilters"
+        :exclude-order-bys="excludeOrderBys"
+        :hide-order-by="hideOrderBy"
+        :main-filter="mainFilter"
+        :reset-button="resetButton"
+        :screen-height="screenHeight"
+        :screen-width="screenWidth"
+        :settings="data.settings"
+        @filter="filterResults"
+        @order="orderBy"
+        @reset="resetFilters"
+        @search="filterResults"
+    />
+  </div>
 
   <VDatatableResults
-      :items="filteredItems"
-      :exclude-from-row-properties="excludeFromRowProperties"
-      :is-loading="isLoading"
       v-model:is-order-reversed="isOrderReversed"
       :admin="admin"
+      :exclude-from-row-properties="excludeFromRowProperties"
       :hide-empty="hideEmpty"
+      :hide-order-by="hideOrderBy"
+      :hide-result-count="hideResultCount"
+      :is-loading="isLoading"
+      :items="filteredItems"
       :max-cell-count-in-row="maxCellCountInRow"
   >
-    <template #rowHeader="{item}" v-if="$slots.rowHeader">
-      <slot name="rowHeader" :item="item"/>
+    <template v-if="$slots.rowHeader" #rowHeader="{item}">
+      <slot :item="item" name="rowHeader"/>
     </template>
     <template #buttons="{item}">
-      <slot name="buttons" :item="item"/>
+      <slot :item="item" name="buttons"/>
     </template>
     <template #row="{item}">
-      <slot name="customRow" :item="item"/>
+      <slot :item="item" name="customRow"/>
     </template>
   </VDatatableResults>
 </template>

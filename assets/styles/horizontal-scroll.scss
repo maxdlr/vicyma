@@ -1,0 +1,9 @@
+.horizontal-scroll-container {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  white-space: nowrap !important;
+}
+
+.horizontal-scroll-item {
+  display: inline-block !important;
+}

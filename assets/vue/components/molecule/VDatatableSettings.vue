@@ -2,10 +2,12 @@
 import VSearchInput from "../atom/VSearchInput.vue";
 import Button from "../atom/VButton.vue";
 import Dropdown from "../atom/Dropdown.vue";
-import {computed} from "vue";
+import {computed, ref} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
 import {SLIDE_RIGHT} from "../../constant/animation";
+import {BREAKPOINTS} from "../../constant/bootstrap-constants";
+import VButton from "../atom/VButton.vue";
 
 const props = defineProps({
   settings: {type: Object, required: true},
@@ -14,9 +16,13 @@ const props = defineProps({
   mainFilter: {type: String, default: null},
   dateFilter: {type: Object, default: null},
   hideOrderBy: {type: Boolean, default: false},
-  resetButton: {type: String, default: 'left', validator(value) {
-    return ['left', 'right'].includes(value)
-    }}
+  resetButton: {
+    type: [String, false], default: 'left', validator(value) {
+      return ['left', 'right', false].includes(value)
+    }
+  },
+  screenWidth: {type: [Number, String], required: true},
+  screenHeight: {type: [Number, String], required: true},
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
@@ -85,69 +91,101 @@ const isFilters = computed(() => {
   return Object.keys(activeFilters.value).length !== 0
 })
 
+const isMdScreen = ref(props.screenWidth < BREAKPOINTS.LG)
 </script>
 
 <template>
   <VDatatableMainFilter
       v-if="mainFilter"
-      :filter="activeMainFilter"
-      @selected-value="handleMainFilter"
       v-model:active-main-filter="selectedMainFilterOption.value"
+      :filter="activeMainFilter"
+      :screen-height="screenHeight"
+      :screen-width="screenWidth"
       class="py-5"
+      @selected-value="handleMainFilter"
   />
 
-  <div :class="`row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`"
-       class="justify-content-center align-items-center py-4">
-    <div class="d-flex justify-content-center align-items-center" v-if="isFilters && resetButton === 'left'">
-      <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
-      <i class="bi bi-arrow-right-short"></i>
-      <Transition :name="SLIDE_RIGHT">
-        <div v-if="isFiltered">
-          <Button label="Reset" color-class="secondary" @click.prevent="emit('reset')" class="mx-1"/>
-        </div>
-      </Transition>
-    </div>
-    <div v-if="isFilters">
+  <div class="d-flex align-items-center">
+    <Button v-if="isFiltered && isMdScreen" class="mx-1" color-class="secondary" label="Reset"
+            @click.prevent="emit('reset')"/>
+
+    <div
+        id="filters"
+        :class="[ isMdScreen ?
+      'horizontal-scroll-container' :
+      `row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`,
+      resetButton === 'right' ?
+      'justify-content-start' : resetButton === 'left' ?
+      'justify-content-end' :
+      'justify-content-center',
+      ]"
+        class="align-items-center py-4">
+      <div v-if="isFilters && resetButton === 'left' && !isMdScreen"
+           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+           class="d-flex justify-content-center align-items-center"
+      >
+        <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
+        <i class="bi bi-arrow-right-short"></i>
+        <Transition :name="SLIDE_RIGHT">
+          <Button v-if="isFiltered" class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
+        </Transition>
+      </div>
       <Dropdown
           v-if="!hideOrderBy && orderByOptions[0]"
+          v-model:selected-option="selectedOrderByOption"
+          :class="isMdScreen ? 'horizontal-scroll-item' : ''"
           :no-empty="true"
           :options="orderByOptions"
-          property-of="label"
           :return-raw-object="true"
           label="Order"
-          v-model:selected-option="selectedOrderByOption"
+          property-of="label"
           @has-selection="emit('order')"
       />
-    </div>
 
-    <div v-if="dateFilter">
-      <Dropdown
-          :options="getDateOptions()"
-          property-of="name"
-          :return-raw-object="true"
-          :label="dateFilter.label"
-          v-model:selected-option="selectedDateFilterOption"
-          @has-selection="emit('filter')"
-      />
-    </div>
-
-    <div v-for="(filter, index) in activeFilters" :key="index" v-if="isFilters">
-      <slot name="filters" :label="filter['name']" :options="filter['values']">
+      <div v-if="dateFilter"
+           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+      >
         <Dropdown
+            v-model:selected-option="selectedDateFilterOption"
+            :label="dateFilter.label"
+            :options="getDateOptions()"
+            :return-raw-object="true"
+            property-of="name"
+            @has-selection="emit('filter')"
+        />
+      </div>
+
+      <div v-for="(filter, index) in activeFilters" v-if="isFilters" :key="index"
+           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+      >
+        <Dropdown
+            v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             :label="filter['name']"
             :options="filter['values']"
             property-of="value"
-            v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             @has-selection="emit('filter')"
         />
-      </slot>
+      </div>
+      <VSearchInput
+          v-if="screenWidth >= BREAKPOINTS.MD"
+          v-model:query="searchQuery" :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+          @typing="emit('search')"
+      />
+
+      <Transition :name="SLIDE_RIGHT">
+        <div v-if="isFiltered && resetButton === 'right' && !isMdScreen"
+             :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+        >
+          <Button class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
+        </div>
+      </Transition>
+
     </div>
-    <VSearchInput v-model:query="searchQuery" @typing="emit('search')"/>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "../../../styles/animation/slide-left";
 @import "../../../styles/animation/slide-right";
-
+@import "../../../styles/horizontal-scroll";
 </style>

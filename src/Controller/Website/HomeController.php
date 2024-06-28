@@ -6,6 +6,7 @@ use App\Repository\LodgingRepository;
 use App\Vue\Model\VueDatatableSetting;
 use App\Vue\VueFormatter;
 use App\Vue\VueObjectMaker;
+use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -19,7 +20,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     #[Route('/', name: 'app_home')]
     public function index(): Response

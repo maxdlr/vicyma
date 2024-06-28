@@ -4,7 +4,8 @@
 
     <div {{ vue_component('HomePage', {
         lodgings: lodgings
-    }) }}></div>
-    <h1>Hello World</h1>
+    }) }}>
+        {{ include('_components/Atom/_spinner.html.twig') }}
+    </div>
 
 {% endblock %}
