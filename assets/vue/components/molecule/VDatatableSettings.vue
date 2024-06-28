@@ -1,13 +1,12 @@
 <script setup>
 import VSearchInput from "../atom/VSearchInput.vue";
-import Button from "../atom/VButton.vue";
+import VButton from "../atom/VButton.vue";
 import Dropdown from "../atom/Dropdown.vue";
-import {computed, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
 import {SLIDE_RIGHT} from "../../constant/animation";
 import {BREAKPOINTS} from "../../constant/bootstrap-constants";
-import VButton from "../atom/VButton.vue";
 
 const props = defineProps({
   settings: {type: Object, required: true},
@@ -21,8 +20,6 @@ const props = defineProps({
       return ['left', 'right', false].includes(value)
     }
   },
-  screenWidth: {type: [Number, String], required: true},
-  screenHeight: {type: [Number, String], required: true},
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
@@ -91,7 +88,23 @@ const isFilters = computed(() => {
   return Object.keys(activeFilters.value).length !== 0
 })
 
-const isMdScreen = ref(props.screenWidth < BREAKPOINTS.LG)
+const screenWidth = ref(window.innerWidth);
+const screenHeight = ref(window.innerHeight);
+const handleResize = () => {
+  screenWidth.value = window.innerWidth;
+  screenHeight.value = window.innerHeight;
+};
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const isMdScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.LG;
+})
+
 </script>
 
 <template>
@@ -104,22 +117,35 @@ const isMdScreen = ref(props.screenWidth < BREAKPOINTS.LG)
       class="py-5"
       @selected-value="handleMainFilter"
   />
-
+  <div class="w-100">
+    <VSearchInput
+        v-if="isMdScreen"
+        v-model:query="searchQuery"
+        class="w-75 mx-auto"
+        @typing="emit('search')"
+    />
+  </div>
   <div class="d-flex align-items-center">
-    <Button v-if="isFiltered && isMdScreen" class="mx-1" color-class="secondary" label="Reset"
-            @click.prevent="emit('reset')"/>
-
+    <VButton v-if="isFiltered && isMdScreen" class="mx-1" color-class="secondary" label="Reset"
+             @click.prevent="emit('reset')"/>
     <div
         id="filters"
         :class="[ isMdScreen ?
       'horizontal-scroll-container' :
-      `row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`,
+      `row row-cols-${Object.keys(activeFilters).length + (!hideOrderBy ? 1 : 0) + (isFiltered ? 1 : 0) + 1 + (dateFilter ? 1 : 0)}`,
       resetButton === 'right' ?
       'justify-content-start' : resetButton === 'left' ?
       'justify-content-end' :
       'justify-content-center',
       ]"
-        class="align-items-center py-4">
+        class="align-items-center py-4"
+    >
+      <VSearchInput
+          v-if="!isMdScreen"
+          v-model:query="searchQuery" :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+          @typing="emit('search')"
+      />
+
       <div v-if="isFilters && resetButton === 'left' && !isMdScreen"
            :class="isMdScreen ? 'horizontal-scroll-item' : ''"
            class="d-flex justify-content-center align-items-center"
@@ -127,7 +153,7 @@ const isMdScreen = ref(props.screenWidth < BREAKPOINTS.LG)
         <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
         <i class="bi bi-arrow-right-short"></i>
         <Transition :name="SLIDE_RIGHT">
-          <Button v-if="isFiltered" class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
+          <VButton v-if="isFiltered" class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
         </Transition>
       </div>
       <Dropdown
@@ -166,17 +192,12 @@ const isMdScreen = ref(props.screenWidth < BREAKPOINTS.LG)
             @has-selection="emit('filter')"
         />
       </div>
-      <VSearchInput
-          v-if="screenWidth >= BREAKPOINTS.MD"
-          v-model:query="searchQuery" :class="isMdScreen ? 'horizontal-scroll-item' : ''"
-          @typing="emit('search')"
-      />
 
       <Transition :name="SLIDE_RIGHT">
         <div v-if="isFiltered && resetButton === 'right' && !isMdScreen"
              :class="isMdScreen ? 'horizontal-scroll-item' : ''"
         >
-          <Button class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
+          <VButton class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
         </div>
       </Transition>
 
