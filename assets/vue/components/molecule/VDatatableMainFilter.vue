@@ -2,12 +2,10 @@
 import Button from "../atom/VButton.vue";
 import {toTitle} from "../../composable/formatter/string";
 import {BREAKPOINTS} from "../../constant/bootstrap-constants";
-import {ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 
 const props = defineProps({
   filter: {type: Object, required: true},
-  screenWidth: {type: [Number, String]},
-  screenHeight: {type: [Number, String]},
 });
 
 const emit = defineEmits(['selectedValue']);
@@ -17,16 +15,31 @@ const selectMainFilterValue = (value) => {
   emit('selectedValue', value);
 };
 
-const isMdScreen = ref(props.screenWidth < BREAKPOINTS.MD)
+const screenWidth = ref(window.innerWidth);
+const screenHeight = ref(window.innerHeight);
+const handleResize = () => {
+  screenWidth.value = window.innerWidth;
+  screenHeight.value = window.innerHeight;
+};
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const isMdScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.LG;
+})
 </script>
 
 <template>
-  <div class="border border-primary border-1 position-relative px-5 pt-5 pb-3 rounded-pill">
+  <div class="border border-primary border-1 position-relative px-5 pt-5 pb-3 rounded-pill py-5">
     <span class="position-absolute top-0 start-0 ms-5 mt-3 badge badge bg-success rounded-pill">{{
         toTitle(filter.name)
       }}</span>
     <div
-        :class="!isMdScreen ? `row row-cols-${filter.values.length + 1}` : 'horizontal-scroll-container'"
+        :class="!isMdScreen ? `row row-cols-${filter.values.length + 1}` : 'horizontal-scroll-container text-center'"
     >
       <div :class="isMdScreen ? 'horizontal-scroll-item' : ''" class="px-1">
         <Button

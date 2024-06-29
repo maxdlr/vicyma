@@ -2,11 +2,12 @@
 import VSearchInput from "../atom/VSearchInput.vue";
 import VButton from "../atom/VButton.vue";
 import Dropdown from "../atom/Dropdown.vue";
-import {computed, onMounted, onUnmounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
 import {SLIDE_RIGHT} from "../../constant/animation";
 import {BREAKPOINTS} from "../../constant/bootstrap-constants";
+import getMainAxisFromPlacement from "@popperjs/core/lib/utils/getMainAxisFromPlacement";
 
 const props = defineProps({
   settings: {type: Object, required: true},
@@ -20,7 +21,9 @@ const props = defineProps({
       return ['left', 'right', false].includes(value)
     }
   },
+  searchableProperties: {type: Array},
 })
+const maxBasicFilterColCount = ref(6);
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
 const selectedMainFilterOption = defineModel('mainFilterOption', {type: Object})
@@ -94,6 +97,7 @@ const handleResize = () => {
   screenWidth.value = window.innerWidth;
   screenHeight.value = window.innerHeight;
 };
+
 onMounted(() => {
   window.addEventListener("resize", handleResize);
 });
@@ -105,50 +109,67 @@ const isMdScreen = computed(() => {
   return screenWidth.value < BREAKPOINTS.LG;
 })
 
+const basicFiltersColCount = computed(() => {
+
+  const maxCount = maxBasicFilterColCount.value;
+  const computedCount = Object.keys(activeFilters.value).length
+      + (!props.hideOrderBy ? 1 : 0)
+      + (isFiltered.value ? 1 : 0)
+      + (props.searchableProperties ? 1 : 0)
+      + (props.dateFilter ? 1 : 0);
+
+  let result = 0;
+
+  if (computedCount === maxCount) {
+    result = maxCount;
+  } else if (computedCount < maxCount) {
+    result = computedCount
+  } else if (
+      computedCount >= maxCount && isMdScreen
+  ) {
+    result = computedCount / 2;
+  }
+
+  return result;
+})
+
 </script>
 
 <template>
-  <VDatatableMainFilter
-      v-if="mainFilter"
-      v-model:active-main-filter="selectedMainFilterOption.value"
-      :filter="activeMainFilter"
-      :screen-height="screenHeight"
-      :screen-width="screenWidth"
-      class="py-5"
-      @selected-value="handleMainFilter"
-  />
-  <div class="w-100">
-    <VSearchInput
-        v-if="isMdScreen"
-        v-model:query="searchQuery"
-        class="w-75 mx-auto"
-        @typing="emit('search')"
+  <div class="pb-2 pb-lg-0">
+    <VDatatableMainFilter
+        v-if="mainFilter"
+        v-model:active-main-filter="selectedMainFilterOption.value"
+        :filter="activeMainFilter"
+        class=""
+        @selected-value="handleMainFilter"
     />
   </div>
-  <div class="d-flex align-items-center">
+  <VSearchInput
+      v-if="isMdScreen && searchableProperties"
+      v-model:query="searchQuery"
+      class="w-75 mx-auto py-2"
+      @typing="emit('search')"
+  />
+  <div :class="isMdScreen ? 'justify-content-center' : ''" class="d-flex align-items-center">
     <VButton v-if="isFiltered && isMdScreen" class="mx-1" color-class="secondary" label="Reset"
              @click.prevent="emit('reset')"/>
     <div
         id="filters"
         :class="[ isMdScreen ?
       'horizontal-scroll-container' :
-      `row row-cols-${Object.keys(activeFilters).length + (!hideOrderBy ? 1 : 0) + (isFiltered ? 1 : 0) + 1 + (dateFilter ? 1 : 0)}`,
+      `row row-cols-${basicFiltersColCount}`,
       resetButton === 'right' ?
       'justify-content-start' : resetButton === 'left' ?
       'justify-content-end' :
       'justify-content-center',
       ]"
-        class="align-items-center py-4"
+        class="align-items-center py-2 py-lg-4"
     >
-      <VSearchInput
-          v-if="!isMdScreen"
-          v-model:query="searchQuery" :class="isMdScreen ? 'horizontal-scroll-item' : ''"
-          @typing="emit('search')"
-      />
 
       <div v-if="isFilters && resetButton === 'left' && !isMdScreen"
            :class="isMdScreen ? 'horizontal-scroll-item' : ''"
-           class="d-flex justify-content-center align-items-center"
+           class="d-flex justify-content-center align-items-center py-lg-2"
       >
         <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
         <i class="bi bi-arrow-right-short"></i>
@@ -156,6 +177,12 @@ const isMdScreen = computed(() => {
           <VButton v-if="isFiltered" class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
         </Transition>
       </div>
+      <VSearchInput
+          v-if="!isMdScreen && searchableProperties"
+          v-model:query="searchQuery" :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+          class="px-1"
+          @typing="emit('search')"
+      />
       <Dropdown
           v-if="!hideOrderBy && orderByOptions[0]"
           v-model:selected-option="selectedOrderByOption"
@@ -163,6 +190,7 @@ const isMdScreen = computed(() => {
           :no-empty="true"
           :options="orderByOptions"
           :return-raw-object="true"
+          class="px-1"
           label="Order"
           property-of="label"
           @has-selection="emit('order')"
@@ -170,6 +198,7 @@ const isMdScreen = computed(() => {
 
       <div v-if="dateFilter"
            :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+           class="px-1"
       >
         <Dropdown
             v-model:selected-option="selectedDateFilterOption"
@@ -183,6 +212,7 @@ const isMdScreen = computed(() => {
 
       <div v-for="(filter, index) in activeFilters" v-if="isFilters" :key="index"
            :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+           class="px-1"
       >
         <Dropdown
             v-model:selected-option="selectedFilterOptions[filter['codeName']]"

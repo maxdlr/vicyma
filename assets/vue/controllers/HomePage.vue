@@ -40,7 +40,6 @@ const isMdScreen = computed(() => {
           :data="lodgings"
           :hide-order-by="true"
           :hide-result-count="true"
-          :searchable-properties="['description', 'name']"
           reset-button="right"
       >
         <template #customRow="{item}">

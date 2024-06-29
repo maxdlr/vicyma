@@ -20,48 +20,48 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
 </script>
 
 <template>
-  <VDatatable admin
-      :title="title"
-      :data="data"
-      main-filter="reservationStatus"
-      :exclude-from-row-properties="['id', 'reservationStatus']"
-      :exclude-order-bys="['lodgings']"
-      :searchable-properties="['user', 'lodgings', 'reservationNumber']"
-      :new-item-link="`${baseUrl}/new`"
-      :date-filter="{label: 'check in date', codeName: 'arrivalDate'}"
+  <VDatatable :data="data"
+              :date-filter="{label: 'check in', codeName: 'arrivalDate'}"
+              :exclude-from-row-properties="['id', 'reservationStatus']"
+              :exclude-order-bys="['lodgings']"
+              :new-item-link="`${baseUrl}/new`"
+              :searchable-properties="['user', 'lodgings', 'reservationNumber']"
+              :title="title"
+              admin
+              main-filter="reservationStatus"
   >
     <template #buttons="{item}">
       <Button
-          label="Détails..."
-          color-class="primary"
           class="my-1"
+          color-class="primary"
           icon-class-end="box-arrow-up-right"
+          label="Détails..."
           @click.prevent="goTo(`${url(item.id)}/show`)"/>
       <Button v-if="canBeConfirmed(item)"
-              label="Confirm"
               class="my-1"
               color-class="success"
               icon-class-end="check-all"
+              label="Confirm"
               @click.prevent="goTo(
                         `${url(item.id)}/confirm`,
                         `Salut Maman, tu veux vraiment confirmer la reservation de ${item.user.value} ?`
                         )"
       />
       <Button v-if="canBePaid(item)"
-              label="Set as paid"
               class="my-1"
               color-class="outline-success"
               icon-class-end="cash-coin"
+              label="Set as paid"
               @click.prevent="goTo(
                         `${url(item.id)}/paid`,
                         `Salut Maman, est-ce que ${item.user.value} à bien payé la réservation ${item.reservationNumber} ?`
                         )"
       />
       <Button v-if="canBeDeleted(item)"
-              label="Delete"
-              color-class="danger"
               class="my-1"
+              color-class="danger"
               icon-class-end="trash"
+              label="Delete"
               @click.prevent="goTo(
                         `${url(item.id)}/delete`,
                         `Salut Maman, tu veux vraiment supprimer la reservation de ${item.user.value} ?`
@@ -69,10 +69,10 @@ const canBePaid = (object) => ['PENDING', 'CONFIRMED'].includes(getPropertyValue
       />
       <Button
           v-if="canBeArchived(item)"
-          label="Archive"
-          color-class="warning"
           class="my-1"
+          color-class="warning"
           icon-class-end="archive"
+          label="Archive"
           @click.prevent="goTo(
                   `${url(item.id)}/archive`,
                   `Salut Maman, tu veux vraiment archiver la reservation de ${item.user.value} ?`

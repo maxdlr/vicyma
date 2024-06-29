@@ -4,12 +4,16 @@ const emit = defineEmits(['typing'])
 </script>
 
 <template>
-  <div class="form-floating" role="search">
-    <input id="searchBar" v-model="query" aria-label="Search" class="form-control" placeholder="Search..."
-           type="search" @input="emit('typing')">
-    <label class="ps-4 bg-transparent d-flex justify-content-between" for="searchBar">
-      <i class="bi bi-search"></i>
-    </label>
+  <div>
+    <input
+        id="searchBar"
+        v-model="query"
+        aria-label="Search"
+        class="form-control border-info rounded-pill"
+        placeholder="Search..."
+        type="search"
+        @input="emit('typing')"
+    >
   </div>
 </template>
 

@@ -273,6 +273,7 @@ onUnmounted(() => {
         :reset-button="resetButton"
         :screen-height="screenHeight"
         :screen-width="screenWidth"
+        :searchable-properties="searchableProperties"
         :settings="data.settings"
         @filter="filterResults"
         @order="orderBy"
