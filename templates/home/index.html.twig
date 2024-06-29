@@ -2,7 +2,10 @@
 
 {% block body %}
 
-    <div {{ vue_component('HomePage') }}></div>
-    <h1>Hello World</h1>
+    <div {{ vue_component('HomePage', {
+        lodgings: lodgings
+    }) }}>
+        {{ include('_components/Atom/_spinner.html.twig') }}
+    </div>
 
 {% endblock %}

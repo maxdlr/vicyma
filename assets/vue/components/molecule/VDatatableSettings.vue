@@ -1,19 +1,25 @@
 <script setup>
 import VSearchInput from "../atom/VSearchInput.vue";
-import Button from "../atom/VButton.vue";
+import VButton from "../atom/VButton.vue";
 import Dropdown from "../atom/Dropdown.vue";
-import {computed} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
 import {SLIDE_RIGHT} from "../../constant/animation";
+import {BREAKPOINTS} from "../../constant/bootstrap-constants";
 
 const props = defineProps({
   settings: {type: Object, required: true},
-  excludeFilters: {type: Array, default: [], required: false},
-  excludeOrderBys: {type: Array, default: [], required: false},
-  mainFilter: {type: String, default: null, required: false},
-  dateFilter: {type: Object, default: null, required: false},
-  hideOrderBy: {type: Boolean, default: false, required: false}
+  excludeFilters: {type: Array, default: []},
+  excludeOrderBys: {type: Array, default: []},
+  mainFilter: {type: String, default: null},
+  dateFilter: {type: Object, default: null},
+  hideOrderBy: {type: Boolean, default: false},
+  resetButton: {
+    type: [String, false], default: 'left', validator(value) {
+      return ['left', 'right', false].includes(value)
+    }
+  },
 })
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
@@ -82,69 +88,125 @@ const isFilters = computed(() => {
   return Object.keys(activeFilters.value).length !== 0
 })
 
+const screenWidth = ref(window.innerWidth);
+const screenHeight = ref(window.innerHeight);
+const handleResize = () => {
+  screenWidth.value = window.innerWidth;
+  screenHeight.value = window.innerHeight;
+};
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const isMdScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.LG;
+})
+
 </script>
 
 <template>
   <VDatatableMainFilter
       v-if="mainFilter"
-      :filter="activeMainFilter"
-      @selected-value="handleMainFilter"
       v-model:active-main-filter="selectedMainFilterOption.value"
+      :filter="activeMainFilter"
+      :screen-height="screenHeight"
+      :screen-width="screenWidth"
       class="py-5"
+      @selected-value="handleMainFilter"
   />
+  <div class="w-100">
+    <VSearchInput
+        v-if="isMdScreen"
+        v-model:query="searchQuery"
+        class="w-75 mx-auto"
+        @typing="emit('search')"
+    />
+  </div>
+  <div class="d-flex align-items-center">
+    <VButton v-if="isFiltered && isMdScreen" class="mx-1" color-class="secondary" label="Reset"
+             @click.prevent="emit('reset')"/>
+    <div
+        id="filters"
+        :class="[ isMdScreen ?
+      'horizontal-scroll-container' :
+      `row row-cols-${Object.keys(activeFilters).length + (!hideOrderBy ? 1 : 0) + (isFiltered ? 1 : 0) + 1 + (dateFilter ? 1 : 0)}`,
+      resetButton === 'right' ?
+      'justify-content-start' : resetButton === 'left' ?
+      'justify-content-end' :
+      'justify-content-center',
+      ]"
+        class="align-items-center py-4"
+    >
+      <VSearchInput
+          v-if="!isMdScreen"
+          v-model:query="searchQuery" :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+          @typing="emit('search')"
+      />
 
-  <div :class="`row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`"
-       class="justify-content-center align-items-center py-4">
-    <div class="d-flex justify-content-center align-items-center" v-if="isFilters">
-      <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
-      <i class="bi bi-arrow-right-short"></i>
-      <Transition :name="SLIDE_RIGHT">
-        <div v-if="isFiltered">
-          <Button label="Reset" color-class="secondary" @click.prevent="emit('reset')" class="mx-1"/>
-        </div>
-      </Transition>
-    </div>
-    <div v-if="isFilters">
+      <div v-if="isFilters && resetButton === 'left' && !isMdScreen"
+           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+           class="d-flex justify-content-center align-items-center"
+      >
+        <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
+        <i class="bi bi-arrow-right-short"></i>
+        <Transition :name="SLIDE_RIGHT">
+          <VButton v-if="isFiltered" class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
+        </Transition>
+      </div>
       <Dropdown
           v-if="!hideOrderBy && orderByOptions[0]"
+          v-model:selected-option="selectedOrderByOption"
+          :class="isMdScreen ? 'horizontal-scroll-item' : ''"
           :no-empty="true"
           :options="orderByOptions"
-          property-of="label"
           :return-raw-object="true"
           label="Order"
-          v-model:selected-option="selectedOrderByOption"
+          property-of="label"
           @has-selection="emit('order')"
       />
-    </div>
 
-    <div v-if="dateFilter">
-      <Dropdown
-          :options="getDateOptions()"
-          property-of="name"
-          :return-raw-object="true"
-          :label="dateFilter.label"
-          v-model:selected-option="selectedDateFilterOption"
-          @has-selection="emit('filter')"
-      />
-    </div>
-
-    <div v-for="(filter, index) in activeFilters" :key="index" v-if="isFilters">
-      <slot name="filters" :filter="filter">
+      <div v-if="dateFilter"
+           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+      >
         <Dropdown
+            v-model:selected-option="selectedDateFilterOption"
+            :label="dateFilter.label"
+            :options="getDateOptions()"
+            :return-raw-object="true"
+            property-of="name"
+            @has-selection="emit('filter')"
+        />
+      </div>
+
+      <div v-for="(filter, index) in activeFilters" v-if="isFilters" :key="index"
+           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+      >
+        <Dropdown
+            v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             :label="filter['name']"
             :options="filter['values']"
             property-of="value"
-            v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             @has-selection="emit('filter')"
         />
-      </slot>
+      </div>
+
+      <Transition :name="SLIDE_RIGHT">
+        <div v-if="isFiltered && resetButton === 'right' && !isMdScreen"
+             :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+        >
+          <VButton class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
+        </div>
+      </Transition>
+
     </div>
-    <VSearchInput v-model:query="searchQuery" @typing="emit('search')"/>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "../../../styles/animation/slide-left";
 @import "../../../styles/animation/slide-right";
-
+@import "../../../styles/horizontal-scroll";
 </style>

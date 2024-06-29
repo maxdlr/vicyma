@@ -2,9 +2,8 @@ twig:
   file_name_pattern: '*.twig'
   globals:
     navigation: '@App\Controller\Navigation'
+    metadata: '@App\Controller\Metadata'
 
 when@test:
   twig:
     strict_variables: true
-
-#      caca: 'caca'

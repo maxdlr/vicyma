@@ -6,6 +6,7 @@ use App\Entity\Address;
 use App\Entity\BedType;
 use App\Entity\Conversation;
 use App\Entity\Lodging;
+use App\Entity\Media;
 use App\Entity\Message;
 use App\Entity\Reservation;
 use App\Entity\ReservationStatus;
@@ -104,6 +105,7 @@ class VueObjectMaker
             $object instanceof Review => ['id', 'rate'],
             $object instanceof Reservation => ['id', 'reservationNumber', 'reservationStatus'],
             $object instanceof Lodging => ['id', 'name'],
+            $object instanceof Media => ['id', 'mediaPath'],
             default => null
         };
     }

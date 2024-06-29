@@ -10,7 +10,9 @@ const props = defineProps({
   isLoading: {type: Boolean},
   admin: {type: Boolean, default: false, required: false},
   hideEmpty: {type: Boolean},
-  maxCellCountInRow: {type: Number, default: 4, required: false}
+  maxCellCountInRow: {type: Number, default: 4, required: false},
+  hideOrderBy: {type: Boolean, default: false},
+  hideResultCount: {type: Boolean, default: false}
 })
 
 const resultCount = computed(() => {
@@ -22,8 +24,8 @@ const isOrderReversed = defineModel('isOrderReversed', {type: Boolean, required:
 </script>
 
 <template>
-  <div class="justify-content-between align-items-center d-flex">
-    <div class="p-3">
+  <div v-if="!hideResultCount || !hideOrderBy" class="justify-content-between align-items-center d-flex">
+    <div v-if="!hideResultCount" class="p-3">
       <div v-if="resultCount > 0">
         <span>{{ resultCount }} result{{ resultCount > 1 ? 's' : '' }} found!</span>
       </div>
@@ -32,6 +34,7 @@ const isOrderReversed = defineModel('isOrderReversed', {type: Boolean, required:
       </div>
     </div>
     <Button
+        v-if="!hideOrderBy"
         :icon-class-start="`caret-${isOrderReversed ? 'up' : 'down'}-fill`"
         @click.prevent="isOrderReversed = !isOrderReversed"
     />
@@ -41,21 +44,21 @@ const isOrderReversed = defineModel('isOrderReversed', {type: Boolean, required:
     <LoadingSpinner/>
   </div>
 
-  <div v-for="(item) in items" :key="item.id" v-else>
+  <div v-for="(item) in items" v-else :key="item.id">
 
-    <slot name="row" :item="item">
+    <slot :item="item" name="row">
       <VDatatableRow
-          :item="item"
-          :exclude-properties="excludeFromRowProperties"
           :admin="admin"
+          :exclude-properties="excludeFromRowProperties"
           :hide-empty="hideEmpty"
+          :item="item"
           :max-cell-count-in-row="maxCellCountInRow"
       >
-        <template #rowHeader="{item}" v-if="$slots.rowHeader">
-          <slot name="rowHeader" :item="{item}"/>
+        <template v-if="$slots.rowHeader" #rowHeader="{item}">
+          <slot :item="{item}" name="rowHeader"/>
         </template>
         <template #buttons>
-          <slot name="buttons" :item="item"/>
+          <slot :item="item" name="buttons"/>
         </template>
       </VDatatableRow>
     </slot>
