@@ -1,7 +1,7 @@
 <script setup>
 import VSearchInput from "../atom/VSearchInput.vue";
 import VButton from "../atom/VButton.vue";
-import Dropdown from "../atom/Dropdown.vue";
+import InputDropdown from "../atom/InputDropdown.vue";
 import {computed, onMounted, onUnmounted, ref, watch} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
@@ -182,7 +182,7 @@ const basicFiltersColCount = computed(() => {
           class="px-1"
           @typing="emit('search')"
       />
-      <Dropdown
+      <InputDropdown
           v-if="!hideOrderBy && orderByOptions[0]"
           v-model:selected-option="selectedOrderByOption"
           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
@@ -199,7 +199,7 @@ const basicFiltersColCount = computed(() => {
            :class="isMdScreen ? 'horizontal-scroll-item' : ''"
            class="px-1"
       >
-        <Dropdown
+        <InputDropdown
             v-model:selected-option="selectedDateFilterOption"
             :label="dateFilter.label"
             :options="getDateOptions()"
@@ -213,10 +213,10 @@ const basicFiltersColCount = computed(() => {
            :class="isMdScreen ? 'horizontal-scroll-item' : ''"
            class="px-1"
       >
-        <Dropdown
+        <InputDropdown
             v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             :label="filter['name']"
-            :options="filter['values']"
+            :options="filter['values']"2
             property-of="value"
             @has-selection="emit('filter')"
         />

@@ -27,10 +27,10 @@ onUnmounted(() => {
 <template>
   <HomeHeader :background="headerBackground" title="Résidence Vicyma"/>
   <section class="row px-3">
-    <div class="col-12 col-lg-2">
+    <div class="col-12 col-lg-3">
       <AvailableLodgingForm/>
     </div>
-    <div class="col-12 col-lg-10">
+    <div class="col-12 col-lg-9">
       <VDatatable
           :data="lodgings"
           :hide-order-by="true"

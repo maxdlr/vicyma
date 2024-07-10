@@ -106,24 +106,6 @@ const select = (value) => {
       </div>
     </Transition>
   </div>
-
-
-  <!--  <div class="form-floating">-->
-  <!--    <select-->
-  <!--        :id="`select-${label}`"-->
-  <!--        v-model="selectedOption"-->
-  <!--        :class="`bg-${mainColorClass}`"-->
-  <!--        class="form-select form-control"-->
-  <!--        @change="emit('hasSelection')"-->
-  <!--    >-->
-  <!--      <option v-if="!noEmpty" value="">All</option>-->
-  <!--      <option v-for="(option, index) in options"-->
-  <!--              :key="index" :value="propertyOf && !returnRawObject ? getPropertyValue(option, propertyOf) : option">-->
-  <!--        {{ propertyOf ? toTitle(getPropertyValue(option, propertyOf)) : option }}-->
-  <!--      </option>-->
-  <!--    </select>-->
-  <!--    <label :for="`select-${label}`">{{ toTitle(label) }}</label>-->
-  <!--  </div>-->
 </template>
 <style lang="scss" scoped>
 @import "../../../styles/animation/slide-down.scss";
