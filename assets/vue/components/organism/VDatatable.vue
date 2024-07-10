@@ -246,14 +246,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2">
+  <div class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2"
+       v-if="newItemLink || title || $slots.titleButtons"
+  >
     <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
     <div>
       <Button
-          v-if="newItemLink"
           icon-class-end="plus-circle-fill"
           label="Create new"
-          @click.prevent="goTo(newItemLink)"/>
+          @click.prevent="goTo(newItemLink)"
+      />
       <slot name="titleButtons"/>
     </div>
   </div>

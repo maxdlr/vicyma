@@ -3,6 +3,7 @@
 namespace App\Controller\Website;
 
 use App\Repository\LodgingRepository;
+use App\Repository\MediaRepository;
 use App\Vue\Model\VueDatatableSetting;
 use App\Vue\VueFormatter;
 use App\Vue\VueObjectMaker;
@@ -14,7 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends AbstractController
 {
     public function __construct(
-        private readonly LodgingRepository $lodgingRepository
+        private readonly LodgingRepository $lodgingRepository,
+        private readonly MediaRepository $mediaRepository,
     )
     {
     }
@@ -26,6 +28,7 @@ class HomeController extends AbstractController
     public function index(): Response
     {
         $allLodgings = $this->lodgingRepository->findAll();
+        $allMedia = $this->mediaRepository->findAll();
 
         $lodgings = VueFormatter::createDatatable(
             settings: [
@@ -59,12 +62,19 @@ class HomeController extends AbstractController
             ],
             items: VueObjectMaker::makeVueObjectOf(
                 $allLodgings,
-                ['medias', 'name', 'surface', 'roomCount', 'terraceSurface', 'priceByNight', 'floor', 'roomCount', 'capacity']
+                ['medias', 'name', 'surface', 'roomCount', 'terraceSurface', 'priceByNight', 'floor', 'roomCount', 'capacity', 'description']
             )->get()
         );
 
+        //todo: make headerBackground something chosen rather than random
+        $headerBackground = VueObjectMaker::makeVueObjectOf(
+            [$allMedia[rand(0, count($allMedia) - 1)]],
+            ['mediaPath']
+        )->get()[0];
+
         return $this->render('home/index.html.twig', [
-            'lodgings' => $lodgings
+            'lodgings' => $lodgings,
+            'headerBackground' => $headerBackground
         ]);
     }
 }

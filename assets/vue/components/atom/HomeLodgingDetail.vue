@@ -7,7 +7,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="fs-4">
+  <div class="fs-5">
     <div class="d-inline text-primary fst-italic fw-bold">
       <i class="bi bi-arrow-right-short text-primary"/>
       <span>{{ content }}</span>

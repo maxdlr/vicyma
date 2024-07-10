@@ -3,7 +3,8 @@
 {% block body %}
 
     <div {{ vue_component('HomePage', {
-        lodgings: lodgings
+        lodgings: lodgings,
+        headerBackground: headerBackground
     }) }}>
         {{ include('_components/Atom/_spinner.html.twig') }}
     </div>

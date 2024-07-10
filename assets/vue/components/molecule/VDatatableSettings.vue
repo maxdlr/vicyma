@@ -136,9 +136,8 @@ const basicFiltersColCount = computed(() => {
 </script>
 
 <template>
-  <div class="pb-2 pb-lg-0">
+  <div class="pb-2 pb-lg-0" v-if="mainFilter">
     <VDatatableMainFilter
-        v-if="mainFilter"
         v-model:active-main-filter="selectedMainFilterOption.value"
         :filter="activeMainFilter"
         class=""
@@ -164,7 +163,7 @@ const basicFiltersColCount = computed(() => {
       'justify-content-end' :
       'justify-content-center',
       ]"
-        class="align-items-center py-2 py-lg-4"
+        class="align-items-center pt-2 pt-lg-4"
     >
 
       <div v-if="isFilters && resetButton === 'left' && !isMdScreen"
