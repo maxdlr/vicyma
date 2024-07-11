@@ -1,22 +1,24 @@
 <script setup>
-import InputTextField from "../atom/InputTextField.vue";
-// import VueDatePicker from '@vuepic/vue-datepicker';
-// import '@vuepic/vue-datepicker/dist/main.css'
+import InputDate from "../atom/InputDate.vue";
+import {ref} from "vue";
+
+const availabilityCheckFormData = ref({
+  guestCount: null,
+  arrivalDate: null,
+  departureDate: null
+});
 
 </script>
 
 <template>
-<div class="ps-0 pt-4 m-0">
-<!--  <VueDatePicker/>-->
-
-  <div
-      v-for="(_, index) in 3"
-       :key="index"
-      :class="index === 1 ? 'my-2' : ''"
-  >
-    <InputTextField />
+  <div class="ps-0 pt-4 m-0">
+    <InputDate
+        v-model:date="availabilityCheckFormData.arrivalDate"
+        label="Dates"
+        placeholder="Quelles sont vos dates ?"
+        :range="true"
+    />
   </div>
-</div>
 </template>
 
 <style scoped>

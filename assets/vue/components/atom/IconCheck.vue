@@ -12,7 +12,7 @@ const props = defineProps({
   animation: {
     type: String,
     default: 'rotate',
-    validator(value, props) {
+    validator(value) {
       return [ROTATE, SLIDE_UP, SLIDE_DOWN, SLIDE_RIGHT, SLIDE_LEFT].includes(
           value,
       );

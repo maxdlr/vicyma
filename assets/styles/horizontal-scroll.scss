@@ -1,7 +1,10 @@
-.horizontal-scroll-container {
+.horizontal-scroll-container-x {
   overflow-x: auto !important;
-  overflow-y: visible !important;
   white-space: nowrap !important;
+}
+
+.horizontal-scroll-container-y {
+  overflow-y: visible !important;
 }
 
 .horizontal-scroll-item {

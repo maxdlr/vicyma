@@ -1,6 +1,4 @@
 <script setup>
-import Button from "../../components/atom/VButton.vue";
-import {goTo} from "../../composable/action/redirect";
 import {toTitle} from "../../composable/formatter/string";
 
 const props = defineProps({

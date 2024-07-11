@@ -33,7 +33,7 @@ class HomeController extends AbstractController
         $lodgings = VueFormatter::createDatatable(
             settings: [
                 new VueDatatableSetting(
-                    'beds',
+                    'places',
                     VueObjectMaker::makeVueObjectOf(
                         $allLodgings,
                         ['capacity']

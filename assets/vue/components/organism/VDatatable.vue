@@ -7,12 +7,10 @@ import {isEmpty} from "../../composable/formatter/object";
 import {clearEmptyLocaleStorage} from "../../composable/action/localStorage";
 import Button from "../atom/VButton.vue";
 import {goTo} from "../../composable/action/redirect";
-import VButton from "../atom/VButton.vue";
-import {BREAKPOINTS} from "../../constant/bootstrap-constants";
 
 const props = defineProps({
   data: {type: Object, required: true},
-  title: {type: String},
+  title: {type: String, default: '-- ' + window.location.href + ' --'},
   mainFilter: {type: String, default: null},
   excludeFilters: {type: Array},
   excludeOrderBys: {type: Array},
@@ -23,6 +21,8 @@ const props = defineProps({
   admin: {type: Boolean, default: false, required: false},
   hideOrderBy: {type: Boolean},
   hideEmpty: {type: Boolean},
+  hideRangePicker: {type: Boolean, default: true},
+  hideTitle: {type:Boolean, default: false},
   maxCellCountInRow: {type: Number},
   hideResultCount: {type: Boolean},
   resetButton: {type: [String, false]}
@@ -31,6 +31,7 @@ const filteredItems = ref([])
 const selectedFilterOptions = ref({});
 const selectedOrderByOption = ref({label: '', codeName: ''});
 const selectedDateFilterOption = ref({});
+const selectedDateRange = ref([]);
 const selectedMainFilterOption = ref({codeName: '', value: ''});
 const searchQuery = ref('')
 const isLoading = ref(false)
@@ -40,6 +41,8 @@ onBeforeMount(() => {
   clearEmptyLocaleStorage()
   setDefaultOrderBy()
   setDefaultFilters();
+
+  console.log(localStorage, window.location)
 
   selectedMainFilterOption.value = {
     codeName: props.mainFilter ? props.data.settings[props.mainFilter].codeName : null,
@@ -247,9 +250,9 @@ onUnmounted(() => {
 
 <template>
   <div class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2"
-       v-if="newItemLink || title || $slots.titleButtons"
+       v-if="newItemLink || (title && !hideTitle) || $slots.titleButtons"
   >
-    <VDatatableTitle v-if="title" :title="title" class="pt-4"/>
+    <VDatatableTitle v-if="title && !hideTitle" :title="title" class="pt-4"/>
     <div>
       <Button
           icon-class-end="plus-circle-fill"
@@ -267,10 +270,12 @@ onUnmounted(() => {
         v-model:main-filter-option="selectedMainFilterOption"
         v-model:order-by-option="selectedOrderByOption"
         v-model:search-query="searchQuery"
+        v-model:date-range="selectedDateRange"
         :date-filter="dateFilter"
         :exclude-filters="excludeFilters"
         :exclude-order-bys="excludeOrderBys"
         :hide-order-by="hideOrderBy"
+        :hide-range-picker="hideRangePicker"
         :main-filter="mainFilter"
         :reset-button="resetButton"
         :screen-height="screenHeight"

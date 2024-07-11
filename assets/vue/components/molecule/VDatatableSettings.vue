@@ -2,12 +2,12 @@
 import VSearchInput from "../atom/VSearchInput.vue";
 import VButton from "../atom/VButton.vue";
 import InputDropdown from "../atom/InputDropdown.vue";
-import {computed, onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
 import {SLIDE_RIGHT} from "../../constant/animation";
 import {BREAKPOINTS} from "../../constant/bootstrap-constants";
-import getMainAxisFromPlacement from "@popperjs/core/lib/utils/getMainAxisFromPlacement";
+import InputDate from "../atom/InputDate.vue";
 
 const props = defineProps({
   settings: {type: Object, required: true},
@@ -16,6 +16,7 @@ const props = defineProps({
   mainFilter: {type: String, default: null},
   dateFilter: {type: Object, default: null},
   hideOrderBy: {type: Boolean, default: false},
+  hideRangePicker: {type: Boolean},
   resetButton: {
     type: [String, false], default: 'left', validator(value) {
       return ['left', 'right', false].includes(value)
@@ -27,6 +28,7 @@ const maxBasicFilterColCount = ref(6);
 const searchQuery = defineModel('searchQuery', {type: String, required: true})
 const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
 const selectedMainFilterOption = defineModel('mainFilterOption', {type: Object})
+const selectedDateRange = defineModel('dateRange', {type: Array})
 const selectedOrderByOption = defineModel('orderByOption', {type: Object, required: true})
 const selectedDateFilterOption = defineModel('dateFilterOption', {type: [Object, String], required: false})
 const activeMainFilter = computed(() => {
@@ -107,31 +109,33 @@ onUnmounted(() => {
 
 const isMdScreen = computed(() => {
   return screenWidth.value < BREAKPOINTS.LG;
+  // return true;
 })
 
-const basicFiltersColCount = computed(() => {
-
-  const maxCount = maxBasicFilterColCount.value;
-  const computedCount = Object.keys(activeFilters.value).length
-      + (!props.hideOrderBy ? 1 : 0)
-      + (isFiltered.value ? 1 : 0)
-      + (props.searchableProperties ? 1 : 0)
-      + (props.dateFilter ? 1 : 0);
-
-  let result = 0;
-
-  if (computedCount === maxCount) {
-    result = maxCount;
-  } else if (computedCount < maxCount) {
-    result = computedCount
-  } else if (
-      computedCount >= maxCount && isMdScreen
-  ) {
-    result = computedCount / 2;
-  }
-
-  return result;
-})
+// const basicFiltersColCount = computed(() => {
+//
+//   const maxCount = maxBasicFilterColCount.value;
+//   const computedCount = Object.keys(activeFilters.value).length
+//       + (!props.hideOrderBy ? 1 : 0)
+//       + (isFiltered.value ? 1 : 0)
+//       + (props.searchableProperties ? 1 : 0)
+//       + (props.dateFilter ? 1 : 0)
+//       + (!props.hideRangePicker ? 1 : 0);
+//
+//   let result = 0;
+//
+//   if (computedCount === maxCount) {
+//     result = maxCount;
+//   } else if (computedCount < maxCount) {
+//     result = computedCount
+//   } else if (
+//       computedCount >= maxCount && isMdScreen
+//   ) {
+//     result = computedCount / 2;
+//   }
+//
+//   return result;
+// })
 
 </script>
 
@@ -155,20 +159,18 @@ const basicFiltersColCount = computed(() => {
              @click.prevent="emit('reset')"/>
     <div
         id="filters"
-        :class="[ isMdScreen ?
-      'horizontal-scroll-container' :
-      `row row-cols-${basicFiltersColCount}`,
+        :class="[
       resetButton === 'right' ?
       'justify-content-start' : resetButton === 'left' ?
       'justify-content-end' :
       'justify-content-center',
       ]"
-        class="align-items-center pt-2 pt-lg-4"
+        class="align-items-center pt-2 pt-lg-4 horizontal-scroll-container-y"
     >
+      <div class="horizontal-scroll-container-x">
 
       <div v-if="isFilters && resetButton === 'left' && !isMdScreen"
-           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
-           class="d-flex justify-content-center align-items-center py-lg-2"
+           class="d-flex justify-content-center align-items-center horizontal-scroll-item"
       >
         <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
         <i class="bi bi-arrow-right-short"></i>
@@ -178,26 +180,23 @@ const basicFiltersColCount = computed(() => {
       </div>
       <VSearchInput
           v-if="!isMdScreen && searchableProperties"
-          v-model:query="searchQuery" :class="isMdScreen ? 'horizontal-scroll-item' : ''"
-          class="px-1"
+          v-model:query="searchQuery" class="horizontal-scroll-item px-1"
           @typing="emit('search')"
       />
       <InputDropdown
           v-if="!hideOrderBy && orderByOptions[0]"
           v-model:selected-option="selectedOrderByOption"
-          :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+          class="horizontal-scroll-item px-1"
           :no-empty="true"
           :options="orderByOptions"
           :return-raw-object="true"
-          class="px-1"
           label="Order"
           property-of="label"
           @has-selection="emit('order')"
       />
 
       <div v-if="dateFilter"
-           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
-           class="px-1"
+           class="horizontal-scroll-item px-1"
       >
         <InputDropdown
             v-model:selected-option="selectedDateFilterOption"
@@ -208,15 +207,22 @@ const basicFiltersColCount = computed(() => {
             @has-selection="emit('filter')"
         />
       </div>
+      <InputDate
+          v-if="!hideRangePicker"
+          v-model:date="selectedDateRange"
+          class="horizontal-scroll-item"
+          label="Dates"
+          placeholder="Quelles sont vos dates ?"
+          :range="true"
+      />
 
       <div v-for="(filter, index) in activeFilters" v-if="isFilters" :key="index"
-           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
-           class="px-1"
+           class="horizontal-scroll-item px-1"
       >
         <InputDropdown
             v-model:selected-option="selectedFilterOptions[filter['codeName']]"
             :label="filter['name']"
-            :options="filter['values']"2
+            :options="filter['values']"
             property-of="value"
             @has-selection="emit('filter')"
         />
@@ -224,12 +230,13 @@ const basicFiltersColCount = computed(() => {
 
       <Transition :name="SLIDE_RIGHT">
         <div v-if="isFiltered && resetButton === 'right' && !isMdScreen"
-             :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+             class="horizontal-scroll-item"
         >
           <VButton class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
         </div>
       </Transition>
 
+    </div>
     </div>
   </div>
 </template>
