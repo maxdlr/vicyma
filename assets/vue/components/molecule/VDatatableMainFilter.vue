@@ -1,11 +1,13 @@
 <script setup>
 import Button from "../atom/VButton.vue";
-import {toTitle} from "../../composable/formatter/string";
+import {toTitle, truncate} from "../../composable/formatter/string";
 import {BREAKPOINTS} from "../../constant/bootstrap-constants";
 import {computed, onMounted, onUnmounted, ref} from "vue";
 
 const props = defineProps({
   filter: {type: Object, required: true},
+  containerClasses: {type: String, default: ''},
+  itemClasses: {type: String, default: ''},
 });
 
 const emit = defineEmits(['selectedValue']);
@@ -28,8 +30,12 @@ onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
 });
 
-const isMdScreen = computed(() => {
+const isLgScreen = computed(() => {
   return screenWidth.value < BREAKPOINTS.LG;
+})
+
+const isMdScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.MD;
 })
 </script>
 
@@ -39,27 +45,30 @@ const isMdScreen = computed(() => {
         toTitle(filter.name)
       }}</span>
     <div
-        :class="!isMdScreen ? `row row-cols-${filter.values.length + 1}` : 'horizontal-scroll-container text-center'"
+        :class="[
+            !isLgScreen ? `row row-cols-${filter.values.length + 1}` : 'text-center',
+            containerClasses
+            ]"
     >
-      <div :class="isMdScreen ? 'horizontal-scroll-item' : ''" class="px-1">
+      <div :class="itemClasses" class="px-1">
         <Button
             :color-class="'' === active ? 'primary' : 'outline-secondary'"
+            :size="isMdScreen ? 'sm' : 'lg'"
             class="w-100"
             label="All"
-            size="lg"
             @click.prevent="selectMainFilterValue('')"
         />
       </div>
       <div v-for="(data, index) in filter.values"
            :key="index"
-           :class="isMdScreen ? 'horizontal-scroll-item' : ''"
+           :class="itemClasses"
            class="px-1"
       >
         <Button
             :color-class="data.toString() === active ? 'primary' : 'outline-secondary'"
-            :label="data"
+            :label="isMdScreen ? truncate(data, 5, '...') : data"
+            :size="isMdScreen ? 'sm' : 'lg'"
             class="w-100"
-            size="lg"
             @click.prevent="selectMainFilterValue(data.toString())"
         />
       </div>

@@ -2,12 +2,13 @@
 import VSearchInput from "../atom/VSearchInput.vue";
 import VButton from "../atom/VButton.vue";
 import InputDropdown from "../atom/InputDropdown.vue";
-import {computed, onMounted, onUnmounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, onUpdated, ref, watch} from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
 import {getDateOptions} from "../../composable/formatter/date";
 import {SLIDE_RIGHT} from "../../constant/animation";
 import {BREAKPOINTS} from "../../constant/bootstrap-constants";
 import InputDate from "../atom/InputDate.vue";
+
 
 const props = defineProps({
   settings: {type: Object, required: true},
@@ -102,101 +103,143 @@ const handleResize = () => {
 
 onMounted(() => {
   window.addEventListener("resize", handleResize);
+  handleFilterMenuClasses()
+  handleBasicFiltersColCount()
 });
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
 });
 
-const isMdScreen = computed(() => {
+const isLgScreen = computed(() => {
   return screenWidth.value < BREAKPOINTS.LG;
-  // return true;
+})
+const isMdScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.MD;
+})
+const isSmScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.SM;
 })
 
-// const basicFiltersColCount = computed(() => {
-//
-//   const maxCount = maxBasicFilterColCount.value;
-//   const computedCount = Object.keys(activeFilters.value).length
-//       + (!props.hideOrderBy ? 1 : 0)
-//       + (isFiltered.value ? 1 : 0)
-//       + (props.searchableProperties ? 1 : 0)
-//       + (props.dateFilter ? 1 : 0)
-//       + (!props.hideRangePicker ? 1 : 0);
-//
-//   let result = 0;
-//
-//   if (computedCount === maxCount) {
-//     result = maxCount;
-//   } else if (computedCount < maxCount) {
-//     result = computedCount
-//   } else if (
-//       computedCount >= maxCount && isMdScreen
-//   ) {
-//     result = computedCount / 2;
-//   }
-//
-//   return result;
-// })
+const basicFiltersColCount = ref();
+
+const handleBasicFiltersColCount = () => {
+  const computedCount = Object.keys(activeFilters.value).length
+      + (!props.hideOrderBy ? 1 : 0)
+      + (isFiltered.value ? 1 : props.resetButton === 'left' ? 1 : 0)
+      + (props.searchableProperties ? 1 : 0)
+      + (props.dateFilter ? 1 : 0)
+      + (!props.hideRangePicker ? 1 : 0);
+
+  let result = 6;
+
+  console.log(computedCount >= 6 && isLgScreen.value)
+  console.log(computedCount < 6)
+  console.log(computedCount)
+
+  if (computedCount >= 6 && isLgScreen.value) {
+    result = props.resetButton === 'left' ? (computedCount / 2) - 1 : computedCount / 2;
+  }
+
+  if (computedCount < 6) {
+    result = isLgScreen.value ? 3 : computedCount;
+  }
+
+  if (isSmScreen.value) {
+    result = 2;
+  }
+
+  basicFiltersColCount.value = result;
+}
+
+const settingElementClasses = ref();
+const settingsContainerClasses = ref();
+const mainFilterContainerClasses = ref();
+const mainFilterItemClasses = ref();
+
+const handleFilterMenuClasses = () => {
+  if (isLgScreen.value) {
+    settingElementClasses.value = ''
+    settingsContainerClasses.value = `row row-cols-${basicFiltersColCount.value}`
+    mainFilterContainerClasses.value = `row row-cols-3`
+    mainFilterItemClasses.value = 'flex-fill'
+  } else {
+    settingElementClasses.value = ''
+    settingsContainerClasses.value = `row row-cols-${basicFiltersColCount.value}`
+    mainFilterContainerClasses.value = '';
+    mainFilterItemClasses.value = '';
+  }
+}
+
+onUpdated(() => {
+  handleFilterMenuClasses()
+  handleBasicFiltersColCount()
+})
 
 </script>
 
 <template>
-  <div class="pb-2 pb-lg-0" v-if="mainFilter">
+  <div v-if="mainFilter" class="pb-2 pb-lg-0">
     <VDatatableMainFilter
         v-model:active-main-filter="selectedMainFilterOption.value"
+        :container-classes="mainFilterContainerClasses"
         :filter="activeMainFilter"
-        class=""
+        :item-classes="mainFilterItemClasses"
         @selected-value="handleMainFilter"
     />
   </div>
   <VSearchInput
-      v-if="isMdScreen && searchableProperties"
+      v-if="isLgScreen && searchableProperties"
       v-model:query="searchQuery"
       class="w-75 mx-auto py-2"
       @typing="emit('search')"
   />
-  <div :class="isMdScreen ? 'justify-content-center' : ''" class="d-flex align-items-center">
-    <VButton v-if="isFiltered && isMdScreen" class="mx-1" color-class="secondary" label="Reset"
+  <div :class="isLgScreen ? 'justify-content-center' : ''" class="d-flex align-items-center pt-2 pt-lg-4">
+    <VButton v-if="isFiltered && isLgScreen" class="mx-1" color-class="secondary" label="Reset"
              @click.prevent="emit('reset')"/>
+    {{ basicFiltersColCount }}
     <div
         id="filters"
-        :class="[
+        :class="[ settingsContainerClasses,
       resetButton === 'right' ?
       'justify-content-start' : resetButton === 'left' ?
       'justify-content-end' :
       'justify-content-center',
       ]"
-        class="align-items-center pt-2 pt-lg-4 horizontal-scroll-container-y"
+        class="align-items-center"
     >
-      <div class="horizontal-scroll-container-x">
 
-      <div v-if="isFilters && resetButton === 'left' && !isMdScreen"
+      <div v-if="isFilters && resetButton === 'left' && !isLgScreen"
            class="d-flex justify-content-center align-items-center horizontal-scroll-item"
       >
         <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
         <i class="bi bi-arrow-right-short"></i>
         <Transition :name="SLIDE_RIGHT">
-          <VButton v-if="isFiltered" class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
+          <VButton v-if="isFiltered" class="mx-1" color-class="secondary" label="Reset"
+                   @click.prevent="emit('reset')"/>
         </Transition>
       </div>
       <VSearchInput
-          v-if="!isMdScreen && searchableProperties"
-          v-model:query="searchQuery" class="horizontal-scroll-item px-1"
+          v-if="!isLgScreen && searchableProperties"
+          v-model:query="searchQuery" :class="settingElementClasses"
+          class=" px-1"
           @typing="emit('search')"
       />
       <InputDropdown
           v-if="!hideOrderBy && orderByOptions[0]"
           v-model:selected-option="selectedOrderByOption"
-          class="horizontal-scroll-item px-1"
+          :class="settingElementClasses"
           :no-empty="true"
           :options="orderByOptions"
           :return-raw-object="true"
+          class=" px-1"
           label="Order"
           property-of="label"
           @has-selection="emit('order')"
       />
 
       <div v-if="dateFilter"
-           class="horizontal-scroll-item px-1"
+           :class="settingElementClasses"
+           class=" px-1"
       >
         <InputDropdown
             v-model:selected-option="selectedDateFilterOption"
@@ -210,14 +253,15 @@ const isMdScreen = computed(() => {
       <InputDate
           v-if="!hideRangePicker"
           v-model:date="selectedDateRange"
-          class="horizontal-scroll-item"
+          :class="settingElementClasses"
           label="Dates"
           placeholder="Quelles sont vos dates ?"
-          :range="true"
+          range
       />
 
       <div v-for="(filter, index) in activeFilters" v-if="isFilters" :key="index"
-           class="horizontal-scroll-item px-1"
+           :class="settingElementClasses"
+           class=" px-1"
       >
         <InputDropdown
             v-model:selected-option="selectedFilterOptions[filter['codeName']]"
@@ -229,14 +273,13 @@ const isMdScreen = computed(() => {
       </div>
 
       <Transition :name="SLIDE_RIGHT">
-        <div v-if="isFiltered && resetButton === 'right' && !isMdScreen"
-             class="horizontal-scroll-item"
+        <div v-if="isFiltered && resetButton === 'right' && !isLgScreen"
+             :class="settingElementClasses"
         >
           <VButton class="mx-1" color-class="secondary" label="Reset" @click.prevent="emit('reset')"/>
         </div>
       </Transition>
 
-    </div>
     </div>
   </div>
 </template>

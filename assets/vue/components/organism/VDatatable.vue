@@ -22,7 +22,7 @@ const props = defineProps({
   hideOrderBy: {type: Boolean},
   hideEmpty: {type: Boolean},
   hideRangePicker: {type: Boolean, default: true},
-  hideTitle: {type:Boolean, default: false},
+  hideTitle: {type: Boolean, default: false},
   maxCellCountInRow: {type: Number},
   hideResultCount: {type: Boolean},
   resetButton: {type: [String, false]}
@@ -231,26 +231,11 @@ const storeFilters = () => {
 const storeOrderBy = () => {
   localStorage.setItem(`datatable/${props.title}/orderByState`, JSON.stringify(selectedOrderByOption.value))
 }
-
-const screenWidth = ref(window.innerWidth);
-const screenHeight = ref(window.innerHeight);
-
-const handleResize = () => {
-  screenWidth.value = window.innerWidth;
-  screenHeight.value = window.innerHeight;
-};
-
-onMounted(() => {
-  window.addEventListener("resize", handleResize);
-});
-onUnmounted(() => {
-  window.removeEventListener("resize", handleResize);
-});
 </script>
 
 <template>
-  <div class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2"
-       v-if="newItemLink || (title && !hideTitle) || $slots.titleButtons"
+  <div v-if="newItemLink || (title && !hideTitle) || $slots.titleButtons"
+       class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2"
   >
     <VDatatableTitle v-if="title && !hideTitle" :title="title" class="pt-4"/>
     <div>
@@ -266,11 +251,11 @@ onUnmounted(() => {
   <div>
     <VDatatableSettings
         v-model:date-filter-option="selectedDateFilterOption"
+        v-model:date-range="selectedDateRange"
         v-model:filter-options="selectedFilterOptions"
         v-model:main-filter-option="selectedMainFilterOption"
         v-model:order-by-option="selectedOrderByOption"
         v-model:search-query="searchQuery"
-        v-model:date-range="selectedDateRange"
         :date-filter="dateFilter"
         :exclude-filters="excludeFilters"
         :exclude-order-bys="excludeOrderBys"
@@ -278,8 +263,6 @@ onUnmounted(() => {
         :hide-range-picker="hideRangePicker"
         :main-filter="mainFilter"
         :reset-button="resetButton"
-        :screen-height="screenHeight"
-        :screen-width="screenWidth"
         :searchable-properties="searchableProperties"
         :settings="data.settings"
         @filter="filterResults"
