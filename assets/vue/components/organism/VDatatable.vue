@@ -9,262 +9,340 @@ import Button from "../atom/Button.vue";
 import { goTo } from "../../composable/action/redirect";
 
 const props = defineProps({
-    data: { type: Object, required: true },
-    title: { type: String, default: '-- ' + window.location.href + ' --' },
-    mainFilter: { type: String, default: null },
-    excludeFilters: { type: Array },
-    excludeOrderBys: { type: Array },
-    dateFilter: { type: Object, default: null, required: false },
-    searchableProperties: { type: Array, default: null, required: false },
-    excludeFromRowProperties: { type: Array },
-    newItemLink: { type: String, default: null, required: false },
-    admin: { type: Boolean, default: false, required: false },
-    hideOrderBy: { type: Boolean },
-    hideEmpty: { type: Boolean },
-    hideRangePicker: { type: Boolean, default: true },
-    hideTitle: { type: Boolean, default: false },
-    maxCellCountInRow: { type: Number },
-    hideResultCount: { type: Boolean },
-    resetButton: { type: [String, false] }
+  data: { type: Object, required: true },
+  title: { type: String, default: "-- " + window.location.href + " --" },
+  mainFilter: { type: String, default: null },
+  excludeFilters: { type: Array },
+  excludeOrderBys: { type: Array },
+  dateFilter: { type: Object, default: null, required: false },
+  searchableProperties: { type: Array, default: null, required: false },
+  excludeFromRowProperties: { type: Array },
+  newItemLink: { type: String, default: null, required: false },
+  admin: { type: Boolean, default: false, required: false },
+  hideOrderBy: { type: Boolean },
+  hideEmpty: { type: Boolean },
+  hideRangeDateFilter: { type: Boolean, default: true },
+  hideTitle: { type: Boolean, default: false },
+  maxCellCountInRow: { type: Number },
+  hideResultCount: { type: Boolean },
+  resetButton: { type: [String, false] },
 });
-const filteredItems = ref([])
+const filteredItems = ref([]);
 const selectedFilterOptions = ref({});
-const selectedOrderByOption = ref({ label: '', codeName: '' });
+const selectedOrderByOption = ref({ label: "", codeName: "" });
 const selectedDateFilterOption = ref({});
-const selectedDateRange = ref([]);
-const selectedMainFilterOption = ref({ codeName: '', value: '' });
-const searchQuery = ref('')
-const isLoading = ref(false)
-const isOrderReversed = ref(false)
+const selectedDateRangeFilterOption = ref([]);
+const selectedMainFilterOption = ref({ codeName: "", value: "" });
+const searchQuery = ref("");
+const isLoading = ref(false);
+const isOrderReversed = ref(false);
 
 onBeforeMount(() => {
-    clearEmptyLocaleStorage()
-    setDefaultOrderBy()
-    setDefaultFilters();
+  clearEmptyLocaleStorage();
+  setDefaultOrderBy();
+  setDefaultFilters();
 
-    console.log(localStorage, window.location)
+  console.log(localStorage, window.location);
 
-    selectedMainFilterOption.value = {
-        codeName: props.mainFilter ? props.data.settings[props.mainFilter].codeName : null,
-        value: props.mainFilter ? selectedFilterOptions.value[props.data.settings[props.mainFilter].codeName] : null
-    }
-})
+  selectedMainFilterOption.value = {
+    codeName: props.mainFilter
+      ? props.data.settings[props.mainFilter].codeName
+      : null,
+    value: props.mainFilter
+      ? selectedFilterOptions.value[
+          props.data.settings[props.mainFilter].codeName
+        ]
+      : null,
+  };
+});
 
 const setDefaultOrderBy = () => {
-    const storedOrderByKey = `datatable/${props.title}/orderByState`
+  const storedOrderByKey = `datatable/${props.title}/orderByState`;
 
-    if (localStorage.getItem(storedOrderByKey)) {
-        selectedOrderByOption.value = JSON.parse(localStorage.getItem(storedOrderByKey))
-        localStorage.removeItem(storedOrderByKey);
-    } else {
-        let defaultOrderBy = '';
-
-        for (const key in props.data.settings) {
-            defaultOrderBy = props.data.settings[key];
-            break;
-        }
-
-        selectedOrderByOption.value.label = defaultOrderBy.name;
-        selectedOrderByOption.value.codeName = defaultOrderBy.codeName
-    }
-}
-
-const setDefaultFilters = () => {
-    for (const filter in props.data.settings) {
-        const storedFilterKey = `datatable/${props.title}/filterState/${props.data.settings[filter].codeName}`;
-        if (localStorage.getItem(storedFilterKey)) {
-            selectedFilterOptions.value[props.data.settings[filter].codeName] = localStorage.getItem(storedFilterKey)
-            localStorage.removeItem(storedFilterKey)
-        } else {
-            selectedFilterOptions.value[props.data.settings[filter].codeName] = props.data.settings[filter].default;
-        }
-    }
-    selectedDateFilterOption.value = ''
-    filterResults();
-}
-
-const resetFilters = () => {
-    for (const filter in props.data.settings) {
-        selectedFilterOptions.value[props.data.settings[filter].codeName] = '';
-    }
-    selectedMainFilterOption.value.value = ''
-    selectedDateFilterOption.value = ''
-    searchQuery.value = '';
-    filterResults()
-}
-
-const orderBy = () => {
-    filteredItems.value.sort((a, b) => {
-        if (typeof a[selectedOrderByOption.value.codeName] === 'object') {
-            return ("" + a[selectedOrderByOption.value.codeName].value).localeCompare(b[selectedOrderByOption.value.codeName].value);
-        } else {
-            return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(b[selectedOrderByOption.value.codeName]);
-        }
-    });
-    storeOrderBy()
-}
-
-const reverseOrder = () => {
-    filteredItems.value.reverse()
-}
-
-watch(isOrderReversed, (value) => {
-    value ? reverseOrder() : orderBy();
-})
-
-const updateSelectedFilterOptions = () => {
-    if (props.mainFilter) {
-        selectedFilterOptions.value[selectedMainFilterOption.value.codeName] = selectedMainFilterOption.value.value.toString();
-    }
-
-    if (props.dateFilter) {
-        selectedFilterOptions.value[props.dateFilter.codeName] = selectedDateFilterOption.value.value ? selectedDateFilterOption.value.value : '';
-    }
-}
-
-const applyFilters = () => {
-    return props.data.items.filter((item) => isItemMatch(item));
-}
-
-const isItemMatch = (item) => {
-    let votes = [];
+  if (localStorage.getItem(storedOrderByKey)) {
+    selectedOrderByOption.value = JSON.parse(
+      localStorage.getItem(storedOrderByKey),
+    );
+    localStorage.removeItem(storedOrderByKey);
+  } else {
+    let defaultOrderBy = "";
 
     for (const key in props.data.settings) {
-
-        let selectedFilterValue = selectedFilterOptions.value[props.data.settings[key].codeName];
-
-        if (selectedFilterValue !== '' && item[key] !== null) {
-            votes.push(checkFilterCondition(item[key], selectedFilterValue));
-        }
-
-        if (props.searchableProperties && searchQuery.value !== '' && item[key]) {
-            votes.push(checkSearchQuery(item));
-        }
+      defaultOrderBy = props.data.settings[key];
+      break;
     }
 
-    return !votes.includes(false);
-}
+    selectedOrderByOption.value.label = defaultOrderBy.name;
+    selectedOrderByOption.value.codeName = defaultOrderBy.codeName;
+  }
+};
+
+const setDefaultFilters = () => {
+  for (const filter in props.data.settings) {
+    const storedFilterKey = `datatable/${props.title}/filterState/${props.data.settings[filter].codeName}`;
+    if (localStorage.getItem(storedFilterKey)) {
+      selectedFilterOptions.value[props.data.settings[filter].codeName] =
+        localStorage.getItem(storedFilterKey);
+      localStorage.removeItem(storedFilterKey);
+    } else {
+      selectedFilterOptions.value[props.data.settings[filter].codeName] =
+        props.data.settings[filter].default;
+    }
+  }
+  selectedDateFilterOption.value = "";
+  filterResults();
+};
+
+const resetFilters = () => {
+  for (const filter in props.data.settings) {
+    selectedFilterOptions.value[props.data.settings[filter].codeName] = "";
+  }
+  selectedMainFilterOption.value.value = "";
+  selectedDateFilterOption.value = "";
+  searchQuery.value = "";
+  selectedDateRangeFilterOption.value = [];
+  filterResults();
+};
+
+const orderBy = () => {
+  filteredItems.value.sort((a, b) => {
+    if (typeof a[selectedOrderByOption.value.codeName] === "object") {
+      return ("" + a[selectedOrderByOption.value.codeName].value).localeCompare(
+        b[selectedOrderByOption.value.codeName].value,
+      );
+    } else {
+      return ("" + a[selectedOrderByOption.value.codeName]).localeCompare(
+        b[selectedOrderByOption.value.codeName],
+      );
+    }
+  });
+  storeOrderBy();
+};
+
+const reverseOrder = () => {
+  filteredItems.value.reverse();
+};
+
+watch(isOrderReversed, (value) => {
+  value ? reverseOrder() : orderBy();
+});
+
+const updateSelectedFilterOptions = () => {
+  if (props.mainFilter) {
+    selectedFilterOptions.value[selectedMainFilterOption.value.codeName] =
+      selectedMainFilterOption.value.value.toString();
+  }
+
+  if (props.dateFilter) {
+    selectedFilterOptions.value[props.dateFilter.codeName] =
+      selectedDateFilterOption.value.value
+        ? selectedDateFilterOption.value.value
+        : "";
+  }
+};
+
+const applyFilters = () => {
+  return props.data.items.filter((item) => isItemMatch(item));
+};
+
+const isItemMatch = (item) => {
+  let votes = [];
+
+  for (const key in props.data.settings) {
+    let selectedFilterValue =
+      selectedFilterOptions.value[props.data.settings[key].codeName];
+
+    if (selectedFilterValue !== "" && item[key] !== null) {
+      votes.push(checkFilterCondition(item[key], selectedFilterValue));
+    }
+
+    if (props.searchableProperties && searchQuery.value !== "" && item[key]) {
+      votes.push(checkSearchQuery(item));
+    }
+  }
+
+  return !votes.includes(false);
+};
 
 const checkFilterCondition = (itemValue, selectedFilterValue) => {
-    if (typeof itemValue === 'boolean') {
-        return itemValue.toString().length === selectedFilterValue.toString().length;
-    }
-    if (typeof itemValue === 'object' && !isEmpty(itemValue)) {
-
-        if (Array.isArray(itemValue)) {
-            let votes = [];
-            for (const itemValueElement of itemValue) {
-                if (Array.isArray(itemValueElement)) {
-                    const arrayValueToCheck = itemValueElement[Object.keys(itemValueElement)[1]];
-                    votes.push(arrayValueToCheck.includes(selectedFilterValue));
-                } else {
-                    votes.push(itemValueElement.includes(selectedFilterValue))
-                }
-            }
-            return votes.includes(true)
+  if (typeof itemValue === "boolean") {
+    return (
+      itemValue.toString().length === selectedFilterValue.toString().length
+    );
+  }
+  if (typeof itemValue === "object" && !isEmpty(itemValue)) {
+    if (Array.isArray(itemValue)) {
+      let votes = [];
+      for (const itemValueElement of itemValue) {
+        if (Array.isArray(itemValueElement)) {
+          const arrayValueToCheck =
+            itemValueElement[Object.keys(itemValueElement)[1]];
+          votes.push(arrayValueToCheck.includes(selectedFilterValue));
         } else {
-            const valueToCheck = itemValue[Object.keys(itemValue)[1]]
-            return valueToCheck.includes(selectedFilterValue);
+          votes.push(itemValueElement.includes(selectedFilterValue));
         }
+      }
+      return votes.includes(true);
+    } else {
+      const valueToCheck = itemValue[Object.keys(itemValue)[1]];
+      return valueToCheck.includes(selectedFilterValue);
     }
+  }
 
-    if (typeof selectedFilterValue === 'object') {
-        if (new Date(itemValue)) {
-            const date = new Date(itemValue)
-            return date.getTime() > selectedFilterValue.start.getTime() && date < selectedFilterValue.end.getTime()
-        }
+  if (typeof selectedFilterValue === "object") {
+    if (new Date(itemValue)) {
+      const date = new Date(itemValue);
+      return (
+        date.getTime() > selectedFilterValue.start.getTime() &&
+        date < selectedFilterValue.end.getTime()
+      );
     }
+  }
 
-    return itemValue.toString() === selectedFilterValue.toString();
-}
+  return itemValue.toString() === selectedFilterValue.toString();
+};
 
 const checkSearchQuery = (item) => {
-    let votes = [];
+  let votes = [];
 
-    for (const searchableProperty of props.searchableProperties) {
-        if (typeof item[searchableProperty] === 'string') {
-            votes.push(item[searchableProperty].toLowerCase().includes(searchQuery.value.toLowerCase()));
-        }
-
-        if (typeof item[searchableProperty] === 'object') {
-
-            if (Array.isArray(item[searchableProperty])) {
-                for (const searchablePropertyElement of item[searchableProperty]) {
-                    if (typeof searchablePropertyElement === 'object') {
-                        const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
-                        votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
-                    } else {
-                        votes.push(searchablePropertyElement.toLowerCase().includes(searchQuery.value.toLowerCase()));
-                    }
-                }
-            } else {
-                for (const searchablePropertyElement in item[searchableProperty]) {
-                    if (typeof searchablePropertyElement === 'object') {
-                        const subEl = searchablePropertyElement[Object.keys(searchablePropertyElement)[1]]
-                        votes.push(subEl.toLowerCase().includes(searchQuery.value.toLowerCase()));
-                    } else {
-                        votes.push(item[searchableProperty]['value'].toLowerCase().includes(searchQuery.value.toLowerCase()));
-                    }
-                }
-            }
-        }
+  for (const searchableProperty of props.searchableProperties) {
+    if (typeof item[searchableProperty] === "string") {
+      votes.push(
+        item[searchableProperty]
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase()),
+      );
     }
 
-    return votes.includes(true);
-}
+    if (typeof item[searchableProperty] === "object") {
+      if (Array.isArray(item[searchableProperty])) {
+        for (const searchablePropertyElement of item[searchableProperty]) {
+          if (typeof searchablePropertyElement === "object") {
+            const subEl =
+              searchablePropertyElement[
+                Object.keys(searchablePropertyElement)[1]
+              ];
+            votes.push(
+              subEl.toLowerCase().includes(searchQuery.value.toLowerCase()),
+            );
+          } else {
+            votes.push(
+              searchablePropertyElement
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase()),
+            );
+          }
+        }
+      } else {
+        for (const searchablePropertyElement in item[searchableProperty]) {
+          if (typeof searchablePropertyElement === "object") {
+            const subEl =
+              searchablePropertyElement[
+                Object.keys(searchablePropertyElement)[1]
+              ];
+            votes.push(
+              subEl.toLowerCase().includes(searchQuery.value.toLowerCase()),
+            );
+          } else {
+            votes.push(
+              item[searchableProperty]["value"]
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase()),
+            );
+          }
+        }
+      }
+    }
+  }
+
+  return votes.includes(true);
+};
 
 const filterResults = () => {
-    updateSelectedFilterOptions();
-    filteredItems.value = applyFilters();
-    orderBy();
-    storeFilters();
-}
+  updateSelectedFilterOptions();
+  filteredItems.value = applyFilters();
+  orderBy();
+  storeFilters();
+};
 
 const storeFilters = () => {
-    for (const setting in props.data.settings) {
-        const itemKey = `datatable/${props.title}/filterState/${props.data.settings[setting].codeName}`;
-        const itemValue = selectedFilterOptions.value[props.data.settings[setting].codeName];
-        ["", ' ', '{}'].includes(itemValue) ? localStorage.removeItem(itemKey) : localStorage.setItem(itemKey, itemValue);
-    }
-}
+  for (const setting in props.data.settings) {
+    const itemKey = `datatable/${props.title}/filterState/${props.data.settings[setting].codeName}`;
+    const itemValue =
+      selectedFilterOptions.value[props.data.settings[setting].codeName];
+    ["", " ", "{}"].includes(itemValue)
+      ? localStorage.removeItem(itemKey)
+      : localStorage.setItem(itemKey, itemValue);
+  }
+};
 
 const storeOrderBy = () => {
-    localStorage.setItem(`datatable/${props.title}/orderByState`, JSON.stringify(selectedOrderByOption.value))
-}
+  localStorage.setItem(
+    `datatable/${props.title}/orderByState`,
+    JSON.stringify(selectedOrderByOption.value),
+  );
+};
 </script>
 
 <template>
-    <div v-if="newItemLink || (title && !hideTitle) || $slots.titleButtons"
-        class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2">
-        <VDatatableTitle v-if="title && !hideTitle" :title="title" class="pt-4" />
-        <div>
-            <Button icon-class-end="plus-circle-fill" label="Create new" @click.prevent="goTo(newItemLink)" />
-            <slot name="titleButtons" />
-        </div>
-    </div>
-
+  <div
+    v-if="newItemLink || (title && !hideTitle) || $slots.titleButtons"
+    class="d-flex justify-content-between align-items-center px-5 pt-4 pb-2"
+  >
+    <VDatatableTitle v-if="title && !hideTitle" :title="title" class="pt-4" />
     <div>
-        <VDatatableSettings v-model:date-filter-option="selectedDateFilterOption" v-model:date-range="selectedDateRange"
-            v-model:filter-options="selectedFilterOptions" v-model:main-filter-option="selectedMainFilterOption"
-            v-model:order-by-option="selectedOrderByOption" v-model:search-query="searchQuery" :date-filter="dateFilter"
-            :exclude-filters="excludeFilters" :exclude-order-bys="excludeOrderBys" :hide-order-by="hideOrderBy"
-            :hide-range-picker="hideRangePicker" :main-filter="mainFilter" :reset-button="resetButton"
-            :searchable-properties="searchableProperties" :settings="data.settings" @filter="filterResults" @order="orderBy"
-            @reset="resetFilters" @search="filterResults" />
+      <Button
+        icon-class-end="plus-circle-fill"
+        label="Create new"
+        @click.prevent="goTo(newItemLink)"
+      />
+      <slot name="titleButtons" />
     </div>
+  </div>
 
-    <VDatatableResults v-model:is-order-reversed="isOrderReversed" :admin="admin"
-        :exclude-from-row-properties="excludeFromRowProperties" :hide-empty="hideEmpty" :hide-order-by="hideOrderBy"
-        :hide-result-count="hideResultCount" :is-loading="isLoading" :items="filteredItems"
-        :max-cell-count-in-row="maxCellCountInRow">
-        <template v-if="$slots.rowHeader" #rowHeader="{ item }">
-            <slot :item="item" name="rowHeader" />
-        </template>
-        <template #buttons="{ item }">
-            <slot :item="item" name="buttons" />
-        </template>
-        <template #row="{ item }">
-            <slot :item="item" name="customRow" />
-        </template>
-    </VDatatableResults>
+  <div>
+    <VDatatableSettings
+      v-model:date-filter-option="selectedDateFilterOption"
+      v-model:date-range="selectedDateRangeFilterOption"
+      v-model:filter-options="selectedFilterOptions"
+      v-model:main-filter-option="selectedMainFilterOption"
+      v-model:order-by-option="selectedOrderByOption"
+      v-model:search-query="searchQuery"
+      :date-filter="dateFilter"
+      :exclude-filters="excludeFilters"
+      :exclude-order-bys="excludeOrderBys"
+      :hide-order-by="hideOrderBy"
+      :hide-range-date-filter="hideRangeDateFilter"
+      :main-filter="mainFilter"
+      :reset-button="resetButton"
+      :searchable-properties="searchableProperties"
+      :settings="data.settings"
+      @filter="filterResults"
+      @order="orderBy"
+      @reset="resetFilters"
+      @search="filterResults"
+    />
+  </div>
+
+  <VDatatableResults
+    v-model:is-order-reversed="isOrderReversed"
+    :admin="admin"
+    :exclude-from-row-properties="excludeFromRowProperties"
+    :hide-empty="hideEmpty"
+    :hide-order-by="hideOrderBy"
+    :hide-result-count="hideResultCount"
+    :is-loading="isLoading"
+    :items="filteredItems"
+    :max-cell-count-in-row="maxCellCountInRow"
+  >
+    <template v-if="$slots.rowHeader" #rowHeader="{ item }">
+      <slot :item="item" name="rowHeader" />
+    </template>
+    <template #buttons="{ item }">
+      <slot :item="item" name="buttons" />
+    </template>
+    <template #row="{ item }">
+      <slot :item="item" name="customRow" />
+    </template>
+  </VDatatableResults>
 </template>

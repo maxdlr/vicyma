@@ -1,15 +1,14 @@
 <script setup>
-
 const props = defineProps({
-  content: {type: String, required: true},
-  detail: {type: String, default: null},
-})
+  content: { type: String, required: true },
+  detail: { type: String, default: null },
+});
 </script>
 
 <template>
   <div class="fs-5">
     <div class="d-inline text-primary fst-italic fw-bold">
-      <i class="bi bi-arrow-right-short text-primary"/>
+      <i class="bi bi-arrow-right-short text-primary" />
       <span>{{ content }}</span>
     </div>
     <div v-if="detail" class="d-inline text-info">

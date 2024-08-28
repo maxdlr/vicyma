@@ -1,6 +1,5 @@
-import {registerVueControllerComponents} from '@symfony/ux-vue';
-import './bootstrap.js';
-
+import { registerVueControllerComponents } from "@symfony/ux-vue";
+import "./bootstrap.js";
 
 /*
  * Welcome to your app's main JavaScript file!
@@ -10,7 +9,7 @@ import './bootstrap.js';
  */
 
 // any CSS you import will output into a single css file (app.scss in this case)
-import './styles/app.scss';
+import "./styles/app.scss";
 
 // document.addEventListener('vue:before-mount', (event) => {
 //     const {
@@ -23,5 +22,6 @@ import './styles/app.scss';
 //     app.use();
 // });
 
-
-registerVueControllerComponents(require.context('./vue/controllers', true, /\.vue$/));
+registerVueControllerComponents(
+  require.context("./vue/controllers", true, /\.vue$/),
+);

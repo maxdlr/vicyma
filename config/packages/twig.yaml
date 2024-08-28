@@ -1,5 +1,5 @@
 twig:
-  file_name_pattern: '*.twig'
+  file_name_pattern: "*.twig"
   globals:
     navigation: '@App\Controller\Navigation'
     metadata: '@App\Controller\Metadata'

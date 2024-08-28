@@ -2,13 +2,13 @@
 import HomeHeader from "../components/molecule/HomeHeader.vue";
 import AvailableLodgingForm from "../components/molecule/AvailableLodgingForm.vue";
 import VDatatable from "../components/organism/VDatatable.vue";
-import {onMounted, onUnmounted, ref} from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import HomeLodgingRow from "../components/molecule/HomeLodgingRow.vue";
 
 const props = defineProps({
-  headerBackground: {type: String, required: true},
-  lodgings: {type: Object, required: true},
-})
+  headerBackground: { type: String, required: true },
+  lodgings: { type: Object, required: true },
+});
 const screenWidth = ref(window.innerWidth);
 const screenHeight = ref(window.innerHeight);
 const handleResize = () => {
@@ -21,23 +21,22 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
 });
-
 </script>
 
 <template>
-  <HomeHeader :background="headerBackground" title="Résidence Vicyma"/>
+  <HomeHeader :background="headerBackground" title="Résidence Vicyma" />
   <section class="row px-3">
     <div class="col-12">
       <VDatatable
-          :data="lodgings"
-          :hide-order-by="true"
-          :hide-result-count="true"
-          reset-button="right"
-          :hide-range-picker="false"
-          hide-title
+        :data="lodgings"
+        :hide-range-date-filter="false"
+        hide-order-by
+        hide-result-count
+        hide-title
+        reset-button="right"
       >
-        <template #customRow="{item}">
-          <HomeLodgingRow :lodging="item"/>
+        <template #customRow="{ item }">
+          <HomeLodgingRow :lodging="item" />
         </template>
       </VDatatable>
     </div>

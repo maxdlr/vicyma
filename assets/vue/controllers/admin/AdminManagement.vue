@@ -5,20 +5,19 @@ import TabbedDatatable from "../../components/molecule/TabbedDatatable.vue";
 import AdminUsers from "./datatables/AdminUsers.vue";
 
 defineProps({
-  datatables: {type: Object, required: true}
-})
-
+  datatables: { type: Object, required: true },
+});
 </script>
 
 <template>
   <TabbedDatatable
-      default-tab="lodgings"
-      :components="{
-          lodgings: AdminLodgings,
-          beds: AdminBeds,
-          users: AdminUsers
-      }"
-      :datatables="datatables"
-      :hidden-empty-datatables="['users', 'beds']"
+    default-tab="lodgings"
+    :components="{
+      lodgings: AdminLodgings,
+      beds: AdminBeds,
+      users: AdminUsers,
+    }"
+    :datatables="datatables"
+    :hidden-empty-datatables="['users', 'beds']"
   />
 </template>
