@@ -16,7 +16,7 @@ class HomeController extends AbstractController
 {
     public function __construct(
         private readonly LodgingRepository $lodgingRepository,
-        private readonly MediaRepository $mediaRepository,
+        private readonly MediaRepository   $mediaRepository,
     )
     {
     }
@@ -70,7 +70,7 @@ class HomeController extends AbstractController
         $headerBackground = VueObjectMaker::makeVueObjectOf(
             [$allMedia[rand(0, count($allMedia) - 1)]],
             ['mediaPath']
-        )->get()[0];
+        )->get();
 
         return $this->render('home/index.html.twig', [
             'lodgings' => $lodgings,

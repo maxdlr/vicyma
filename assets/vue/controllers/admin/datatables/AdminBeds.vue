@@ -15,26 +15,26 @@ const url = (id) => `${baseUrl}/${id}`;
 
 <template>
   <VDatatable
-    admin
-    :title="title"
     :data="data"
-    :searchable-properties="['height', 'width']"
     :exclude-from-row-properties="['id']"
+    :hide-empty="false"
     :new-item-link="`${baseUrl}/new`"
+    :title="title"
+    admin
   >
     <template #buttons="{ item }">
       <Button
-        label="Edit"
         class="my-1"
         color-class="warning"
-        @click.prevent="goTo(`${url(item.id)}/show`)"
         icon-class-end="box-arrow-up-right"
+        label="Edit"
+        @click.prevent="goTo(`${url(item.id)}/show`)"
       />
       <Button
-        label="Delete"
-        color-class="danger"
         class="my-1"
+        color-class="danger"
         icon-class-end="trash"
+        label="Delete"
         @click.prevent="
           goTo(
             `${url(item.id)}/delete`,

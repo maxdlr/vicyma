@@ -111,7 +111,9 @@ const handleMainFilter = (value) => {
 };
 
 const isFilters = computed(() => {
-  return Object.keys(activeFilters.value).length !== 0;
+  return (
+    Object.keys(activeFilters.value).length !== 0 || props.dateFilter !== null
+  );
 });
 
 const screenWidth = ref(window.innerWidth);
@@ -149,7 +151,6 @@ const handleBasicFiltersColCount = () => {
     (isFiltered.value ? 1 : props.resetButton === "left" ? 1 : 0) +
     (props.searchableProperties ? 1 : 0) +
     (props.dateFilter ? 1 : 0);
-  // + (!props.hideRangeDateFilter ? 1 : 0)
   let result = 6;
 
   if (computedCount >= 6 && isLgScreen.value) {
@@ -209,10 +210,7 @@ onUpdated(() => {
     class="w-75 mx-auto py-2"
     @typing="emit('search')"
   />
-  <div
-    :class="isLgScreen ? 'justify-content-center' : ''"
-    class="d-flex align-items-center pt-2 pt-lg-4"
-  >
+  <div class="d-flex align-items-center pt-2 pt-lg-4 justify-content-center">
     <Button
       v-if="isFiltered && isLgScreen"
       class="mx-1"
@@ -254,7 +252,7 @@ onUpdated(() => {
         v-if="!isLgScreen && searchableProperties"
         v-model:query="searchQuery"
         :class="settingElementClasses"
-        class="px-1"
+        class="p-1"
         @typing="emit('search')"
       />
       <InputDropdown
@@ -264,13 +262,13 @@ onUpdated(() => {
         :no-empty="true"
         :options="orderByOptions"
         :return-raw-object="true"
-        class="px-1"
+        class="p-1"
         label="Order"
         property-of="label"
         @has-selection="emit('order')"
       />
 
-      <div v-if="dateFilter" :class="settingElementClasses" class="px-1">
+      <div v-if="dateFilter" :class="settingElementClasses" class="p-1">
         <InputDropdown
           v-model:selected-option="selectedDateFilterOption"
           :label="dateFilter.label"
@@ -280,22 +278,25 @@ onUpdated(() => {
           @has-selection="emit('filter')"
         />
       </div>
-      <InputDate
+      <div
         v-if="!hideRangeDateFilter"
-        v-model:date="selectedDateRange"
         :class="settingElementClasses"
-        class="col-12"
-        label="Dates"
-        placeholder="Quelles sont vos dates ?"
-        range
-      />
+        class="col-12 p-1"
+      >
+        <InputDate
+          v-model:date="selectedDateRange"
+          label="Dates"
+          placeholder="Quelles sont vos dates ?"
+          range
+        />
+      </div>
 
       <div
         v-for="(filter, index) in activeFilters"
         v-if="isFilters"
         :key="index"
         :class="settingElementClasses"
-        class="px-1"
+        class="p-1"
       >
         <InputDropdown
           v-model:selected-option="selectedFilterOptions[filter['codeName']]"

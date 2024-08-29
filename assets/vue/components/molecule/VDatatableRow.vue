@@ -22,51 +22,15 @@ onMounted(() => {
   cellCount.value = datatableRow.value.children.length;
 });
 
-onBeforeMount(() => {
-  for (const property in props.item) {
-    if (props.excludeProperties) {
-      if (!props.excludeProperties.includes(property)) {
-        mainRowItem.value[property] = props.item[property];
-      }
-    } else {
-      mainRowItem.value[property] = props.item[property];
+const repositionItems = (properties) => {
+  for (const property of properties) {
+    if (mainRowItem.value[property]) {
+      delete mainRowItem.value[property];
     }
-  }
-
-  if (mainRowItem.value["createdOn"]) {
-    delete mainRowItem.value["createdOn"];
-  }
-
-  if (mainRowItem.value["firstname"]) {
-    delete mainRowItem.value["firstname"];
-  }
-
-  if (mainRowItem.value["lastname"]) {
-    delete mainRowItem.value["lastname"];
-  }
-
-  if (mainRowItem.value["reservationNumber"]) {
-    delete mainRowItem.value["reservationNumber"];
-  }
-
-  if (mainRowItem.value["arrivalDate"]) {
-    delete mainRowItem.value["arrivalDate"];
-  }
-
-  if (mainRowItem.value["departureDate"]) {
-    delete mainRowItem.value["departureDate"];
   }
 
   if (mainRowItem.value["rate"] && mainRowItem.value["lodging"]) {
     delete mainRowItem.value["lodging"];
-  }
-
-  if (mainRowItem.value["rate"]) {
-    delete mainRowItem.value["rate"];
-  }
-
-  if (mainRowItem.value["reservationStatus"]) {
-    delete mainRowItem.value["reservationStatus"];
   }
 
   for (const key in mainRowItem.value) {
@@ -79,12 +43,68 @@ onBeforeMount(() => {
       delete mainRowItem.value[key];
     }
   }
+};
+
+onBeforeMount(() => {
+  for (const property in props.item) {
+    if (props.excludeProperties) {
+      if (!props.excludeProperties.includes(property)) {
+        mainRowItem.value[property] = props.item[property];
+      }
+    } else {
+      mainRowItem.value[property] = props.item[property];
+    }
+  }
+
+  repositionItems([
+    "createdOn",
+    "firstname",
+    "lastname",
+    "reservationNumber",
+    "arrivalDate",
+    "departureDate",
+    "rate",
+    "reservationStatus",
+  ]);
+
+  // if (mainRowItem.value["createdOn"]) {
+  //   delete mainRowItem.value["createdOn"];
+  // }
+  //
+  // if (mainRowItem.value["firstname"]) {
+  //   delete mainRowItem.value["firstname"];
+  // }
+  //
+  // if (mainRowItem.value["lastname"]) {
+  //   delete mainRowItem.value["lastname"];
+  // }
+  //
+  // if (mainRowItem.value["reservationNumber"]) {
+  //   delete mainRowItem.value["reservationNumber"];
+  // }
+  //
+  // if (mainRowItem.value["arrivalDate"]) {
+  //   delete mainRowItem.value["arrivalDate"];
+  // }
+  //
+  // if (mainRowItem.value["departureDate"]) {
+  //   delete mainRowItem.value["departureDate"];
+  // }
+  //
+  //
+  // if (mainRowItem.value["rate"]) {
+  //   delete mainRowItem.value["rate"];
+  // }
+  //
+  // if (mainRowItem.value["reservationStatus"]) {
+  //   delete mainRowItem.value["reservationStatus"];
+  // }
 });
 </script>
 
 <template>
   <div v-if="$slots.buttons">
-    <VYoyo label="Action" direction="down-left" :is-open="hovering">
+    <VYoyo :is-open="hovering" direction="down-left" label="Action">
       <template #buttons>
         <slot name="buttons" />
       </template>
@@ -92,22 +112,22 @@ onBeforeMount(() => {
   </div>
 
   <div
-    class="my-2 border border-2 rounded-4 p-3"
     :class="hovering ? 'border-secondary' : 'border-secondary-subtle'"
+    class="my-2 border border-2 rounded-4 p-3"
     @mouseenter="hovering = true"
     @mouseleave="hovering = false"
   >
     <div class="d-flex justify-content-between align-items-center">
       <div class="d-flex justify-content-center align-items-center">
-        <slot name="rowHeader" :item="item" />
+        <slot :item="item" name="rowHeader" />
 
         <div v-if="item.rate">
           <span class="badge bg-success fw-bold fs-5 rounded-pill me-3">{{
             item.rate
           }}</span>
           <a
-            class="fs-5 fw-bold icon-link icon-link-hover"
             :href="`/admin/lodging/${item.lodging.id}/show`"
+            class="fs-5 fw-bold icon-link icon-link-hover"
           >
             {{ item.lodging.value }}
             <i class="bi bi-arrow-right-short fs-3"></i>
@@ -116,11 +136,14 @@ onBeforeMount(() => {
 
         <div
           v-if="item.reservationNumber"
-          class="d-flex justify-content-center align-items-center"
           :class="hovering ? 'text-secondary-emphasis' : 'text-secondary'"
+          class="d-flex justify-content-center align-items-center"
         >
           <span
-            class="me-3 badge fs-6 rounded-pill fw-bold"
+            v-if="
+              item.reservationStatus &&
+              ['PENDING', 'CONFIRMED'].includes(item.reservationStatus)
+            "
             :class="[
               ['PENDING'].includes(item.reservationStatus)
                 ? hovering
@@ -133,23 +156,20 @@ onBeforeMount(() => {
                   : 'bg-success-subtle text-success'
                 : '',
             ]"
-            v-if="
-              item.reservationStatus &&
-              ['PENDING', 'CONFIRMED'].includes(item.reservationStatus)
-            "
+            class="me-3 badge fs-6 rounded-pill fw-bold"
           >
             {{ item.reservationStatus }}
           </span>
           <span class="fs-5 fw-bold">{{ item.reservationNumber }}</span>
           <div
-            class="d-inline badge ms-3 fs-6 rounded-pill"
             :class="hovering ? 'bg-info' : 'bg-info-subtle text-info'"
+            class="d-inline badge ms-3 fs-6 rounded-pill"
           >
-            <span class="fw-bold" v-if="item.arrivalDate"
+            <span v-if="item.arrivalDate" class="fw-bold"
               >{{ item.arrivalDate }}
             </span>
             <i class="bi bi-arrow-right mx-3"></i>
-            <span class="fw-bold" v-if="item.departureDate"
+            <span v-if="item.departureDate" class="fw-bold"
               >{{ item.departureDate }}
             </span>
           </div>
@@ -164,21 +184,21 @@ onBeforeMount(() => {
         </div>
       </div>
       <div
-        class="badge fs-6 rounded-pill text-end"
-        :class="hovering ? 'bg-secondary' : 'bg-secondary-subtle'"
         v-if="item.createdOn"
+        :class="hovering ? 'bg-secondary' : 'bg-secondary-subtle'"
+        class="badge fs-6 rounded-pill text-end"
       >
         {{ item.createdOn }}
       </div>
     </div>
     <div
-      class="row"
-      :class="`row-cols-${cellCount > maxCellCountInRow ? Math.round(cellCount / 2) : cellCount}`"
       ref="datatableRow"
+      :class="`row-cols-${cellCount > maxCellCountInRow ? Math.round(cellCount / 2) : cellCount}`"
+      class="row"
     >
       <div v-for="(property, index) in mainRowItem" :key="index" class="p-2">
-        <slot name="cell" :item="{ property, index }">
-          <VDatatableCell :name="index" :value="property" :admin="admin" />
+        <slot :item="{ property, index }" name="cell">
+          <VDatatableCell :admin="admin" :name="index" :value="property" />
         </slot>
       </div>
     </div>

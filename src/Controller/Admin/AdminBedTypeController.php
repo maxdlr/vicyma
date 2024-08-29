@@ -8,6 +8,7 @@ use App\Entity\BedType;
 use App\Enum\RoleEnum;
 use App\Repository\BedTypeRepository;
 use App\Repository\ReviewRepository;
+use App\Vue\Model\VueDatatableSetting;
 use App\Vue\VueFormatter;
 use App\Vue\VueObjectMaker;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,6 +54,12 @@ class AdminBedTypeController extends AbstractController
         ]);
     }
 
+    public function redirectToManagementUsers(): RedirectResponse
+    {
+        return $this->redirectTo(routeName: 'app_admin_management')
+            ->withAnchor('beds')->do();
+    }
+
     /**
      * @throws Exception
      */
@@ -69,6 +76,8 @@ class AdminBedTypeController extends AbstractController
         ]);
     }
 
+    // ---------------------------------------------------------------------------------------------------
+
     /**
      * @throws Exception
      */
@@ -77,14 +86,6 @@ class AdminBedTypeController extends AbstractController
     {
         $this->bedTypeCrud->delete(request: $request, object: $bed);
         return $this->redirectToManagementUsers();
-    }
-
-    // ---------------------------------------------------------------------------------------------------
-
-    public function redirectToManagementUsers(): RedirectResponse
-    {
-        return $this->redirectTo(routeName: 'app_admin_management')
-            ->withAnchor('beds')->do();
     }
 
     /**
@@ -99,11 +100,16 @@ class AdminBedTypeController extends AbstractController
         $beds = VueObjectMaker::makeVueObjectOf(
             entities: $allBeds, properties: ['id', 'height', 'width', 'isExtra', 'lodgings']
         )->get();
+        $widths = VueObjectMaker::makeVueObjectOf($allBeds, ['width'])->regroup('width')->get();
+        $heights = VueObjectMaker::makeVueObjectOf($allBeds, ['height'])->regroup('height')->get();
 
         return VueFormatter::createDatatableComponent(
             name: 'beds',
             component: 'AdminBeds',
-            settings: [],
+            settings: [
+                new VueDatatableSetting(name: 'width', values: $widths, default: '', codeName: 'width'),
+                new VueDatatableSetting(name: 'height', values: $heights, default: '', codeName: 'height'),
+            ],
             items: $beds
         )->getAsVueObject();
     }

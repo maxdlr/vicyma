@@ -43,6 +43,6 @@ readonly class UserManager
         return VueObjectMaker::makeVueObjectOf(
             [$user],
             ['id', 'firstname', 'lastname', 'email', 'phoneNumber', 'address', 'roles', 'reservations', 'messages']
-        )->get()[0];
+        )->get();
     }
 }

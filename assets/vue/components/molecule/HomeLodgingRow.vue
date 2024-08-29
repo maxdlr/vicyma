@@ -5,6 +5,7 @@ import HomeLodgingDetail from "../../components/atom/HomeLodgingDetail.vue";
 import { truncate } from "../../composable/formatter/string";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { BREAKPOINTS } from "../../constant/bootstrap-constants";
+import { goTo } from "../../composable/action/redirect";
 
 const props = defineProps({
   lodging: { type: Object, required: true },
@@ -34,7 +35,7 @@ const clicked = ref(false);
 <template>
   <article
     :class="[
-      !isLgScreen ? 'w-75' : 'w-100',
+      !isLgScreen ? 'w-75 mx-auto' : 'w-100',
       hovering
         ? clicked
           ? 'bg-primary-subtle'
@@ -42,10 +43,11 @@ const clicked = ref(false);
         : '',
     ]"
     class="p-3 border border-secondary border-1 my-3 rounded-5 row"
+    @mousedown="clicked = true"
     @mouseenter="hovering = true"
     @mouseleave="hovering = false"
-    @mousedown="clicked = true"
     @mouseup="clicked = false"
+    @click.prevent="goTo(`/lodging/${lodging.name}`)"
   >
     <div class="overflow-hidden col-12 col-md-5 p-0 align-self-center">
       <HomeLodgingImageGallery :lodging="lodging" />

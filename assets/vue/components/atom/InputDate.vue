@@ -4,6 +4,7 @@ import "@vuepic/vue-datepicker/dist/main.css";
 import { onMounted, ref } from "vue";
 import { addDays, isEqual, set } from "date-fns";
 import InputWrapper from "./InputWrapper.vue";
+import { COLOR_CLASSES } from "../../constant/bootstrap-constants";
 
 const props = defineProps({
   label: { type: String, required: true, default: "label" },
@@ -11,6 +12,13 @@ const props = defineProps({
   availableDates: { type: Array, required: false, default: null },
   occupiedDates: { type: Array, required: false, default: null },
   range: { type: Boolean, default: false },
+  mainColorClass: {
+    type: String,
+    default: "info",
+    validator(value) {
+      return COLOR_CLASSES.includes(value);
+    },
+  },
 });
 
 const date = defineModel("date", {
@@ -60,11 +68,16 @@ const allowedDates = ref([]);
 </script>
 
 <template>
-  <InputWrapper :label="label" padding="">
+  <InputWrapper
+    :label="label"
+    padding=""
+    slot-container-classes="d-flex justify-content-center align-items-center"
+  >
     <div class="d-inline-block">
       <VueDatePicker
         v-model="date"
         :auto-apply="true"
+        :class="`rounded-4 text-${mainColorClass}`"
         :day-class="getDayClass"
         :enable-time-picker="false"
         :hide-input-icon="true"
@@ -73,18 +86,19 @@ const allowedDates = ref([]);
         :range="range"
         :state="isDateValid"
         :ui="dateUi"
-        class="rounded-4"
       >
         <template #marker="{ marker, day, date }">
           <span class="custom-marker"></span>
         </template>
       </VueDatePicker>
     </div>
-    <i class="bi bi-caret-down" />
+    <i :class="`bi bi-caret-down-fill text-${mainColorClass}`" />
   </InputWrapper>
 </template>
 
 <style lang="scss" scoped>
+@import "../../../styles/app";
+
 .custom-marker {
   position: absolute;
   top: 0;
@@ -93,5 +107,9 @@ const allowedDates = ref([]);
   width: 8px;
   border-radius: 100%;
   background-color: green;
+}
+
+.dp__theme_light {
+  --dp-text-color: $info;
 }
 </style>
