@@ -1,15 +1,14 @@
 <script setup>
 import VNavItem from "../components/atom/VNavItem.vue";
-import {Collapse} from 'bootstrap';
+import { Collapse } from "bootstrap";
 
 const props = defineProps({
-  navigation: {type: Object, required: true}
-})
+  navigation: { type: Object, required: true },
+});
 
 const isCurrentLocation = (link) => {
-  return window.location.pathname === link
-}
-
+  return window.location.pathname === link;
+};
 </script>
 
 <template>
@@ -20,26 +19,28 @@ const isCurrentLocation = (link) => {
         <span>VICYMA</span>
       </a>
       <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mb-2 mb-lg-0 justify-content-between d-flex align-items-center w-100">
+        <ul
+          class="navbar-nav mb-2 mb-lg-0 justify-content-between d-flex align-items-center w-100"
+        >
           <li v-for="(link, index) in navigation" :key="index" class="nav-item">
             <div class="py-1">
               <VNavItem
-                  :label="link.label"
-                  :value="link.value"
-                  :icon-class="link.iconClass"
-                  color-class="primary"
-                  size="lg"
+                :label="link.label"
+                :value="link.value"
+                :icon-class="link.iconClass"
+                color-class="primary"
+                size="lg"
               />
             </div>
           </li>
@@ -49,6 +50,4 @@ const isCurrentLocation = (link) => {
   </nav>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

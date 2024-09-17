@@ -1,4 +1,4 @@
-@use 'animation' as *;
+@use "animation" as *;
 
 .slide-left-enter-active {
   transition: transform $duration $timing;

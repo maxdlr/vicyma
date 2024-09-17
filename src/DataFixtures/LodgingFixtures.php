@@ -45,6 +45,10 @@ class LodgingFixtures extends Fixture implements DependentFixtureInterface
                 ->addBed($this->getReference('bed_' . rand(1, AppFixtures::BED_TYPE_COUNT - 1)))
                 ->addBed($this->getReference('bed_' . rand(1, AppFixtures::BED_TYPE_COUNT - 1)))
                 ->addBed($this->getReference('bed_' . rand(1, AppFixtures::BED_TYPE_COUNT - 1)))
+                ->addMedia($this->getReference('media_' . rand(1, AppFixtures::MEDIA_COUNT - 1)))
+                ->addMedia($this->getReference('media_' . rand(1, AppFixtures::MEDIA_COUNT - 1)))
+                ->addMedia($this->getReference('media_' . rand(1, AppFixtures::MEDIA_COUNT - 1)))
+                ->addMedia($this->getReference('media_' . rand(1, AppFixtures::MEDIA_COUNT - 1)))
                 ->addMedia($this->getReference('media_' . rand(1, AppFixtures::MEDIA_COUNT - 1)));
 
             $manager->persist($lodging);

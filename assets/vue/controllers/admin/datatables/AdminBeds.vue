@@ -1,48 +1,49 @@
 <script setup>
 import VDatatable from "../../../components/organism/VDatatable.vue";
-import Button from "../../../components/atom/VButton.vue";
-import {goTo} from "../../../composable/action/redirect";
+import Button from "../../../components/atom/Button.vue";
+import { goTo } from "../../../composable/action/redirect";
 
 defineProps({
-  data: {type: Object, required: true},
-  title: {type: String},
+  data: { type: Object, required: true },
+  title: { type: String },
 });
 
-const baseUrl = '/admin/bed';
+const baseUrl = "/admin/bed";
 
 const url = (id) => `${baseUrl}/${id}`;
 </script>
 
 <template>
-  <VDatatable admin
-      :title="title"
-      :data="data"
-      :searchable-properties="['height', 'width']"
-      :exclude-from-row-properties="['id']"
-      :new-item-link="`${baseUrl}/new`"
+  <VDatatable
+    :data="data"
+    :exclude-from-row-properties="['id']"
+    :hide-empty="false"
+    :new-item-link="`${baseUrl}/new`"
+    :title="title"
+    admin
   >
-    <template #buttons="{item}">
+    <template #buttons="{ item }">
       <Button
-          label="Edit"
-          class="my-1"
-          color-class="warning"
-          @click.prevent="goTo(`${url(item.id)}/show`)"
-          icon-class-end="box-arrow-up-right"
+        class="my-1"
+        color-class="warning"
+        icon-class-end="box-arrow-up-right"
+        label="Edit"
+        @click.prevent="goTo(`${url(item.id)}/show`)"
       />
       <Button
-          label="Delete"
-          color-class="danger"
-          class="my-1"
-          icon-class-end="trash"
-          @click.prevent="goTo(
-                        `${url(item.id)}/delete`,
-                        `Salut Maman, tu veux vraiment supprimer le lit ${item.width} - ${item.height} ?`
-                        )"
+        class="my-1"
+        color-class="danger"
+        icon-class-end="trash"
+        label="Delete"
+        @click.prevent="
+          goTo(
+            `${url(item.id)}/delete`,
+            `Salut Maman, tu veux vraiment supprimer le lit ${item.width} - ${item.height} ?`,
+          )
+        "
       />
     </template>
   </VDatatable>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,28 +1,54 @@
 <script setup>
 import VSearchInput from "../atom/VSearchInput.vue";
-import Button from "../atom/VButton.vue";
-import Dropdown from "../atom/Dropdown.vue";
-import {computed} from "vue";
+import Button from "../atom/Button.vue";
+import InputDropdown from "../atom/InputDropdown.vue";
+import { computed, onMounted, onUnmounted, onUpdated, ref, watch } from "vue";
 import VDatatableMainFilter from "./VDatatableMainFilter.vue";
-import {getDateOptions} from "../../composable/formatter/date";
-import {SLIDE_RIGHT} from "../../constant/animation";
+import { getDateOptions } from "../../composable/formatter/date";
+import { SLIDE_RIGHT } from "../../constant/animation";
+import { BREAKPOINTS } from "../../constant/bootstrap-constants";
+import InputDate from "../atom/InputDate.vue";
 
 const props = defineProps({
-  settings: {type: Object, required: true},
-  excludeFilters: {type: Array, default: [], required: false},
-  excludeOrderBys: {type: Array, default: [], required: false},
-  mainFilter: {type: String, default: null, required: false},
-  dateFilter: {type: Object, default: null, required: false},
-  hideOrderBy: {type: Boolean, default: false, required: false}
-})
-const searchQuery = defineModel('searchQuery', {type: String, required: true})
-const selectedFilterOptions = defineModel('filterOptions', {type: Object, required: true})
-const selectedMainFilterOption = defineModel('mainFilterOption', {type: Object})
-const selectedOrderByOption = defineModel('orderByOption', {type: Object, required: true})
-const selectedDateFilterOption = defineModel('dateFilterOption', {type: [Object, String], required: false})
+  settings: { type: Object, required: true },
+  excludeFilters: { type: Array, default: [] },
+  excludeOrderBys: { type: Array, default: [] },
+  mainFilter: { type: String, default: null },
+  dateFilter: { type: Object, default: null },
+  hideOrderBy: { type: Boolean, default: false },
+  hideRangeDateFilter: { type: Boolean },
+  resetButton: {
+    type: [String, false],
+    default: "left",
+    validator(value) {
+      return ["left", "right", false].includes(value);
+    },
+  },
+  searchableProperties: { type: Array },
+});
+const searchQuery = defineModel("searchQuery", {
+  type: String,
+  required: true,
+});
+const selectedFilterOptions = defineModel("filterOptions", {
+  type: Object,
+  required: true,
+});
+const selectedMainFilterOption = defineModel("mainFilterOption", {
+  type: Object,
+});
+const selectedDateRange = defineModel("dateRange", { type: Array });
+const selectedOrderByOption = defineModel("orderByOption", {
+  type: Object,
+  required: true,
+});
+const selectedDateFilterOption = defineModel("dateFilterOption", {
+  type: [Object, String],
+  required: false,
+});
 const activeMainFilter = computed(() => {
-  return props.mainFilter ? props.settings[props.mainFilter] : null
-})
+  return props.mainFilter ? props.settings[props.mainFilter] : null;
+});
 const activeFilters = computed(() => {
   let activeFilters = {};
 
@@ -33,7 +59,7 @@ const activeFilters = computed(() => {
       }
     }
   } else {
-    activeFilters = {...props.settings};
+    activeFilters = { ...props.settings };
   }
 
   if (props.mainFilter) {
@@ -41,7 +67,7 @@ const activeFilters = computed(() => {
   }
 
   if (props.dateFilter) {
-    delete activeFilters[props.dateFilter.codeName]
+    delete activeFilters[props.dateFilter.codeName];
   }
 
   return activeFilters;
@@ -49,102 +75,257 @@ const activeFilters = computed(() => {
 const isFiltered = computed(() => {
   const votes = [];
   for (const filter in props.settings) {
-    votes.push(selectedFilterOptions.value[props.settings[filter].codeName] !== '');
+    votes.push(
+      selectedFilterOptions.value[props.settings[filter].codeName] !== "",
+    );
   }
-  votes.push(searchQuery.value !== '')
-  return votes.includes(true)
-})
+  votes.push(searchQuery.value !== "");
+  votes.push(selectedDateRange.value.length !== 0);
+  return votes.includes(true);
+});
 
-const emit = defineEmits(['search', 'filter', 'reset', 'order'])
+const emit = defineEmits(["search", "filter", "reset", "order"]);
 
 const orderByOptions = computed(() => {
   let options = [];
   for (const filterName in props.settings) {
-    if (props.settings[filterName].codeName !== props.mainFilter && !props.excludeOrderBys.includes(props.settings[filterName].codeName)) {
+    if (
+      props.settings[filterName].codeName !== props.mainFilter &&
+      !props.excludeOrderBys.includes(props.settings[filterName].codeName)
+    ) {
       options.push({
         label: props.settings[filterName].name,
-        codeName: props.settings[filterName].codeName
-      })
+        codeName: props.settings[filterName].codeName,
+      });
     }
   }
-  return options
-})
+  return options;
+});
 
 const handleMainFilter = (value) => {
   selectedMainFilterOption.value = {
     codeName: activeMainFilter.value.codeName,
-    value: value
-  }
-  emit('filter')
-}
+    value: value,
+  };
+  emit("filter");
+};
 
 const isFilters = computed(() => {
-  return Object.keys(activeFilters.value).length !== 0
-})
+  return (
+    Object.keys(activeFilters.value).length !== 0 || props.dateFilter !== null
+  );
+});
 
+const screenWidth = ref(window.innerWidth);
+const screenHeight = ref(window.innerHeight);
+const handleResize = () => {
+  screenWidth.value = window.innerWidth;
+  screenHeight.value = window.innerHeight;
+};
+
+onMounted(() => {
+  window.addEventListener("resize", handleResize);
+  handleFilterMenuClasses();
+  handleBasicFiltersColCount();
+});
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
+});
+
+const isLgScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.LG;
+});
+const isMdScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.MD;
+});
+const isSmScreen = computed(() => {
+  return screenWidth.value < BREAKPOINTS.SM;
+});
+
+const basicFiltersColCount = ref();
+
+const handleBasicFiltersColCount = () => {
+  const computedCount =
+    Object.keys(activeFilters.value).length +
+    (!props.hideOrderBy ? 1 : 0) +
+    (isFiltered.value ? 1 : props.resetButton === "left" ? 1 : 0) +
+    (props.searchableProperties ? 1 : 0) +
+    (props.dateFilter ? 1 : 0);
+  let result = 6;
+
+  if (computedCount >= 6 && isLgScreen.value) {
+    result =
+      props.resetButton === "left" ? computedCount / 2 - 1 : computedCount / 2;
+  }
+
+  if (computedCount < 6) {
+    result = isLgScreen.value ? 3 : computedCount;
+  }
+
+  if (isSmScreen.value) {
+    result = 2;
+  }
+
+  basicFiltersColCount.value = result;
+};
+
+const settingElementClasses = ref();
+const settingsContainerClasses = ref();
+const mainFilterContainerClasses = ref();
+const mainFilterItemClasses = ref();
+
+const handleFilterMenuClasses = () => {
+  if (isLgScreen.value) {
+    settingElementClasses.value = "";
+    settingsContainerClasses.value = `row row-cols-${basicFiltersColCount.value}`;
+    mainFilterContainerClasses.value = `row row-cols-3`;
+    mainFilterItemClasses.value = "flex-fill";
+  } else {
+    settingElementClasses.value = "";
+    settingsContainerClasses.value = `row row-cols-${basicFiltersColCount.value}`;
+    mainFilterContainerClasses.value = "";
+    mainFilterItemClasses.value = "";
+  }
+};
+
+onUpdated(() => {
+  handleFilterMenuClasses();
+  handleBasicFiltersColCount();
+});
 </script>
 
 <template>
-  <VDatatableMainFilter
-      v-if="mainFilter"
-      :filter="activeMainFilter"
-      @selected-value="handleMainFilter"
+  <div v-if="mainFilter" class="pb-2 pb-lg-0">
+    <VDatatableMainFilter
       v-model:active-main-filter="selectedMainFilterOption.value"
-      class="py-5"
+      :container-classes="mainFilterContainerClasses"
+      :filter="activeMainFilter"
+      :item-classes="mainFilterItemClasses"
+      @selected-value="handleMainFilter"
+    />
+  </div>
+  <VSearchInput
+    v-if="isLgScreen && searchableProperties"
+    v-model:query="searchQuery"
+    class="w-75 mx-auto py-2"
+    @typing="emit('search')"
   />
+  <div class="d-flex align-items-center pt-2 pt-lg-4 justify-content-center">
+    <Button
+      v-if="isFiltered && isLgScreen"
+      class="mx-1"
+      color-class="secondary"
+      label="Reset"
+      @click.prevent="emit('reset')"
+    />
+    <div
+      id="filters"
+      :class="[
+        settingsContainerClasses,
+        resetButton === 'right'
+          ? 'justify-content-start'
+          : resetButton === 'left'
+            ? 'justify-content-end'
+            : 'justify-content-center',
+      ]"
+      class="align-items-center"
+    >
+      <div
+        v-if="isFilters && resetButton === 'left' && !isLgScreen"
+        class="d-flex justify-content-center align-items-center horizontal-scroll-item"
+      >
+        <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">
+          Filters
+        </h5>
+        <i class="bi bi-arrow-right-short"></i>
+        <Transition :name="SLIDE_RIGHT">
+          <Button
+            v-if="isFiltered"
+            class="mx-1"
+            color-class="secondary"
+            label="Reset"
+            @click.prevent="emit('reset')"
+          />
+        </Transition>
+      </div>
+      <VSearchInput
+        v-if="!isLgScreen && searchableProperties"
+        v-model:query="searchQuery"
+        :class="settingElementClasses"
+        class="p-1"
+        @typing="emit('search')"
+      />
+      <InputDropdown
+        v-if="!hideOrderBy && orderByOptions[0]"
+        v-model:selected-option="selectedOrderByOption"
+        :class="settingElementClasses"
+        :no-empty="true"
+        :options="orderByOptions"
+        :return-raw-object="true"
+        class="p-1"
+        label="Order"
+        property-of="label"
+        @has-selection="emit('order')"
+      />
 
-  <div :class="`row row-cols-${Object.keys(activeFilters).length + 3 + (dateFilter ? 1 : 0)}`"
-       class="justify-content-center align-items-center py-4">
-    <div class="d-flex justify-content-center align-items-center" v-if="isFilters">
-      <h5 class="d-inline my-0 mx-2 p-0 text-center text-secondary">Filters</h5>
-      <i class="bi bi-arrow-right-short"></i>
+      <div v-if="dateFilter" :class="settingElementClasses" class="p-1">
+        <InputDropdown
+          v-model:selected-option="selectedDateFilterOption"
+          :label="dateFilter.label"
+          :options="getDateOptions()"
+          :return-raw-object="true"
+          property-of="name"
+          @has-selection="emit('filter')"
+        />
+      </div>
+      <div
+        v-if="!hideRangeDateFilter"
+        :class="settingElementClasses"
+        class="col-12 p-1"
+      >
+        <InputDate
+          v-model:date="selectedDateRange"
+          label="Dates"
+          placeholder="Quelles sont vos dates ?"
+          range
+        />
+      </div>
+
+      <div
+        v-for="(filter, index) in activeFilters"
+        v-if="isFilters"
+        :key="index"
+        :class="settingElementClasses"
+        class="p-1"
+      >
+        <InputDropdown
+          v-model:selected-option="selectedFilterOptions[filter['codeName']]"
+          :label="filter['name']"
+          :options="filter['values']"
+          property-of="value"
+          @has-selection="emit('filter')"
+        />
+      </div>
+
       <Transition :name="SLIDE_RIGHT">
-        <div v-if="isFiltered">
-          <Button label="Reset" color-class="secondary" @click.prevent="emit('reset')" class="mx-1"/>
+        <div
+          v-if="isFiltered && resetButton === 'right' && !isLgScreen"
+          :class="settingElementClasses"
+        >
+          <Button
+            class="mx-1"
+            color-class="secondary"
+            label="Reset"
+            @click.prevent="emit('reset')"
+          />
         </div>
       </Transition>
     </div>
-    <div v-if="isFilters">
-      <Dropdown
-          v-if="!hideOrderBy && orderByOptions[0]"
-          :no-empty="true"
-          :options="orderByOptions"
-          property-of="label"
-          :return-raw-object="true"
-          label="Order"
-          v-model:selected-option="selectedOrderByOption"
-          @has-selection="emit('order')"
-      />
-    </div>
-
-    <div v-if="dateFilter">
-      <Dropdown
-          :options="getDateOptions()"
-          property-of="name"
-          :return-raw-object="true"
-          :label="dateFilter.label"
-          v-model:selected-option="selectedDateFilterOption"
-          @has-selection="emit('filter')"
-      />
-    </div>
-
-    <div v-for="(filter, index) in activeFilters" :key="index" v-if="isFilters">
-      <slot name="filters" :filter="filter">
-        <Dropdown
-            :label="filter['name']"
-            :options="filter['values']"
-            property-of="value"
-            v-model:selected-option="selectedFilterOptions[filter['codeName']]"
-            @has-selection="emit('filter')"
-        />
-      </slot>
-    </div>
-    <VSearchInput v-model:query="searchQuery" @typing="emit('search')"/>
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 @import "../../../styles/animation/slide-left";
 @import "../../../styles/animation/slide-right";
-
+@import "../../../styles/horizontal-scroll";
 </style>

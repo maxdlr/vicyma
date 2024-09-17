@@ -1,10 +1,10 @@
 <script setup>
-import {toTitle} from "../../composable/formatter/string";
+import { toTitle } from "../../composable/formatter/string";
 
 const props = defineProps({
-  title: {type: String, required: true},
-  description: {type: String}
-})
+  title: { type: String, required: true },
+  description: { type: String },
+});
 </script>
 
 <template>
@@ -14,6 +14,4 @@ const props = defineProps({
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

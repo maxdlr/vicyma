@@ -6,6 +6,7 @@ use App\Entity\Address;
 use App\Entity\BedType;
 use App\Entity\Conversation;
 use App\Entity\Lodging;
+use App\Entity\Media;
 use App\Entity\Message;
 use App\Entity\Reservation;
 use App\Entity\ReservationStatus;
@@ -16,6 +17,7 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\Collection;
 use ReflectionException;
 use ReflectionMethod;
+use ReflectionProperty;
 use function Symfony\Component\String\u;
 
 class VueObjectMaker
@@ -25,7 +27,7 @@ class VueObjectMaker
     /**
      * @throws ReflectionException
      */
-    public static function makeVueObjectOf(array $entities, array $properties): static
+    public static function makeVueObjectOf(array $entities, ?array $properties = null): static
     {
         self::$vueObject = array_map(function (object $object) use ($entities, $properties) {
             return self::makeVueObject($object, $properties);
@@ -37,11 +39,17 @@ class VueObjectMaker
     /**
      * @throws ReflectionException
      */
-    private static function makeVueObject(object $object, array $properties): array
+    private static function makeVueObject(object $object, ?array $properties = null): array
     {
         $vueObject = [];
         $objectFqcn = u(get_class($object))->trimPrefix('Proxies\\__CG__\\')->toString();
         $allProperties = ClassBrowser::findAllProperties($objectFqcn);
+
+        if ($properties === null) {
+            $properties = array_map(function (ReflectionProperty $property) {
+                return $property->getName();
+            }, $allProperties);
+        }
 
         foreach ($allProperties as $property) {
             if (in_array($property->getName(), $properties)) {
@@ -104,6 +112,7 @@ class VueObjectMaker
             $object instanceof Review => ['id', 'rate'],
             $object instanceof Reservation => ['id', 'reservationNumber', 'reservationStatus'],
             $object instanceof Lodging => ['id', 'name'],
+            $object instanceof Media => ['id', 'mediaPath'],
             default => null
         };
     }
@@ -126,8 +135,8 @@ class VueObjectMaker
         return new static;
     }
 
-    public function get(): array
+    public function get(): mixed
     {
-        return self::$vueObject;
+        return count(self::$vueObject) === 1 ? self::$vueObject[0] : self::$vueObject;
     }
 }

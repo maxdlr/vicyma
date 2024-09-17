@@ -180,7 +180,7 @@ class Lodging
         return $this;
     }
 
-    public function hasTvService(): ?bool
+    public function getTvService(): ?bool
     {
         return $this->tvService;
     }
@@ -192,7 +192,7 @@ class Lodging
         return $this;
     }
 
-    public function hasWasher(): ?bool
+    public function getWasher(): ?bool
     {
         return $this->washer;
     }
@@ -204,7 +204,7 @@ class Lodging
         return $this;
     }
 
-    public function hasWaterHeater(): ?bool
+    public function getWaterHeater(): ?bool
     {
         return $this->waterHeater;
     }
@@ -216,7 +216,7 @@ class Lodging
         return $this;
     }
 
-    public function hasParking(): ?bool
+    public function getParking(): ?bool
     {
         return $this->parking;
     }
@@ -228,7 +228,7 @@ class Lodging
         return $this;
     }
 
-    public function hasGate(): ?bool
+    public function getGate(): ?bool
     {
         return $this->gate;
     }
@@ -240,7 +240,7 @@ class Lodging
         return $this;
     }
 
-    public function isAnimalAllowed(): ?bool
+    public function getAnimalAllowed(): ?bool
     {
         return $this->animalAllowed;
     }
@@ -252,7 +252,7 @@ class Lodging
         return $this;
     }
 
-    public function hasTerrace(): ?bool
+    public function getTerrace(): ?bool
     {
         return $this->terrace;
     }
@@ -450,7 +450,7 @@ class Lodging
         return $this;
     }
 
-    public function isAirConditioning(): ?bool
+    public function getAirConditioning(): ?bool
     {
         return $this->airConditioning;
     }

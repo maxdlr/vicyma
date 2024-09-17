@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }}
+    Tableau de bord
+{% endblock %}
+
+{% block body %}
+    <div {{ vue_component('LodgingShowPage', {
+        lodging: lodging
+    }) }}></div>
+{% endblock %}
